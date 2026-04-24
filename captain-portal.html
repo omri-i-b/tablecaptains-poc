@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your table · Spring Gala 2026 · RSVPify</title>
+<style>
+  :root {
+    --brand:           #372056;
+    --brand-hover:     #45286b;
+    --brand-accent:    #45286b;
+    --brand-soft:      #ebecf6;
+    --brand-veil:      rgba(25, 18, 54, 0.5);
+
+    --page:            #fafafc;
+    --card:            #ffffff;
+    --border:          #e8e8ed;
+    --border-strong:   #d1d0d9;
+    --divider:         #ededf1;
+
+    --ink:             #191236;
+    --body:            #3a304f;
+    --muted:           #5e5972;
+    --faint:           #9b9aa7;
+
+    --success-fg:      #0d8759;
+    --success-bg:      #d9f2e9;
+    --warning-fg:      #a85a00;
+    --warning-bg:      #fdecd0;
+    --invited-fg:      #7a5a14;
+    --invited-bg:      #fef4d8;
+    --danger-fg:       #b11a2b;
+    --danger-bg:       #fde3e7;
+
+    --link:            #3d91ff;
+
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "Iowan Old Style", "Palatino Linotype", Georgia, Cambria, serif;
+
+    --r-sm: 4px;
+    --r-md: 6px;
+    --r-lg: 10px;
+    --r-xl: 14px;
+    --r-pill: 100px;
+    --r-full: 9999px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 22px;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; }
+
+  /* ========== APP HEADER ========== */
+  .app-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo-mark {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 500; color: var(--ink); font-size: 15px;
+  }
+  .logo-mark svg { display: block; }
+  .header-sub { font-size: 13px; color: var(--muted); }
+
+  /* ========== PORTAL ========== */
+  .portal {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+    display: flex; flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ========== MASTHEAD ========== */
+  .masthead { display: flex; flex-direction: column; gap: 14px; }
+  .event-name {
+    font-family: var(--font-serif);
+    font-size: 34px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink);
+  }
+  .event-meta {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 4px 0 0;
+    line-height: 20px;
+  }
+  .group-line {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .group-label {
+    font-size: 12px; font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .group-name {
+    font-size: 18px; font-weight: 500;
+    color: var(--ink);
+    padding: 4px 8px;
+    border-radius: var(--r-sm);
+    border: 1px dashed transparent;
+    outline: none;
+    min-width: 60px;
+  }
+  .group-name:hover { border-color: var(--border-strong); }
+  .group-name:focus {
+    border: 1px solid var(--brand);
+    background: var(--card);
+  }
+  .edit-hint {
+    font-size: 12px; color: var(--faint);
+    display: inline-flex; align-items: center; gap: 4px;
+    cursor: pointer;
+    user-select: none;
+    padding: 2px 4px;
+    border-radius: var(--r-sm);
+  }
+  .edit-hint:hover { color: var(--muted); background: var(--brand-soft); }
+  .group-name:focus ~ .edit-hint,
+  .group-line.editing .edit-hint { display: none; }
+  .order-context {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 18px;
+  }
+
+  /* ========== PROGRESS HERO ========== */
+  .hero {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 24px 28px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .stat-row {
+    display: flex; align-items: baseline; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .stat-big {
+    font-size: 42px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .stat-big .muted { color: var(--faint); font-weight: 400; }
+  .stat-label {
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .progress-bar {
+    height: 8px;
+    background: var(--brand-soft);
+    border-radius: var(--r-pill);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--brand);
+    transition: width 280ms cubic-bezier(.2, .8, .2, 1);
+  }
+  .stat-sub {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .stat-sub strong { color: var(--ink); font-weight: 500; }
+
+  /* ========== ACTIONS ========== */
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .action-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 18px;
+    text-align: left;
+    color: var(--ink);
+    display: flex; flex-direction: column; gap: 6px;
+    transition: border-color 120ms linear, background-color 120ms linear;
+  }
+  .action-card:hover {
+    border-color: var(--brand);
+    background: #fafafd;
+  }
+  .action-icon {
+    width: 32px; height: 32px;
+    border-radius: var(--r-md);
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 4px;
+  }
+  .action-title {
+    font-size: 15px; font-weight: 500;
+    color: var(--ink);
+    line-height: 22px;
+  }
+  .action-sub {
+    font-size: 13px; color: var(--muted);
+    line-height: 18px;
+  }
+
+  /* ========== SEATS ========== */
+  .seats-section { display: flex; flex-direction: column; gap: 14px; }
+  .seats-head h2 {
+    font-size: 18px; font-weight: 500;
+    margin: 0;
+    color: var(--ink);
+  }
+  .seats-head p {
+    font-size: 13px; color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .seat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .seat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    text-align: left;
+    color: var(--ink);
+    display: flex; flex-direction: column; gap: 4px;
+    min-height: 78px;
+    transition: border-color 120ms linear, background-color 120ms linear;
+  }
+  .seat:hover { border-color: var(--brand-strong, var(--brand)); background: #fafafd; }
+  .seat.open {
+    border-style: dashed;
+    color: var(--muted);
+  }
+  .seat.open:hover {
+    background: var(--brand-soft);
+    color: var(--brand);
+  }
+  .seat-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .seat-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 20px;
+  }
+  .seat-meta {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 18px;
+  }
+  .seat-meta .sep { margin: 0 6px; color: var(--faint); }
+  .seat-empty {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .seat.open:hover .seat-empty { color: var(--brand); }
+  .seat-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 8px;
+    border-radius: var(--r-pill);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .seat-tag.you { background: var(--brand); color: white; }
+  .seat-tag.confirmed { background: var(--success-bg); color: var(--success-fg); }
+  .seat-tag.invited { background: var(--invited-bg); color: var(--invited-fg); }
+  .seat-tag.open { background: transparent; color: var(--faint); letter-spacing: 0.4px; border: 1px solid var(--border-strong); }
+
+  /* ========== SETTINGS ROW ========== */
+  .settings {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+  }
+  .setting-row .label { font-weight: 500; color: var(--ink); }
+  .setting-row .help { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .toggle {
+    position: relative;
+    flex: 0 0 40px;
+    width: 40px; height: 22px;
+    border-radius: var(--r-full);
+    background: #c2c0cd;
+    cursor: pointer;
+    transition: background-color 180ms linear;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: var(--r-full);
+    background: white;
+    transition: transform 180ms cubic-bezier(.2,0,0,1);
+  }
+  .toggle.on { background: var(--brand-accent); }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* ========== FOOTER ========== */
+  .footer-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--divider);
+  }
+  .footer-note p { margin: 0 0 4px; }
+  .footer-note .support { color: var(--muted); }
+
+  /* ========== MODAL ========== */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: var(--brand-veil);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms linear;
+  }
+  .modal-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal {
+    width: 440px;
+    max-width: 100%;
+    max-height: calc(100vh - 40px);
+    background: var(--card);
+    border-radius: var(--r-xl);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transform: translateY(-6px);
+    transition: transform 150ms cubic-bezier(.2, .8, .2, 1);
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px;
+  }
+  .modal-head h2 {
+    font-size: 17px; font-weight: 500; color: var(--ink);
+    margin: 0;
+  }
+  .modal-head p {
+    font-size: 13px; color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: var(--r-full);
+    color: var(--muted);
+    font-size: 18px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--brand-soft); color: var(--ink); }
+  .modal-body { padding: 20px 22px; overflow-y: auto; }
+  .modal-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--divider);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 8px;
+  }
+
+  /* ========== FIELDS ========== */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field + .field { margin-top: 14px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .input, .textarea, .select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--card);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 20px;
+    outline: none;
+  }
+  .input::placeholder, .textarea::placeholder { color: var(--faint); }
+  .input:focus, .select:focus, .textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(55, 32, 86, 0.15);
+  }
+  .textarea { resize: vertical; min-height: 72px; }
+  .select {
+    appearance: none; -webkit-appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%235e5972' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  /* ========== BUTTONS ========== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: var(--r-md);
+    font-size: 14px; font-weight: 500; line-height: 20px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    white-space: nowrap;
+    transition: background-color 120ms linear, border-color 120ms linear;
+  }
+  .btn-primary { background: var(--brand); color: white; border-color: var(--brand); }
+  .btn-primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
+  .btn-primary:disabled {
+    background: #b5a9c4; border-color: #b5a9c4; cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: var(--card); color: var(--ink); border-color: var(--border-strong);
+  }
+  .btn-secondary:hover { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+  .btn-ghost { color: var(--muted); }
+  .btn-ghost:hover { color: var(--ink); background: var(--brand-soft); }
+  .btn-danger {
+    color: var(--danger-fg); border-color: transparent;
+  }
+  .btn-danger:hover { background: var(--danger-bg); }
+
+  /* ========== SHARE URL BOX ========== */
+  .share-url {
+    display: flex; align-items: center;
+    background: var(--brand-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 3px 3px 3px 12px;
+    gap: 8px;
+  }
+  .share-url input {
+    flex: 1;
+    border: 0; outline: 0;
+    background: transparent;
+    font-size: 13px;
+    color: var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    padding: 8px 0;
+  }
+  .share-url button {
+    padding: 7px 14px;
+    border-radius: var(--r-sm);
+    background: var(--brand);
+    color: white;
+    font-size: 13px; font-weight: 500;
+  }
+  .share-url button:hover { background: var(--brand-hover); }
+
+  .qr-placeholder {
+    width: 140px; height: 140px;
+    margin: 16px auto;
+    background:
+      linear-gradient(45deg, transparent 47%, var(--ink) 47%, var(--ink) 53%, transparent 53%),
+      linear-gradient(-45deg, transparent 47%, var(--ink) 47%, var(--ink) 53%, transparent 53%),
+      repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
+    background-color: white;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    position: relative;
+  }
+  .qr-note {
+    text-align: center; color: var(--muted);
+    font-size: 12px; margin-top: 8px;
+  }
+
+  /* ========== TOAST ========== */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--ink); color: white;
+    padding: 10px 18px;
+    border-radius: var(--r-md);
+    font-size: 13px; font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms linear, transform 200ms cubic-bezier(.2,.8,.2,1);
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ========== MOBILE ========== */
+  @media (max-width: 640px) {
+    .app-header { padding: 12px 16px; }
+    .portal { padding: 20px 16px 48px; gap: 22px; }
+    .event-name { font-size: 26px; }
+    .event-meta { font-size: 13px; }
+    .hero { padding: 20px; }
+    .stat-big { font-size: 36px; }
+    .actions { grid-template-columns: 1fr; gap: 10px; }
+    .seat-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (min-width: 800px) {
+    .seat-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo-mark">
+    <svg width="22" height="22" viewBox="0 0 36 36" fill="none">
+      <path d="M17.5963 0.011C30.0787 0.011 35.1376 4.96 35.1376 17.607C35.1376 30.1995 30.1885 35.1486 17.5963 35.1486C4.94897 35.1486 0 30.1995 0 17.607C0 4.96 5.05893 0.011 17.5963 0.011Z" fill="#45286B"/>
+      <path d="M26.8892 13.3731L24.9096 11.4485C24.4147 10.8986 23.8648 10.8986 23.3699 11.4485L15.7266 19.0919C15.2317 19.5868 14.4069 19.5868 13.857 19.0919L11.3825 16.6175C10.8875 16.1226 10.3377 16.1226 9.84277 16.6175L8.24813 18.1571C7.75323 18.6519 7.75323 19.2019 8.24813 19.6968L10.9426 22.3912C13.2521 24.7007 17.1013 24.7007 19.4108 22.3912L26.8892 14.9128C27.3841 14.418 27.3841 13.8681 26.8892 13.3731Z" fill="white"/>
+    </svg>
+    <span>RSVPify</span>
+  </div>
+  <a class="header-sub" href="mailto:help@rsvpify.com">Need help?</a>
+</header>
+
+<main class="portal">
+
+  <!-- MASTHEAD -->
+  <section class="masthead">
+    <div>
+      <h1 class="event-name" id="event-name">Spring Gala 2026</h1>
+      <p class="event-meta" id="event-meta">Sat · May 16, 2026 · 6:30 pm · The Plaza Hotel, New York NY · Acme Foundation</p>
+    </div>
+
+    <div class="group-line">
+      <span class="group-label">Your table</span>
+      <span class="group-name" id="group-name" contenteditable="true" spellcheck="false">Acme Co.</span>
+      <span class="edit-hint">
+        <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M9.5 2l2.5 2.5-7 7H2.5V9z"/><path d="M8.5 3l2.5 2.5"/></svg>
+        Click to rename
+      </span>
+    </div>
+
+    <div class="order-context" id="order-context">
+      You sponsored 1 Standard table · paid $2,500
+    </div>
+  </section>
+
+  <!-- PROGRESS HERO -->
+  <section class="hero">
+    <div class="stat-row">
+      <div class="stat-big"><span id="filled-count">1</span> <span class="muted">of <span id="total-count">10</span></span></div>
+      <div class="stat-label">seats filled</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
+    </div>
+    <div class="stat-sub" id="stat-sub"><strong>9 seats</strong> to go. Invite your guests below.</div>
+  </section>
+
+  <!-- ACTIONS -->
+  <section class="actions">
+    <button class="action-card" data-action="open-share">
+      <span class="action-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 4l3 3-3 3"/><path d="M13 7H6a3 3 0 0 0-3 3v2"/>
+        </svg>
+      </span>
+      <span class="action-title">Share a link</span>
+      <span class="action-sub">Post it in Slack or text it. Anyone with the link can claim a seat.</span>
+    </button>
+    <button class="action-card" data-action="open-invite">
+      <span class="action-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 4.5l6 4 6-4"/>
+        </svg>
+      </span>
+      <span class="action-title">Invite by email</span>
+      <span class="action-sub">Send each guest a personal link to fill their seat.</span>
+    </button>
+    <button class="action-card" data-action="open-add">
+      <span class="action-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="7" cy="6" r="3"/><path d="M2 14a5 5 0 0 1 10 0"/><path d="M13 4v4 M11 6h4"/>
+        </svg>
+      </span>
+      <span class="action-title">Add a guest directly</span>
+      <span class="action-sub">Know who's coming? Enter their details yourself.</span>
+    </button>
+  </section>
+
+  <!-- SEATS -->
+  <section class="seats-section">
+    <div class="seats-head">
+      <h2>Your seats</h2>
+      <p>Click any seat to add or edit a guest.</p>
+    </div>
+    <div class="seat-grid" id="seat-grid">
+      <!-- rendered by JS -->
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <section class="footer-note">
+    <p>Your guests will receive a confirmation email when they respond. We'll send you a digest whenever new responses come in.</p>
+    <p class="support">Questions? <a href="mailto:help@rsvpify.com">help@rsvpify.com</a></p>
+  </section>
+
+</main>
+
+
+<!-- ========== ADD / EDIT GUEST MODAL ========== -->
+<div class="modal-backdrop" id="modal-guest" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="guest-modal-title">Add a guest</h2>
+        <p id="guest-modal-sub">Filling <strong id="guest-modal-seat">seat 2</strong> of your table.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="g-name">Full name</label>
+        <input class="input" id="g-name" placeholder="Jordan Chen" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="g-email">Email</label>
+        <input class="input" id="g-email" type="email" placeholder="jordan@example.com" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="g-meal">Meal preference</label>
+        <select class="select" id="g-meal">
+          <option>Chicken</option>
+          <option>Beef</option>
+          <option>Vegetarian</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="g-diet">Dietary notes <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
+        <input class="input" id="g-diet" placeholder="Allergies, kosher, halal, etc." />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger" id="remove-guest" style="display: none;">Remove guest</button>
+      <div style="display: flex; gap: 8px; margin-left: auto;">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="save-guest" disabled>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== SHARE LINK MODAL ========== -->
+<div class="modal-backdrop" id="modal-share" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Share the link</h2>
+        <p>Anyone with this link can claim the next open seat at your table.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Your table's shareable link</label>
+        <div class="share-url">
+          <input id="share-url-input" readonly value="https://captain.rsvpify.com/spring-gala-2026/t/m4y4-xq7z" />
+          <button id="copy-url">Copy link</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Or paste this message</label>
+        <textarea class="textarea" id="share-msg" readonly>Hey — I've got a table at the Spring Gala on May 16 and I'd love for you to join. Grab a seat here: https://captain.rsvpify.com/spring-gala-2026/t/m4y4-xq7z</textarea>
+        <button class="btn btn-secondary" id="copy-msg" style="margin-top: 8px;">Copy message</button>
+      </div>
+
+      <details style="margin-top: 16px;">
+        <summary style="cursor: pointer; font-size: 13px; color: var(--muted);">Show QR code (for screen-to-phone)</summary>
+        <div class="qr-placeholder"></div>
+        <div class="qr-note">Scan to open the shareable link on a phone.</div>
+      </details>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Done</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== INVITE BY EMAIL MODAL ========== -->
+<div class="modal-backdrop" id="modal-invite" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Invite by email</h2>
+        <p>We'll send each guest a personal link to fill their seat.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="inv-emails">Email addresses</label>
+        <textarea class="textarea" id="inv-emails" rows="4" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
+        <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">One per line, or separated by commas.</div>
+      </div>
+      <div class="field">
+        <label for="inv-msg">Personal note <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
+        <textarea class="textarea" id="inv-msg" rows="3" placeholder="Can't wait to see you there!"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div id="invite-count" style="font-size: 13px; color: var(--muted);">0 invites · 9 open seats</div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="send-invites" disabled>Send invites</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+  // ---- Shared storage (synced with organizer and captain purchase) ----
+  const STORAGE_KEY = 'tablecaptains.data.v1';
+
+  function loadPackages() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.packages)) return { event: data.event, packages: data.packages };
+      }
+    } catch {}
+    return { event: null, packages: null };
+  }
+
+  // Initial event + package info: use stored if present, fall back to hardcoded.
+  const stored = loadPackages();
+  const eventInfo = stored.event || {
+    name: 'Spring Gala 2026',
+    organization: 'Acme Foundation',
+    date: 'Sat · May 16, 2026 · 6:30 pm',
+    venue: 'The Plaza Hotel, New York NY',
+  };
+  // Pick the first "Standard table" (or first live) as the one Maya bought.
+  const boughtPackage = (stored.packages || []).find(p => p.name === 'Standard table')
+    || (stored.packages || []).find(p => p.show)
+    || { name: 'Standard table', seats: 10, price: 2500 };
+
+  const TOTAL_SEATS = boughtPackage.seats || 10;
+  const MEAL_OPTIONS = ['Chicken', 'Beef', 'Vegetarian'];
+
+  // ---- Seat state ----
+  let seats = makeInitialSeats();
+
+  function makeInitialSeats() {
+    const arr = [];
+    arr.push({ n: 1, status: 'captain', name: 'Maya Rodriguez', email: 'maya@acme.co', meal: 'Vegetarian', diet: '' });
+    for (let i = 2; i <= TOTAL_SEATS; i++) arr.push({ n: i, status: 'open' });
+    return arr;
+  }
+
+  // ---- Masthead ----
+  document.getElementById('event-name').textContent = eventInfo.name;
+  document.getElementById('event-meta').textContent = `${eventInfo.date} · ${eventInfo.venue} · ${eventInfo.organization}`;
+  document.getElementById('order-context').textContent =
+    `You sponsored 1 ${boughtPackage.name} · paid $${Number(boughtPackage.price).toLocaleString('en-US')}`;
+  document.getElementById('total-count').textContent = TOTAL_SEATS;
+
+  // Live-update if organizer changes anything while portal is open
+  window.addEventListener('storage', (e) => {
+    if (e.key !== STORAGE_KEY) return;
+    const s = loadPackages();
+    if (s.event) {
+      document.getElementById('event-name').textContent = s.event.name;
+      document.getElementById('event-meta').textContent = `${s.event.date} · ${s.event.venue} · ${s.event.organization}`;
+    }
+  });
+
+  // ---- Seat render ----
+  const grid = document.getElementById('seat-grid');
+
+  function renderSeats() {
+    grid.innerHTML = '';
+    seats.forEach(s => {
+      const el = document.createElement('button');
+      el.className = 'seat ' + s.status;
+      el.dataset.seat = s.n;
+      el.type = 'button';
+      el.innerHTML = seatInner(s);
+      grid.appendChild(el);
+    });
+    updateProgress();
+    updateInviteCount();
+  }
+
+  function seatInner(s) {
+    if (s.status === 'captain') {
+      return `
+        <div class="seat-head">Seat ${s.n} <span class="seat-tag you">You</span></div>
+        <div class="seat-name">${esc(s.name)}</div>
+        <div class="seat-meta">${esc(s.meal)}${s.diet ? `<span class="sep">·</span>${esc(s.diet)}` : ''}</div>
+      `;
+    }
+    if (s.status === 'confirmed') {
+      return `
+        <div class="seat-head">Seat ${s.n} <span class="seat-tag confirmed">Confirmed</span></div>
+        <div class="seat-name">${esc(s.name)}</div>
+        <div class="seat-meta">${esc(s.meal)}${s.diet ? `<span class="sep">·</span>${esc(s.diet)}` : ''}</div>
+      `;
+    }
+    if (s.status === 'invited') {
+      return `
+        <div class="seat-head">Seat ${s.n} <span class="seat-tag invited">Invited</span></div>
+        <div class="seat-name">${esc(s.email)}</div>
+        <div class="seat-meta">Sent just now</div>
+      `;
+    }
+    return `
+      <div class="seat-head">Seat ${s.n} <span class="seat-tag open">Open</span></div>
+      <div class="seat-empty">+ Add a guest</div>
+    `;
+  }
+
+  function updateProgress() {
+    const filled = seats.filter(s => s.status === 'captain' || s.status === 'confirmed').length;
+    const invited = seats.filter(s => s.status === 'invited').length;
+    const open = seats.filter(s => s.status === 'open').length;
+
+    document.getElementById('filled-count').textContent = filled;
+    document.getElementById('progress-fill').style.width = (filled / TOTAL_SEATS * 100) + '%';
+
+    const sub = document.getElementById('stat-sub');
+    if (open === 0 && invited === 0) {
+      sub.innerHTML = `<strong>You're all set.</strong> Every seat is filled.`;
+    } else if (invited > 0) {
+      sub.innerHTML = `<strong>${invited} invited</strong>, waiting to respond · <strong>${open} open</strong> to go.`;
+    } else {
+      sub.innerHTML = `<strong>${open} seat${open === 1 ? '' : 's'}</strong> to go. Invite your guests below.`;
+    }
+  }
+
+  // ---- Modal plumbing ----
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+  function closeAll() {
+    document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
+  }
+
+  document.addEventListener('click', e => {
+    const action = e.target.closest('[data-action]')?.dataset.action;
+    const close = e.target.closest('[data-close]');
+    if (close) { closeAll(); return; }
+    if (action === 'open-share') openModal('modal-share');
+    if (action === 'open-invite') { resetInviteForm(); openModal('modal-invite'); }
+    if (action === 'open-add') openGuestModalForSeat(nextOpenSeat());
+  });
+
+  // Click on backdrop closes
+  document.querySelectorAll('.modal-backdrop').forEach(bd => {
+    bd.addEventListener('click', e => { if (e.target === bd) closeAll(); });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAll();
+  });
+
+  // ---- Click a seat → open guest modal for that seat ----
+  grid.addEventListener('click', e => {
+    const btn = e.target.closest('.seat');
+    if (!btn) return;
+    const n = parseInt(btn.dataset.seat, 10);
+    const s = seats.find(x => x.n === n);
+    if (!s) return;
+    openGuestModalForSeat(n);
+  });
+
+  // ---- Guest modal (add / edit) ----
+  const gName = document.getElementById('g-name');
+  const gEmail = document.getElementById('g-email');
+  const gMeal = document.getElementById('g-meal');
+  const gDiet = document.getElementById('g-diet');
+  const saveGuestBtn = document.getElementById('save-guest');
+  const removeGuestBtn = document.getElementById('remove-guest');
+  const guestModalTitle = document.getElementById('guest-modal-title');
+  const guestModalSeat = document.getElementById('guest-modal-seat');
+
+  let editingSeat = null;
+
+  function openGuestModalForSeat(n) {
+    const s = seats.find(x => x.n === n);
+    if (!s) return;
+    editingSeat = n;
+
+    guestModalSeat.textContent = `seat ${n}`;
+
+    if (s.status === 'open') {
+      guestModalTitle.textContent = 'Add a guest';
+      gName.value = '';
+      gEmail.value = '';
+      gMeal.value = 'Chicken';
+      gDiet.value = '';
+      removeGuestBtn.style.display = 'none';
+    } else if (s.status === 'captain') {
+      guestModalTitle.textContent = 'Edit your details';
+      gName.value = s.name;
+      gEmail.value = s.email;
+      gMeal.value = s.meal;
+      gDiet.value = s.diet || '';
+      removeGuestBtn.style.display = 'none'; // can't remove self here
+    } else if (s.status === 'confirmed') {
+      guestModalTitle.textContent = 'Edit guest';
+      gName.value = s.name;
+      gEmail.value = s.email;
+      gMeal.value = s.meal;
+      gDiet.value = s.diet || '';
+      removeGuestBtn.style.display = 'inline-flex';
+    } else if (s.status === 'invited') {
+      guestModalTitle.textContent = 'Replace invite';
+      gName.value = '';
+      gEmail.value = s.email;
+      gMeal.value = 'Chicken';
+      gDiet.value = '';
+      removeGuestBtn.style.display = 'inline-flex';
+    }
+
+    validateGuest();
+    openModal('modal-guest');
+    setTimeout(() => gName.focus(), 50);
+  }
+
+  function validateGuest() {
+    const ok = gName.value.trim().length > 0 && gEmail.value.trim().length > 0;
+    saveGuestBtn.disabled = !ok;
+  }
+  [gName, gEmail].forEach(el => el.addEventListener('input', validateGuest));
+
+  saveGuestBtn.addEventListener('click', () => {
+    if (saveGuestBtn.disabled) return;
+    const s = seats.find(x => x.n === editingSeat);
+    if (!s) return;
+
+    const wasOpen = s.status === 'open' || s.status === 'invited';
+    s.name = gName.value.trim();
+    s.email = gEmail.value.trim();
+    s.meal = gMeal.value;
+    s.diet = gDiet.value.trim();
+    if (s.status !== 'captain') s.status = 'confirmed';
+
+    renderSeats();
+    closeAll();
+    showToast(wasOpen ? `${s.name} added to seat ${s.n}` : `${s.name} updated`);
+  });
+
+  removeGuestBtn.addEventListener('click', () => {
+    const s = seats.find(x => x.n === editingSeat);
+    if (!s || s.status === 'captain') return;
+    const name = s.name || s.email;
+    s.status = 'open';
+    delete s.name;
+    delete s.email;
+    delete s.meal;
+    delete s.diet;
+    renderSeats();
+    closeAll();
+    showToast(`${name} removed · seat ${s.n} is open again`);
+  });
+
+  // ---- Share link ----
+  document.getElementById('copy-url').addEventListener('click', () => {
+    copyText(document.getElementById('share-url-input').value, 'Link copied');
+  });
+  document.getElementById('copy-msg').addEventListener('click', () => {
+    copyText(document.getElementById('share-msg').value, 'Message copied');
+  });
+
+  function copyText(text, toast) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast(toast));
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); showToast(toast); } catch {}
+      ta.remove();
+    }
+  }
+
+  // ---- Invite by email ----
+  const invEmails = document.getElementById('inv-emails');
+  const sendInvitesBtn = document.getElementById('send-invites');
+
+  function resetInviteForm() {
+    invEmails.value = '';
+    document.getElementById('inv-msg').value = '';
+    updateInviteCount();
+  }
+
+  function parseEmails(text) {
+    return text.split(/[\s,]+/).map(s => s.trim()).filter(s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s));
+  }
+
+  function updateInviteCount() {
+    const open = seats.filter(s => s.status === 'open').length;
+    const count = parseEmails(invEmails?.value || '').length;
+    const el = document.getElementById('invite-count');
+    if (el) {
+      if (count === 0) {
+        el.textContent = `0 invites · ${open} open seat${open === 1 ? '' : 's'}`;
+      } else if (count > open) {
+        el.innerHTML = `<span style="color: var(--danger-fg);">${count} emails, only ${open} open seat${open === 1 ? '' : 's'}</span>`;
+      } else {
+        el.textContent = `${count} invite${count === 1 ? '' : 's'} · ${open - count} will stay open`;
+      }
+    }
+    if (sendInvitesBtn) {
+      sendInvitesBtn.disabled = count === 0 || count > open;
+    }
+  }
+  invEmails.addEventListener('input', updateInviteCount);
+
+  sendInvitesBtn.addEventListener('click', () => {
+    const emails = parseEmails(invEmails.value);
+    if (!emails.length) return;
+    const openSeats = seats.filter(s => s.status === 'open');
+    emails.slice(0, openSeats.length).forEach((email, i) => {
+      openSeats[i].status = 'invited';
+      openSeats[i].email = email;
+    });
+    renderSeats();
+    closeAll();
+    showToast(`${emails.length} invite${emails.length === 1 ? '' : 's'} sent`);
+  });
+
+  // ---- Group name edit ----
+  const groupName = document.getElementById('group-name');
+  const editHint = document.querySelector('.edit-hint');
+  function focusGroupName() {
+    groupName.focus();
+    // place caret at end
+    const range = document.createRange();
+    range.selectNodeContents(groupName);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  editHint.addEventListener('click', focusGroupName);
+  groupName.addEventListener('blur', () => {
+    const v = groupName.textContent.trim();
+    if (!v) groupName.textContent = 'Your table';
+    showToast(`Table renamed to "${groupName.textContent.trim()}"`);
+  });
+  groupName.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); groupName.blur(); }
+    if (e.key === 'Escape') { e.preventDefault(); groupName.blur(); }
+  });
+
+  // ---- Utils ----
+  function nextOpenSeat() {
+    const s = seats.find(x => x.status === 'open');
+    return s ? s.n : seats[1]?.n;
+  }
+  function esc(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  let toastTimer = null;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // Init
+  renderSeats();
+</script>
+
+</body>
+</html>

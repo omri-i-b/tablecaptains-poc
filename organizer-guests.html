@@ -1,0 +1,1365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1280, initial-scale=1" />
+<title>Guests · Spring Gala 2026 · RSVPify</title>
+<style>
+  :root {
+    --rail:            #191236;
+    --rail-icon:       rgba(255,255,255,0.55);
+    --rail-icon-on:    #ffffff;
+
+    --sidebar-bg:      #ffffff;
+    --sidebar-border:  #e8e8ed;
+
+    --brand:           #372056;
+    --brand-hover:     #45286b;
+    --brand-accent:    #45286b;
+    --brand-soft:      #ebecf6;
+    --brand-soft-2:    #f4f3f8;
+    --brand-veil:      rgba(25, 18, 54, 0.5);
+
+    --canvas:          #f5f6fc;
+    --card:            #ffffff;
+    --row-hover:       #f7f7fb;
+    --header-row:      #fafafd;
+    --group-header:    #f4f3f8;
+
+    --ink:             #191236;
+    --body:            #2d2d3a;
+    --muted:           #5e5972;
+    --faint:           #a5a5ac;
+    --caps:            #5e5972;
+
+    --border:          #e8e8ed;
+    --border-strong:   #d1d0d9;
+    --divider:         #ededf1;
+
+    --success-fg:      #0d8759;
+    --success-bg:      #d9f2e9;
+    --warning-fg:      #a85a00;
+    --warning-bg:      #fdecd0;
+    --warning-border:  #f0b66b;
+    --invited-fg:      #7a5a14;
+    --invited-bg:      #fef4d8;
+    --danger-fg:       #b11a2b;
+    --danger-bg:       #fde3e7;
+
+    --link:            #3d91ff;
+
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+
+    --r-sm: 4px;
+    --r-md: 6px;
+    --r-lg: 8px;
+    --r-pill: 100px;
+    --r-full: 9999px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ========== APP SHELL ========== */
+  .app {
+    display: grid;
+    grid-template-columns: 72px 216px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ---- Rail ---- */
+  .rail {
+    background: var(--rail);
+    padding: 24px 0 0;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px;
+  }
+  .rail-logo {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .rail-icon {
+    width: 52px; height: 52px;
+    border-radius: var(--r-md);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--rail-icon);
+    background: transparent; border: 0;
+    cursor: pointer;
+  }
+  .rail-icon:hover { background: rgba(255,255,255,0.08); color: var(--rail-icon-on); }
+  .rail-icon.active { color: var(--rail-icon-on); }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    padding: 12px 10px;
+    display: flex; flex-direction: column;
+    font-size: 13px;
+  }
+  .nav-group-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    font-size: 13px; font-weight: 500;
+    color: var(--ink);
+    border-radius: var(--r-md);
+  }
+  .nav-caret { margin-left: auto; color: var(--muted); font-size: 10px; }
+  .nav-items { display: flex; flex-direction: column; gap: 1px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 10px 7px 18px;
+    border-radius: var(--r-md);
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    line-height: 20px;
+  }
+  .nav-item .icon, .nav-top .icon, .nav-group-head .icon {
+    color: var(--muted);
+    flex: 0 0 14px;
+  }
+  .nav-item:hover, .nav-top:hover { background: var(--brand-soft); color: var(--ink); text-decoration: none; }
+  .nav-item.active { background: var(--brand-soft); color: var(--brand); font-weight: 500; }
+  .nav-top.active { background: var(--brand-soft); color: var(--brand); font-weight: 500; }
+  .nav-top {
+    padding: 7px 10px;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+  }
+  .nav-sep { height: 1px; background: var(--divider); margin: 10px 2px; }
+  .sidebar-spacer { flex: 1; }
+  .my-events-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 9px 14px;
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    font-size: 13px; font-weight: 500;
+    color: var(--ink);
+  }
+  .my-events-btn:hover { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+
+  /* ---- Main ---- */
+  .main { background: var(--canvas); display: flex; flex-direction: column; min-width: 0; }
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--sidebar-border);
+    height: 56px;
+    padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar-left, .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar .event-name { font-weight: 500; font-size: 14px; color: var(--ink); }
+  .topbar-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 6px;
+    color: var(--body); font-size: 13px;
+    background: transparent; border: 0;
+    border-radius: var(--r-sm);
+  }
+  .topbar-btn:hover { background: var(--brand-soft); }
+  .topbar-icon {
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: var(--r-full);
+    background: transparent; border: 0; color: var(--muted);
+  }
+  .topbar-icon:hover { background: var(--brand-soft); color: var(--ink); }
+  .avatar-small {
+    width: 32px; height: 32px;
+    border-radius: var(--r-full);
+    background: var(--brand-soft);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--brand);
+    font-size: 11px; font-weight: 500;
+  }
+
+  /* Pills */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 22px; padding: 0 10px;
+    border-radius: var(--r-pill);
+    font-size: 12px; font-weight: 500; line-height: 1;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: var(--r-full); }
+  .pill-live, .pill-success { background: var(--success-bg); color: var(--success-fg); }
+  .pill-live .pill-dot, .pill-success .pill-dot { background: var(--success-fg); }
+  .pill-invited { background: var(--invited-bg); color: var(--invited-fg); }
+  .pill-invited .pill-dot { background: var(--invited-fg); }
+  .pill-open { background: transparent; color: var(--muted); border: 1px dashed var(--border-strong); }
+  .pill-open .pill-dot { background: var(--faint); }
+  .pill-warn { background: var(--warning-bg); color: var(--warning-fg); }
+  .pill-warn .pill-dot { background: var(--warning-fg); }
+  .pill-released { background: var(--brand-soft); color: var(--brand); }
+  .pill-released .pill-dot { background: var(--brand); }
+
+  /* ========== CONTENT ========== */
+  .content {
+    padding: 24px 28px 56px;
+    width: 100%;
+    max-width: 1400px;
+  }
+
+  /* Page header */
+  .page-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+  }
+  .page-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .page-icon-box {
+    width: 28px; height: 28px;
+    border-radius: var(--r-md);
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .page-title {
+    font-size: 28px; font-weight: 600;
+    line-height: 1.15; margin: 0;
+    color: var(--ink); letter-spacing: -0.25px;
+  }
+  .event-context {
+    font-size: 13px; color: var(--muted);
+    margin: 6px 0 0;
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .event-context .dot-sep { color: var(--faint); }
+  .event-context .countdown {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    padding: 2px 8px;
+    border-radius: var(--r-pill);
+    font-weight: 500;
+    font-size: 12px;
+  }
+  .page-head-right { display: flex; gap: 8px; flex-shrink: 0; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: box-shadow 120ms linear, background-color 120ms linear;
+    border: 1px solid var(--border);
+  }
+  .stat-card:hover { background: var(--brand-soft-2); }
+  .stat-card.active { border-color: var(--brand); background: var(--brand-soft); }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--caps);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Toolbar */
+  .toolbar-card {
+    background: var(--card);
+    border-radius: var(--r-md);
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--divider);
+    flex-wrap: wrap;
+  }
+  .search {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-sm);
+    background: var(--card);
+    min-width: 280px;
+    flex: 1;
+    max-width: 360px;
+  }
+  .search input {
+    border: 0; outline: 0; font-family: inherit;
+    font-size: 13px; background: transparent; width: 100%;
+  }
+  .search input::placeholder { color: var(--faint); }
+
+  .toolbar-group {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding-left: 12px;
+    border-left: 1px solid var(--divider);
+  }
+  .toolbar-label { font-size: 12px; color: var(--muted); }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-pill);
+    background: var(--card);
+    font-size: 12px; font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--brand); color: var(--brand); }
+  .chip.active {
+    border-style: solid;
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+
+  /* Toggle (group-by) */
+  .toolbar-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    color: var(--body);
+    cursor: pointer;
+    padding: 5px 6px;
+    border-radius: var(--r-sm);
+  }
+  .toolbar-toggle:hover { background: var(--brand-soft); }
+  .toggle {
+    position: relative;
+    width: 34px; height: 20px;
+    border-radius: var(--r-full);
+    background: #c2c0cd;
+    transition: background-color 180ms linear;
+    flex: 0 0 34px;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    border-radius: var(--r-full);
+    background: white;
+    transition: transform 180ms cubic-bezier(.2,0,0,1);
+  }
+  .toggle.on { background: var(--brand-accent); }
+  .toggle.on::after { transform: translateX(14px); }
+
+  .spacer { flex: 1; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--r-md);
+    font-size: 13px; font-weight: 500; line-height: 20px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    white-space: nowrap;
+    transition: background-color 100ms linear, border-color 100ms linear;
+  }
+  .btn-primary { background: var(--brand); color: white; border-color: var(--brand); }
+  .btn-primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
+  .btn-secondary { background: var(--card); color: var(--ink); border-color: var(--border-strong); }
+  .btn-secondary:hover { background: var(--brand-soft); border-color: var(--brand); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; line-height: 18px; }
+  .btn-icon {
+    width: 28px; height: 28px;
+    padding: 0;
+    border-radius: var(--r-md);
+    color: var(--muted);
+    border: 1px solid transparent;
+    background: transparent;
+  }
+  .btn-icon:hover { background: var(--brand-soft); color: var(--ink); }
+
+  /* ========== DATA TABLE ========== */
+  .table-wrap {
+    background: var(--card);
+    border-radius: var(--r-md);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    overflow: hidden;
+  }
+
+  .dt {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .dt thead th {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--caps);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--header-row);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+  .dt thead th .sort { color: var(--faint); font-size: 10px; margin-left: 4px; }
+  .dt thead th.th-check { width: 36px; padding-right: 4px; }
+  .dt thead th.th-seat { width: 60px; }
+  .dt thead th.th-meal { width: 110px; }
+  .dt thead th.th-flags { width: 110px; }
+  .dt thead th.th-status { width: 130px; }
+  .dt thead th.th-source { width: 180px; }
+  .dt thead th.th-actions { width: 56px; }
+
+  .dt tbody td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--divider);
+    color: var(--body);
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dt .group-header {
+    background: var(--group-header);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .dt .group-header td {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  .dt .group-header .group-title {
+    display: flex; align-items: center; gap: 12px;
+    font-weight: 500;
+  }
+  .dt .group-header .group-name {
+    color: var(--ink); font-size: 14px;
+  }
+  .dt .group-header .group-captain {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 13px;
+  }
+  .dt .group-header .captain-avatar {
+    width: 22px; height: 22px;
+    border-radius: var(--r-full);
+    background: var(--brand-soft);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--brand);
+    font-size: 10px; font-weight: 500;
+  }
+  .dt .group-header .tier-tag {
+    display: inline-flex; align-items: center;
+    padding: 1px 7px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    border-radius: var(--r-sm);
+    font-size: 11px; font-weight: 500;
+  }
+  .dt .group-header .group-meta {
+    display: flex; align-items: center; gap: 14px;
+    justify-content: flex-end;
+  }
+  .dt .group-header .group-progress {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 12px;
+    min-width: 140px;
+  }
+  .dt .group-header .bar {
+    flex: 1;
+    height: 4px;
+    background: #e4e3ea;
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .dt .group-header .bar > span {
+    display: block; height: 100%;
+    background: var(--brand);
+  }
+  .dt .group-header .bar.warn > span { background: #d48a0a; }
+  .dt .group-header .bar.full > span { background: var(--success-fg); }
+
+  .dt tbody tr.guest-row:hover td { background: var(--row-hover); cursor: pointer; }
+  .dt tbody tr.guest-row.selected td { background: var(--brand-soft-2); }
+  .dt tbody tr.guest-row.open td { color: var(--muted); }
+  .dt tbody tr.group-collapsed { display: none; }
+
+  .seat-n {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .seat-n.dim { color: var(--faint); font-weight: 400; }
+  .guest-name {
+    color: var(--ink); font-weight: 500;
+    max-width: 280px;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .guest-email {
+    color: var(--muted); font-size: 12px; font-weight: 400;
+    max-width: 280px;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .guest-open-text { color: var(--muted); font-style: italic; }
+  .guest-you {
+    display: inline-flex; align-items: center;
+    margin-left: 6px;
+    padding: 0 6px; height: 16px;
+    border-radius: var(--r-sm);
+    background: var(--brand);
+    color: white;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .flag-icon {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 7px;
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    border-radius: var(--r-sm);
+    font-size: 11px; font-weight: 500;
+    margin-right: 4px;
+  }
+
+  .source {
+    color: var(--muted);
+    font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .source::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: var(--r-full);
+    background: var(--faint);
+    flex-shrink: 0;
+  }
+  .source.direct::before { background: #6a6a78; }
+  .source.captain-self::before { background: var(--brand); }
+  .source.captain-add::before { background: #7b5fa3; }
+  .source.captain-invite::before { background: var(--invited-fg); }
+  .source.captain-share::before { background: var(--link); }
+
+  .group-actions { display: flex; gap: 4px; }
+  .group-actions-menu {
+    display: flex; gap: 4px;
+    justify-content: flex-end;
+  }
+
+  /* Unassigned group treatment */
+  .dt .group-header.unassigned-header {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+  }
+  .dt .group-header.unassigned-header .group-name {
+    color: var(--warning-fg);
+  }
+  .dt tr.unassigned-row td {
+    background: #fffaf0;
+  }
+  .dt tr.unassigned-row:hover td { background: #fef3de; }
+
+  /* Direct registrants group */
+  .dt .group-header.direct-header {
+    background: #fafafd;
+  }
+
+  /* ========== DRAWER ========== */
+  .drawer-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(25, 18, 54, 0.3);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms linear;
+  }
+  .drawer-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 440px; max-width: 92vw;
+    background: var(--card);
+    border-left: 1px solid var(--border);
+    z-index: 51;
+    transform: translateX(100%);
+    transition: transform 200ms cubic-bezier(.2, .8, .2, 1);
+    display: flex; flex-direction: column;
+    box-shadow: -12px 0 32px rgba(10, 8, 20, 0.12);
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-head {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px;
+  }
+  .drawer-head h2 {
+    font-size: 18px; font-weight: 500;
+    margin: 0; color: var(--ink);
+  }
+  .drawer-head .drawer-sub {
+    font-size: 12px; color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .drawer-close {
+    width: 28px; height: 28px;
+    border-radius: var(--r-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    background: transparent;
+    border: 0;
+    font-size: 18px;
+  }
+  .drawer-close:hover { background: var(--brand-soft); color: var(--ink); }
+  .drawer-body { padding: 18px 20px; overflow-y: auto; flex: 1; }
+
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h3 {
+    font-size: 11px; font-weight: 500;
+    color: var(--caps);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 0 0 10px;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--divider);
+    font-size: 13px;
+  }
+  .detail-row:last-child { border-bottom: 0; }
+  .detail-row .dkey { color: var(--muted); flex-shrink: 0; }
+  .detail-row .dval { color: var(--ink); font-weight: 500; text-align: right; word-break: break-word; }
+  .detail-row .dval.muted { color: var(--muted); font-weight: 400; }
+
+  .history {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .history-item {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 8px 10px;
+    background: #fafafd;
+    border-radius: var(--r-sm);
+    line-height: 17px;
+  }
+  .history-item .hdate { color: var(--faint); }
+  .history-item .hwho { color: var(--ink); font-weight: 500; }
+
+  .drawer-foot {
+    padding: 14px 20px;
+    border-top: 1px solid var(--divider);
+    display: flex; gap: 8px; align-items: center; justify-content: space-between;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--ink); color: white;
+    padding: 10px 18px;
+    border-radius: var(--r-md);
+    font-size: 13px; font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms linear, transform 200ms cubic-bezier(.2,.8,.2,1);
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .empty-row td {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+    background: var(--card);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Rail -->
+  <aside class="rail">
+    <a class="rail-logo" title="Workspaces">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M17.5963 0.011C30.0787 0.011 35.1376 4.96 35.1376 17.607C35.1376 30.1995 30.1885 35.1486 17.5963 35.1486C4.94897 35.1486 0 30.1995 0 17.607C0 4.96 5.05893 0.011 17.5963 0.011Z" fill="#45286B"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M26.8892 13.3731L24.9096 11.4485C24.4147 10.8986 23.8648 10.8986 23.3699 11.4485L15.7266 19.0919C15.2317 19.5868 14.4069 19.5868 13.857 19.0919L11.3825 16.6175C10.8875 16.1226 10.3377 16.1226 9.84277 16.6175L8.24813 18.1571C7.75323 18.6519 7.75323 19.2019 8.24813 19.6968L10.9426 22.3912C13.2521 24.7007 17.1013 24.7007 19.4108 22.3912L26.8892 14.9128C27.3841 14.418 27.3841 13.8681 26.8892 13.3731Z" fill="white"/>
+      </svg>
+    </a>
+    <a class="rail-icon active" title="Events">
+      <svg width="22" height="22" viewBox="0 0 448 512" fill="currentColor"><path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 320c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 128C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256L48 192zM242 260l17.4 37.4 41 5.9c8 1.2 11.2 11 5.4 16.6L275.5 349l7 40.7c1.4 8-7 14-14.1 10.3L232 380.8l-36.4 19.2c-7.1 3.7-15.5-2.3-14.1-10.3l7-40.7-30.3-29.2c-5.8-5.6-2.6-15.5 5.4-16.6l41-5.9L222 260c3.6-7.7 14.5-7.7 18.1 0L242 260z"/></svg>
+    </a>
+    <a class="rail-icon" title="Team members">
+      <svg width="22" height="22" viewBox="0 0 640 512" fill="currentColor"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM609.3 512l-137.8 0c5.4-9.4 8.6-20.3 8.6-32l0-8c0-60.9-27.1-115.4-69.9-152.3c2.1-.1 4.1-.2 6.2-.2l61.4 0C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z"/></svg>
+    </a>
+    <a class="rail-icon" title="Demo">
+      <svg width="22" height="22" viewBox="0 0 640 512" fill="currentColor"><path d="M128 32C92.7 32 64 60.7 64 96l0 256 64 0 0-256 384 0 0 256 64 0 0-256c0-35.3-28.7-64-64-64L128 32zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480l486.4 0c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2L19.2 384z"/></svg>
+    </a>
+  </aside>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div style="margin-bottom: 4px;">
+      <div class="nav-group-head">
+        <svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="4" height="4" rx="0.6"/><rect x="8" y="2" width="4" height="4" rx="0.6"/><rect x="2" y="8" width="4" height="4" rx="0.6"/><rect x="8" y="8" width="4" height="4" rx="0.6"/></svg>
+        <span>Event</span>
+        <span class="nav-caret">▾</span>
+      </div>
+      <div class="nav-items">
+        <a class="nav-item"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 7.5a5.5 5.5 0 0 1 11 0"/><path d="M7 7.5l2.8-2.8"/><circle cx="7" cy="7.5" r="0.8" fill="currentColor" stroke="none"/></svg><span>Dashboard</span></a>
+        <a class="nav-item"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="5.5" y="1.5" width="3" height="6" rx="1.5"/><path d="M3.5 7a3.5 3.5 0 0 0 7 0"/><path d="M7 10.5v2 M5 12.5h4"/></svg><span>Speakers</span></a>
+        <a class="nav-item"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="5" width="11" height="2" rx="0.3"/><rect x="2.5" y="7" width="9" height="5.5" rx="0.3"/><path d="M7 5v7.5"/></svg><span>Sponsors</span></a>
+        <a class="nav-item"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="3" width="10" height="9" rx="1"/><path d="M2 6h10 M5 2v2 M9 2v2"/><path d="M5 9l1.3 1.3L9 7.5"/></svg><span>Sessions</span></a>
+        <a class="nav-item"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="5" cy="5" r="1.8"/><circle cx="10" cy="5" r="1.3"/><path d="M1.5 12a3.5 3.5 0 0 1 7 0"/><path d="M8.5 12a2.8 2.8 0 0 1 4.5 0"/></svg><span>Captains</span></a>
+        <a class="nav-item"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 4.5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1V6a1 1 0 0 0 0 2v1.5a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1V8a1 1 0 0 0 0-2V4.5z"/><path d="M5.5 5v4"/></svg><span>Tickets</span></a>
+      </div>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <a class="nav-top"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 12 V4 M5 12 V7 M8 12 V5 M11 12 V2"/></svg><span>Reporting</span></a>
+    <a class="nav-top active"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 3h10 M2 7h10 M2 11h10"/></svg><span>Guest List</span></a>
+    <a class="nav-top"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="3"/><circle cx="3" cy="3" r="1.2"/><circle cx="11" cy="3" r="1.2"/><circle cx="3" cy="11" r="1.2"/><circle cx="11" cy="11" r="1.2"/></svg><span>Seating Chart</span></a>
+    <a class="nav-top"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="7" cy="7" r="5"/><polyline points="4.5 7 6.3 8.6 9.5 5.5"/></svg><span>Check-in</span></a>
+    <a class="nav-top"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="7" cy="7" r="5"/><circle cx="4.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><circle cx="7" cy="4" r="0.8" fill="currentColor" stroke="none"/><circle cx="9.5" cy="6" r="0.8" fill="currentColor" stroke="none"/></svg><span>Design &amp; Setup</span></a>
+    <a class="nav-top"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="2"/><path d="M7 1v2 M7 11v2 M1 7h2 M11 7h2 M2.8 2.8l1.4 1.4 M9.8 9.8l1.4 1.4 M2.8 11.2l1.4-1.4 M9.8 4.2l1.4-1.4"/></svg><span>Event Settings</span></a>
+    <a class="nav-top"><svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="10" height="8" rx="0.6"/><path d="M2 4.5l5 3.3 5-3.3"/></svg><span>Invitations &amp; Emails</span></a>
+
+    <div class="sidebar-spacer"></div>
+
+    <button class="my-events-btn">
+      <span>←</span>
+      <span>My Events</span>
+    </button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="event-name">Spring Gala 2026</span>
+        <span class="pill pill-success"><span class="pill-dot"></span>Published</span>
+        <button class="topbar-icon" title="Change event"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar-small">JC</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- Page header -->
+      <div class="page-head">
+        <div>
+          <div class="page-title-row">
+            <span class="page-icon-box">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 3h12 M2 8h12 M2 13h12"/></svg>
+            </span>
+            <h1 class="page-title">Guests</h1>
+          </div>
+          <div class="event-context">
+            <span>Spring Gala 2026 · May 16, 2026 · Ritz-Carlton Chicago</span>
+            <span class="dot-sep">·</span>
+            <span class="countdown">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="5" cy="5" r="3.5"/><path d="M5 3v2l1.5 1"/></svg>
+              Event in 22 days
+            </span>
+          </div>
+        </div>
+        <div class="page-head-right">
+          <button class="btn btn-secondary">+ Add guest</button>
+          <button class="btn btn-secondary">Export</button>
+          <button class="btn btn-primary">Email guests</button>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar-card">
+        <div class="toolbar">
+          <div class="search">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="var(--muted)" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="3.5"/><path d="M8.2 8.2L11 11" stroke-linecap="round"/></svg>
+            <input id="search-input" placeholder="Search guests, email, or table" />
+          </div>
+
+          <div class="spacer"></div>
+
+          <button class="btn-icon" title="Column settings">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 3.5V6 M8 10v2.5 M3.5 8H6 M10 8h2.5" stroke-linecap="round"/><circle cx="8" cy="8" r="1.5"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Data table -->
+      <div class="table-wrap">
+        <table class="dt">
+          <thead>
+            <tr>
+              <th class="th-check"><span class="check"></span></th>
+              <th class="th-seat">SEAT</th>
+              <th>GUEST <span class="sort">↕</span></th>
+              <th class="th-meal">MEAL</th>
+              <th class="th-flags">FLAGS</th>
+              <th class="th-status">STATUS</th>
+              <th class="th-actions"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <!-- rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- DRAWER -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <h2 id="drawer-title">Guest details</h2>
+      <div class="drawer-sub" id="drawer-sub"></div>
+    </div>
+    <button class="drawer-close" id="drawer-close" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+  <div class="drawer-foot">
+    <button class="btn btn-secondary btn-sm" id="drawer-email">Email guest</button>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-secondary btn-sm">Move to another table</button>
+      <button class="btn btn-primary btn-sm" id="drawer-edit">Edit details</button>
+    </div>
+  </div>
+</aside>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+  // =====================================================
+  // DATA — realistic populated state, mid-sale
+  // =====================================================
+  const GROUPS = [
+    {
+      id: 'unassigned',
+      type: 'unassigned',
+      name: 'Unassigned · returned to you',
+      headline: 'Benefactor table was released by the previous captain on Apr 18.',
+      seats: Array.from({ length: 10 }, (_, i) => ({
+        n: i + 1,
+        status: 'unassigned',
+        tier: 'Benefactor',
+        releaseNote: 'Released from Benefactor table',
+      })),
+    },
+    {
+      id: 'acme',
+      type: 'captain',
+      name: 'Acme Co.',
+      tier: 'Standard',
+      status: 'seating',
+      captain: { name: 'Maya Rodriguez', email: 'maya@acme.co', initials: 'MR' },
+      seats: [
+        { n: 1, status: 'confirmed', isCaptain: true, name: 'Maya Rodriguez', email: 'maya@acme.co', meal: 'Vegetarian', source: 'captain-self', sourceLabel: 'Captain · self', joined: 'Joined Apr 12' },
+        { n: 2, status: 'confirmed', name: 'Jordan Chen', email: 'jordan@acme.co', meal: 'Chicken', source: 'captain-add', sourceLabel: 'Captain · manual add', joined: 'Added by Maya Apr 14' },
+        { n: 3, status: 'confirmed', name: 'Sam Patel', email: 'sam@acme.co', meal: 'Beef', dietary: 'Gluten-free', source: 'captain-invite', sourceLabel: 'Captain · invite email', joined: 'Submitted Apr 16' },
+        { n: 4, status: 'confirmed', name: 'Taylor Kim', email: 'taylor@acme.co', meal: 'Vegetarian', source: 'captain-share', sourceLabel: 'Captain · shareable link', joined: 'Submitted Apr 17' },
+        { n: 5, status: 'confirmed', name: 'Morgan Rivera', email: 'morgan@acme.co', meal: 'Chicken', dietary: 'Nut allergy', source: 'captain-add', sourceLabel: 'Captain · manual add', joined: 'Added by Maya Apr 19' },
+        { n: 6, status: 'invited', email: 'alex@acme.co', sent: 'Apr 22', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 7, status: 'invited', email: 'jamie@acme.co', sent: 'Apr 22', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 8, status: 'open' },
+        { n: 9, status: 'open' },
+        { n: 10, status: 'open' },
+      ],
+    },
+    {
+      id: 'henderson',
+      type: 'captain',
+      name: 'The Henderson Group',
+      tier: 'Patron',
+      status: 'fully-seated',
+      captain: { name: 'Brent Lange', email: 'brent@hendersongroup.com', initials: 'BL' },
+      seats: [
+        { n: 1, status: 'confirmed', isCaptain: true, name: 'Brent Lange', email: 'brent@hendersongroup.com', meal: 'Beef', source: 'captain-self', sourceLabel: 'Captain · self' },
+        { n: 2, status: 'confirmed', name: 'Emma Foster', email: 'emma@hendersongroup.com', meal: 'Chicken', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 3, status: 'confirmed', name: 'Daniel Park', email: 'daniel@hendersongroup.com', meal: 'Beef', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 4, status: 'confirmed', name: "Sarah O'Neill", email: 'sarah@hendersongroup.com', meal: 'Vegetarian', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 5, status: 'confirmed', name: 'Michael Zhou', email: 'michael@hendersongroup.com', meal: 'Chicken', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 6, status: 'confirmed', name: 'Isabella Martinez', email: 'isabella@hendersongroup.com', meal: 'Beef', source: 'captain-share', sourceLabel: 'Captain · shareable link' },
+        { n: 7, status: 'confirmed', name: 'James Thompson', email: 'james@hendersongroup.com', meal: 'Chicken', source: 'captain-share', sourceLabel: 'Captain · shareable link' },
+        { n: 8, status: 'confirmed', name: 'Grace Liu', email: 'grace@hendersongroup.com', meal: 'Vegetarian', dietary: 'Wheelchair access', source: 'captain-add', sourceLabel: 'Captain · manual add' },
+        { n: 9, status: 'confirmed', name: 'Ethan Walsh', email: 'ethan@hendersongroup.com', meal: 'Beef', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+        { n: 10, status: 'confirmed', name: 'Priya Sharma', email: 'priya@hendersongroup.com', meal: 'Vegetarian', source: 'captain-invite', sourceLabel: 'Captain · invite email' },
+      ],
+    },
+    {
+      id: 'weiss',
+      type: 'captain',
+      name: 'Weiss Family',
+      tier: 'Patron',
+      status: 'struggling',
+      captain: { name: 'Rachel Weiss', email: 'rachel@weissfamily.com', initials: 'RW' },
+      sponsor: true,
+      seats: [
+        { n: 1, status: 'confirmed', name: 'David Weiss', email: 'david@weissfamily.com', meal: 'Chicken', source: 'captain-add', sourceLabel: 'Captain · manual add' },
+        { n: 2, status: 'confirmed', name: 'Leah Weiss-Cohen', email: 'leah@cohenlaw.com', meal: 'Vegetarian', dietary: 'Kosher', source: 'captain-add', sourceLabel: 'Captain · manual add' },
+        { n: 3, status: 'confirmed', name: 'Noah Weiss', email: 'noah@weissfamily.com', meal: 'Beef', source: 'captain-add', sourceLabel: 'Captain · manual add' },
+        { n: 4, status: 'open' },
+        { n: 5, status: 'open' },
+        { n: 6, status: 'open' },
+        { n: 7, status: 'open' },
+        { n: 8, status: 'open' },
+        { n: 9, status: 'open' },
+        { n: 10, status: 'open' },
+      ],
+    },
+    {
+      id: 'direct',
+      type: 'direct',
+      name: 'Direct registrants',
+      seats: [
+        { n: '—', ticket: 'T-1007', status: 'confirmed', name: 'Henry Nakamura', email: 'henry.nakamura@gmail.com', meal: 'Chicken', source: 'direct', sourceLabel: 'Direct' },
+        { n: '—', ticket: 'T-1008', status: 'confirmed', name: 'Charlotte Bell', email: 'charlotte.bell@outlook.com', meal: 'Vegetarian', dietary: 'Vegan', source: 'direct', sourceLabel: 'Direct' },
+        { n: '—', ticket: 'T-1009', status: 'confirmed', name: 'Oliver Singh', email: 'osingh@protonmail.com', meal: 'Beef', source: 'direct', sourceLabel: 'Direct' },
+        { n: '—', ticket: 'T-1010', status: 'confirmed', name: 'Amelia Krantz', email: 'amelia.k@workmail.io', meal: 'Chicken', dietary: 'Shellfish allergy', source: 'direct', sourceLabel: 'Direct' },
+        { n: '—', ticket: 'T-1011', status: 'confirmed', name: 'William Torres', email: 'will.torres@gmail.com', meal: 'Vegetarian', source: 'direct', sourceLabel: 'Direct' },
+      ],
+    },
+  ];
+
+  const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // =====================================================
+  // RENDER
+  // =====================================================
+  const tbody = document.getElementById('tbody');
+  const groupedMode = false;
+  let collapsed = new Set();
+  let searchText = '';
+
+  function computeGroupCounts(g) {
+    if (g.type === 'unassigned') {
+      return { pool: g.seats.length };
+    }
+    if (g.type === 'direct') {
+      return { confirmed: g.seats.length };
+    }
+    const confirmed = g.seats.filter(s => s.status === 'confirmed').length;
+    const invited = g.seats.filter(s => s.status === 'invited').length;
+    const open = g.seats.filter(s => s.status === 'open').length;
+    return { confirmed, invited, open, total: g.seats.length };
+  }
+
+  function statusPill(s) {
+    if (s.status === 'confirmed') return `<span class="pill pill-success"><span class="pill-dot"></span>Confirmed</span>`;
+    if (s.status === 'invited') return `<span class="pill pill-invited"><span class="pill-dot"></span>Invited</span>`;
+    if (s.status === 'open') return `<span class="pill pill-open"><span class="pill-dot"></span>Open</span>`;
+    if (s.status === 'unassigned') return `<span class="pill pill-released"><span class="pill-dot"></span>In pool</span>`;
+    return '';
+  }
+
+  function groupStatusPill(g) {
+    if (g.status === 'fully-seated') return `<span class="pill pill-success"><span class="pill-dot"></span>Fully seated</span>`;
+    if (g.status === 'seating') return `<span class="pill pill-invited"><span class="pill-dot"></span>Seating</span>`;
+    if (g.status === 'struggling') return `<span class="pill pill-warn"><span class="pill-dot"></span>Struggling</span>`;
+    if (g.status === 'sponsor') return `<span class="pill pill-released"><span class="pill-dot"></span>Sponsor only</span>`;
+    return '';
+  }
+
+  function flagsCell(s) {
+    if (!s.dietary) return '';
+    return `<span class="flag-icon" title="${esc(s.dietary)}">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 1v5 M5 8v0.5" stroke-linecap="round"/></svg>
+      ${esc(s.dietary)}
+    </span>`;
+  }
+
+  function seatCell(s, type) {
+    if (type === 'direct') return `<span class="seat-n dim">${esc(s.ticket)}</span>`;
+    if (s.status === 'open') return `<span class="seat-n dim">${s.n}</span>`;
+    return `<span class="seat-n">${s.n}</span>`;
+  }
+
+  function renderGroup(g) {
+    const rows = [];
+    const counts = computeGroupCounts(g);
+
+    // Group header
+    if (g.type === 'unassigned') {
+      rows.push(`
+        <tr class="group-header unassigned-header" data-group="${g.id}">
+          <td colspan="7">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div class="group-title">
+                <span class="group-name">${esc(g.name)}</span>
+                <span style="color: var(--warning-fg); font-size: 12px; font-weight: 400;">${esc(g.headline)}</span>
+              </div>
+              <div class="group-actions-menu">
+                <button class="btn btn-secondary btn-sm">Reassign to captain</button>
+                <button class="btn btn-secondary btn-sm">Fill directly</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `);
+    } else if (g.type === 'direct') {
+      rows.push(`
+        <tr class="group-header direct-header" data-group="${g.id}">
+          <td colspan="7">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div class="group-title">
+                <span class="group-name">${esc(g.name)}</span>
+                <span style="color: var(--muted); font-size: 12px; font-weight: 400;">${g.seats.length} single-ticket guests</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `);
+    } else {
+      const bar = counts.total
+        ? `<div class="bar ${counts.open === 0 ? 'full' : (g.status === 'struggling' ? 'warn' : '')}"><span style="width: ${counts.confirmed / counts.total * 100}%"></span></div>`
+        : '';
+      const progressText = g.sponsor
+        ? `${counts.confirmed} of ${counts.total} · sponsor not attending`
+        : `${counts.confirmed} of ${counts.total}${counts.invited ? ` · ${counts.invited} invited` : ''}${counts.open ? ` · ${counts.open} open` : ''}`;
+      rows.push(`
+        <tr class="group-header" data-group="${g.id}">
+          <td colspan="3">
+            <div class="group-title">
+              <span class="group-name">${esc(g.name)}</span>
+              <span class="tier-tag">${esc(g.tier)}</span>
+              <span class="group-captain">
+                <span class="captain-avatar">${esc(g.captain.initials)}</span>
+                <span>${esc(g.captain.name)}</span>
+              </span>
+            </div>
+          </td>
+          <td colspan="2">
+            <div class="group-progress">
+              ${bar}
+              <span style="white-space: nowrap;">${progressText}</span>
+            </div>
+          </td>
+          <td>${groupStatusPill(g)}</td>
+          <td>
+            <div class="group-actions-menu">
+              <button class="btn-icon" title="Message captain">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="10" height="8" rx="0.6"/><path d="M2 4.5l5 3.3 5-3.3"/></svg>
+              </button>
+              <button class="btn-icon" title="More"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.3"/><circle cx="7" cy="7" r="1.3"/><circle cx="11" cy="7" r="1.3"/></svg></button>
+            </div>
+          </td>
+        </tr>
+      `);
+    }
+
+    if (collapsed.has(g.id)) return rows.join('');
+
+    // Guest rows
+    g.seats.forEach((s, idx) => {
+      const matchesSearch = matchGuest(s, g);
+      if (!matchesSearch) return;
+
+      const openish = s.status === 'open' || s.status === 'unassigned';
+      const classes = ['guest-row'];
+      if (openish) classes.push('open');
+      if (g.type === 'unassigned') classes.push('unassigned-row');
+
+      const seat = seatCell(s, g.type);
+      const name = s.status === 'open'
+        ? `<span class="guest-open-text">Open seat</span>`
+        : s.status === 'invited'
+          ? `<span class="guest-name">${esc(s.email)}</span>`
+          : `<span class="guest-name">${esc(s.name || '')}</span>`;
+      const emailCell = s.status === 'open'
+        ? ''
+        : s.status === 'invited'
+          ? `<div class="guest-email">Sent ${esc(s.sent)}</div>`
+          : `<div class="guest-email">${esc(s.email || '')}</div>`;
+
+      const meal = s.meal
+        ? esc(s.meal)
+        : s.status === 'invited'
+          ? `<span style="color: var(--faint);">—</span>`
+          : s.status === 'open'
+            ? `<span style="color: var(--faint);">—</span>`
+            : `<span style="color: var(--faint);">—</span>`;
+
+      const flags = flagsCell(s);
+
+      const guestIdx = `${g.id}:${idx}`;
+      rows.push(`
+        <tr class="${classes.join(' ')}" data-guest="${guestIdx}">
+          <td><span class="check"></span></td>
+          <td>${seat}</td>
+          <td>
+            ${name}
+            ${emailCell}
+          </td>
+          <td>${meal}</td>
+          <td>${flags}</td>
+          <td>${statusPill(s)}</td>
+          <td class="td-actions">
+            <button class="btn-icon" title="More"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.3"/><circle cx="7" cy="7" r="1.3"/><circle cx="11" cy="7" r="1.3"/></svg></button>
+          </td>
+        </tr>
+      `);
+    });
+
+    return rows.join('');
+  }
+
+  function matchGuest(s, g) {
+    if (!searchText) return true;
+    const needle = searchText.toLowerCase();
+    const hay = [s.name, s.email, g.name, g.captain?.name, s.meal, s.dietary].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(needle);
+  }
+
+  function renderFlat() {
+    const rows = [];
+    let guestIdx = 0;
+    GROUPS.forEach(g => {
+      if (g.type === 'unassigned') return; // skip in flat
+      g.seats.forEach((s, idx) => {
+        if (!matchGuest(s, g)) return;
+        if (s.status === 'open' || s.status === 'unassigned') return; // flat list = actual people
+
+        const flags = flagsCell(s);
+        const name = s.status === 'invited'
+          ? `<span class="guest-name">${esc(s.email)}</span>`
+          : `<span class="guest-name">${esc(s.name)}</span>`;
+        const meal = s.meal || '<span style="color: var(--faint);">—</span>';
+
+        rows.push(`
+          <tr class="guest-row" data-guest="${g.id}:${idx}">
+            <td><span class="check"></span></td>
+            <td><span class="seat-n">${g.type === 'direct' ? esc(s.ticket) : s.n}</span></td>
+            <td>
+              ${name}
+              <div class="guest-email">${esc(s.email || '')}</div>
+            </td>
+            <td>${esc(meal)}</td>
+            <td>${flags}</td>
+            <td>${statusPill(s)}</td>
+            <td><button class="btn-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.3"/><circle cx="7" cy="7" r="1.3"/><circle cx="11" cy="7" r="1.3"/></svg></button></td>
+          </tr>
+        `);
+      });
+    });
+    return rows.join('') || `<tr class="empty-row"><td colspan="7">No guests match your search.</td></tr>`;
+  }
+
+  function render() {
+    if (!groupedMode) {
+      tbody.innerHTML = renderFlat();
+    } else {
+      const html = GROUPS.map(renderGroup).join('');
+      tbody.innerHTML = html || `<tr class="empty-row"><td colspan="7">No guests match your search.</td></tr>`;
+    }
+  }
+
+  // =====================================================
+  // SEARCH + TOGGLE
+  // =====================================================
+  document.getElementById('search-input').addEventListener('input', e => {
+    searchText = e.target.value.trim();
+    render();
+  });
+
+  // Group header click → collapse/expand
+  tbody.addEventListener('click', e => {
+    const header = e.target.closest('.group-header');
+    if (header && !e.target.closest('button')) {
+      const gid = header.dataset.group;
+      if (collapsed.has(gid)) collapsed.delete(gid);
+      else collapsed.add(gid);
+      render();
+      return;
+    }
+    const row = e.target.closest('.guest-row');
+    if (row && !e.target.closest('button')) {
+      openDrawer(row.dataset.guest);
+    }
+  });
+
+  // =====================================================
+  // DRAWER
+  // =====================================================
+  const drawer = document.getElementById('drawer');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+
+  function openDrawer(guestIdx) {
+    const [gid, idxStr] = guestIdx.split(':');
+    const g = GROUPS.find(x => x.id === gid);
+    if (!g) return;
+    const s = g.seats[parseInt(idxStr, 10)];
+    if (!s) return;
+
+    const title = s.status === 'open'
+      ? `Open seat · seat ${s.n}`
+      : s.status === 'invited'
+        ? `Invite pending · ${s.email}`
+        : s.name;
+    const sub = g.type === 'direct'
+      ? `Direct registrant · ticket ${s.ticket}`
+      : g.type === 'unassigned'
+        ? `Unassigned pool · was Benefactor seat ${s.n}`
+        : `${g.name} · seat ${s.n}`;
+
+    document.getElementById('drawer-title').textContent = title;
+    document.getElementById('drawer-sub').textContent = sub;
+
+    const body = document.getElementById('drawer-body');
+    body.innerHTML = buildDrawerBody(g, s);
+
+    drawer.classList.add('open');
+    drawerBackdrop.classList.add('open');
+  }
+
+  function buildDrawerBody(g, s) {
+    if (s.status === 'open') {
+      return `
+        <div class="detail-section">
+          <h3>This seat is empty</h3>
+          <div class="detail-row"><span class="dkey">Table</span><span class="dval">${esc(g.name)}</span></div>
+          <div class="detail-row"><span class="dkey">Seat</span><span class="dval">${s.n} of ${g.seats.length}</span></div>
+          <div class="detail-row"><span class="dkey">Captain</span><span class="dval">${esc(g.captain?.name || '')}</span></div>
+        </div>
+        <div class="detail-section">
+          <h3>Fill this seat</h3>
+          <p style="font-size: 13px; color: var(--muted); margin: 0 0 12px; line-height: 18px;">
+            You can add a guest directly, or nudge the captain to fill it.
+          </p>
+          <button class="btn btn-primary btn-sm" style="margin-right: 8px;">Add guest to seat ${s.n}</button>
+          <button class="btn btn-secondary btn-sm">Message captain</button>
+        </div>
+      `;
+    }
+    if (s.status === 'invited') {
+      return `
+        <div class="detail-section">
+          <h3>Invite details</h3>
+          <div class="detail-row"><span class="dkey">Email</span><span class="dval">${esc(s.email)}</span></div>
+          <div class="detail-row"><span class="dkey">Sent</span><span class="dval">${esc(s.sent)}</span></div>
+          <div class="detail-row"><span class="dkey">Seat held</span><span class="dval">${g.name} · seat ${s.n}</span></div>
+          <div class="detail-row"><span class="dkey">Source</span><span class="dval muted">${esc(s.sourceLabel)}</span></div>
+        </div>
+        <div class="detail-section">
+          <h3>Actions</h3>
+          <button class="btn btn-secondary btn-sm" style="margin-right: 8px;">Resend invite</button>
+          <button class="btn btn-secondary btn-sm">Cancel invite</button>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="detail-section">
+        <h3>Identity</h3>
+        <div class="detail-row"><span class="dkey">Name</span><span class="dval">${esc(s.name)}</span></div>
+        <div class="detail-row"><span class="dkey">Email</span><span class="dval">${esc(s.email)}</span></div>
+        ${s.isCaptain ? `<div class="detail-row"><span class="dkey">Role</span><span class="dval">Captain of this table</span></div>` : ''}
+      </div>
+      <div class="detail-section">
+        <h3>Response</h3>
+        ${g.type !== 'direct' ? `<div class="detail-row"><span class="dkey">Table</span><span class="dval">${esc(g.name)} · seat ${s.n}</span></div>` : `<div class="detail-row"><span class="dkey">Ticket</span><span class="dval">${esc(s.ticket)}</span></div>`}
+        <div class="detail-row"><span class="dkey">Meal</span><span class="dval">${esc(s.meal || '—')}</span></div>
+        <div class="detail-row"><span class="dkey">Dietary notes</span><span class="dval ${s.dietary ? '' : 'muted'}">${esc(s.dietary || 'None noted')}</span></div>
+      </div>
+      <div class="detail-section">
+        <h3>Source</h3>
+        <div class="detail-row"><span class="dkey">How they joined</span><span class="dval">${esc(s.sourceLabel || 'Direct')}</span></div>
+        ${s.joined ? `<div class="detail-row"><span class="dkey">Timeline</span><span class="dval muted">${esc(s.joined)}</span></div>` : ''}
+      </div>
+      <div class="detail-section">
+        <h3>Internal only</h3>
+        <div class="detail-row" style="border: 0; padding: 0;">
+          <textarea placeholder="Add a note the guest won't see…" style="width: 100%; min-height: 60px; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); font-family: inherit; font-size: 13px; outline: none; resize: vertical;"></textarea>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h3>History</h3>
+        <div class="history">
+          <div class="history-item"><span class="hdate">Apr 12</span> · <span class="hwho">${esc(g.captain?.name || 'Guest')}</span> ${s.isCaptain ? 'bought this table' : 'was added to this table'}</div>
+          ${s.meal ? `<div class="history-item"><span class="hdate">Apr 17</span> · <span class="hwho">${esc(s.name)}</span> selected ${esc(s.meal)}</div>` : ''}
+          ${s.dietary ? `<div class="history-item"><span class="hdate">Apr 17</span> · Dietary flag added: ${esc(s.dietary)}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    drawerBackdrop.classList.remove('open');
+  }
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  drawerBackdrop.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+  document.getElementById('drawer-email').addEventListener('click', () => showToast('Email composer opened'));
+  document.getElementById('drawer-edit').addEventListener('click', () => showToast('Edit mode coming in full build'));
+
+  // =====================================================
+  // TOAST
+  // =====================================================
+  let toastTimer = null;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // Init
+  render();
+</script>
+
+</body>
+</html>
