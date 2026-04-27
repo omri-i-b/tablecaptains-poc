@@ -10,18 +10,22 @@
     --brand-hover:     #45286b;
     --brand-accent:    #45286b;
     --brand-soft:      #ebecf6;
+    --brand-soft-2:    #f4f3f8;
     --brand-veil:      rgba(25, 18, 54, 0.5);
 
-    --page:            #fafafc;
+    --page:            #f5f6fc;
     --card:            #ffffff;
+    --row-hover:       #f7f7fb;
+    --header-row:      #fafafd;
     --border:          #e8e8ed;
     --border-strong:   #d1d0d9;
     --divider:         #ededf1;
 
     --ink:             #191236;
-    --body:            #3a304f;
+    --body:            #2d2d3a;
     --muted:           #5e5972;
     --faint:           #9b9aa7;
+    --caps:            #5e5972;
 
     --success-fg:      #0d8759;
     --success-bg:      #d9f2e9;
@@ -29,6 +33,8 @@
     --warning-bg:      #fdecd0;
     --invited-fg:      #7a5a14;
     --invited-bg:      #fef4d8;
+    --released-fg:     #5e5972;
+    --released-bg:     #ededf1;
     --danger-fg:       #b11a2b;
     --danger-bg:       #fde3e7;
 
@@ -39,8 +45,8 @@
 
     --r-sm: 4px;
     --r-md: 6px;
-    --r-lg: 10px;
-    --r-xl: 14px;
+    --r-lg: 8px;
+    --r-xl: 12px;
     --r-pill: 100px;
     --r-full: 9999px;
   }
@@ -51,8 +57,8 @@
     background: var(--page);
     color: var(--ink);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 20px;
     -webkit-font-smoothing: antialiased;
     font-variant-numeric: tabular-nums;
   }
@@ -71,23 +77,22 @@
     display: inline-flex; align-items: center; gap: 10px;
     font-weight: 500; color: var(--ink); font-size: 15px;
   }
-  .logo-mark svg { display: block; }
   .header-sub { font-size: 13px; color: var(--muted); }
 
   /* ========== PORTAL ========== */
   .portal {
-    max-width: 760px;
+    max-width: 980px;
     margin: 0 auto;
-    padding: 28px 20px 64px;
+    padding: 28px 20px 80px;
     display: flex; flex-direction: column;
-    gap: 28px;
+    gap: 24px;
   }
 
   /* ========== MASTHEAD ========== */
-  .masthead { display: flex; flex-direction: column; gap: 14px; }
+  .masthead { display: flex; flex-direction: column; gap: 12px; }
   .event-name {
     font-family: var(--font-serif);
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 400;
     letter-spacing: -0.3px;
     line-height: 1.1;
@@ -95,7 +100,7 @@
     color: var(--ink);
   }
   .event-meta {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--muted);
     margin: 4px 0 0;
     line-height: 20px;
@@ -105,13 +110,13 @@
     flex-wrap: wrap;
   }
   .group-label {
-    font-size: 12px; font-weight: 500;
+    font-size: 11px; font-weight: 500;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.8px;
   }
   .group-name {
-    font-size: 18px; font-weight: 500;
+    font-size: 16px; font-weight: 500;
     color: var(--ink);
     padding: 4px 8px;
     border-radius: var(--r-sm);
@@ -133,40 +138,42 @@
     border-radius: var(--r-sm);
   }
   .edit-hint:hover { color: var(--muted); background: var(--brand-soft); }
-  .group-name:focus ~ .edit-hint,
-  .group-line.editing .edit-hint { display: none; }
-  .order-context {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 18px;
-  }
 
-  /* ========== PROGRESS HERO ========== */
-  .hero {
+  /* ========== HERO STATS ========== */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--r-xl);
-    padding: 24px 28px;
-    display: flex; flex-direction: column; gap: 16px;
+    border-radius: var(--r-md);
+    padding: 14px 16px;
   }
-  .stat-row {
-    display: flex; align-items: baseline; gap: 14px;
-    flex-wrap: wrap;
+  .stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--caps);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
   }
-  .stat-big {
-    font-size: 42px;
+  .stat-value {
+    font-size: 22px;
     font-weight: 500;
     color: var(--ink);
-    line-height: 1;
-    letter-spacing: -1px;
+    line-height: 1.1;
   }
-  .stat-big .muted { color: var(--faint); font-weight: 400; }
-  .stat-label {
-    font-size: 15px;
+  .stat-value.muted { color: var(--faint); font-weight: 400; }
+  .stat-sub {
+    font-size: 12px;
     color: var(--muted);
+    margin-top: 4px;
   }
   .progress-bar {
-    height: 8px;
+    margin-top: 8px;
+    height: 4px;
     background: var(--brand-soft);
     border-radius: var(--r-pill);
     overflow: hidden;
@@ -176,31 +183,27 @@
     background: var(--brand);
     transition: width 280ms cubic-bezier(.2, .8, .2, 1);
   }
-  .stat-sub {
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .stat-sub strong { color: var(--ink); font-weight: 500; }
 
   /* ========== ACTIONS ========== */
   .actions {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
   .action-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 18px;
+    border-radius: var(--r-md);
+    padding: 14px 16px;
     text-align: left;
     color: var(--ink);
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; align-items: center; gap: 12px;
     transition: border-color 120ms linear, background-color 120ms linear;
+    cursor: pointer;
   }
   .action-card:hover {
     border-color: var(--brand);
-    background: #fafafd;
+    background: var(--brand-soft);
   }
   .action-icon {
     width: 32px; height: 32px;
@@ -208,127 +211,149 @@
     background: var(--brand-soft);
     color: var(--brand);
     display: inline-flex; align-items: center; justify-content: center;
-    margin-bottom: 4px;
+    flex-shrink: 0;
   }
+  .action-card:hover .action-icon {
+    background: var(--brand);
+    color: white;
+  }
+  .action-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .action-title {
-    font-size: 15px; font-weight: 500;
+    font-size: 14px; font-weight: 500;
     color: var(--ink);
-    line-height: 22px;
-  }
-  .action-sub {
-    font-size: 13px; color: var(--muted);
     line-height: 18px;
   }
+  .action-sub {
+    font-size: 12px; color: var(--muted);
+    line-height: 16px;
+  }
 
-  /* ========== SEATS ========== */
-  .seats-section { display: flex; flex-direction: column; gap: 14px; }
+  /* ========== SEATS LIST ========== */
+  .seats-section { display: flex; flex-direction: column; gap: 12px; }
+  .seats-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px;
+  }
   .seats-head h2 {
-    font-size: 18px; font-weight: 500;
+    font-size: 16px; font-weight: 500;
     margin: 0;
     color: var(--ink);
   }
   .seats-head p {
     font-size: 13px; color: var(--muted);
-    margin: 4px 0 0;
+    margin: 0;
   }
-  .seat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  .seat {
+
+  .table-wrap {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 14px 16px;
-    text-align: left;
-    color: var(--ink);
-    display: flex; flex-direction: column; gap: 4px;
-    min-height: 78px;
-    transition: border-color 120ms linear, background-color 120ms linear;
+    border-radius: var(--r-md);
+    overflow: hidden;
   }
-  .seat:hover { border-color: var(--brand-strong, var(--brand)); background: #fafafd; }
-  .seat.open {
-    border-style: dashed;
-    color: var(--muted);
+  .dt {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
   }
-  .seat.open:hover {
-    background: var(--brand-soft);
-    color: var(--brand);
-  }
-  .seat-head {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px;
-    color: var(--muted);
+  .dt thead th {
+    font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
+    color: var(--caps);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--header-row);
+    white-space: nowrap;
   }
-  .seat-name {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ink);
-    line-height: 20px;
+  .dt thead th.th-seat { width: 60px; }
+  .dt thead th.th-status { width: 110px; }
+  .dt thead th.th-actions { width: 70px; text-align: right; }
+  .dt tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--divider);
+    color: var(--body);
+    vertical-align: middle;
   }
-  .seat-meta {
-    font-size: 13px;
+  .dt tbody tr:last-child td { border-bottom: 0; }
+  .dt tbody tr.guest-row { cursor: pointer; }
+  .dt tbody tr.guest-row:hover td { background: var(--row-hover); }
+  .dt tbody tr.released-row td { color: var(--faint); }
+  .dt tbody tr.released-row .guest-name { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--faint); }
+
+  .seat-n {
+    font-variant-numeric: tabular-nums;
     color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .seat-n.dim { color: var(--faint); font-weight: 400; }
+
+  .guest-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .guest-name {
+    color: var(--ink); font-weight: 500;
     line-height: 18px;
   }
-  .seat-meta .sep { margin: 0 6px; color: var(--faint); }
-  .seat-empty {
-    font-size: 14px;
+  .guest-name .you {
+    display: inline-flex; align-items: center;
+    margin-left: 6px;
+    padding: 0 6px; height: 16px;
+    border-radius: var(--r-sm);
+    background: var(--brand);
+    color: white;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .guest-email {
+    color: var(--muted); font-size: 12px; font-weight: 400;
+    line-height: 16px;
+  }
+  .guest-empty { color: var(--muted); font-style: italic; }
+  .connection-line {
     color: var(--muted);
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 2px;
+    font-style: italic;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-  .seat.open:hover .seat-empty { color: var(--brand); }
-  .seat-tag {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 1px 8px;
-    border-radius: var(--r-pill);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-  }
-  .seat-tag.you { background: var(--brand); color: white; }
-  .seat-tag.confirmed { background: var(--success-bg); color: var(--success-fg); }
-  .seat-tag.invited { background: var(--invited-bg); color: var(--invited-fg); }
-  .seat-tag.open { background: transparent; color: var(--faint); letter-spacing: 0.4px; border: 1px solid var(--border-strong); }
 
-  /* ========== SETTINGS ROW ========== */
-  .settings {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 16px 20px;
-    display: flex; flex-direction: column; gap: 12px;
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 22px; padding: 0 10px;
+    border-radius: var(--r-pill);
+    font-size: 11px; font-weight: 500; line-height: 1;
+    white-space: nowrap;
   }
-  .setting-row {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 16px;
-    font-size: 14px;
+  .pill-dot { width: 6px; height: 6px; border-radius: var(--r-full); }
+  .pill-success { background: var(--success-bg); color: var(--success-fg); }
+  .pill-success .pill-dot { background: var(--success-fg); }
+  .pill-invited { background: var(--invited-bg); color: var(--invited-fg); }
+  .pill-invited .pill-dot { background: var(--invited-fg); }
+  .pill-open { background: transparent; color: var(--muted); border: 1px dashed var(--border-strong); }
+  .pill-open .pill-dot { background: var(--faint); }
+  .pill-released { background: var(--released-bg); color: var(--released-fg); }
+  .pill-released .pill-dot { background: var(--faint); }
+  .pill-you { background: var(--brand); color: white; }
+  .pill-you .pill-dot { background: white; }
+
+  .row-actions {
+    display: flex; justify-content: flex-end; gap: 4px;
   }
-  .setting-row .label { font-weight: 500; color: var(--ink); }
-  .setting-row .help { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .toggle {
-    position: relative;
-    flex: 0 0 40px;
-    width: 40px; height: 22px;
-    border-radius: var(--r-full);
-    background: #c2c0cd;
-    cursor: pointer;
-    transition: background-color 180ms linear;
+  .icon-btn {
+    width: 28px; height: 28px;
+    padding: 0;
+    border-radius: var(--r-sm);
+    color: var(--muted);
+    border: 1px solid transparent;
+    background: transparent;
+    display: inline-flex; align-items: center; justify-content: center;
   }
-  .toggle::after {
-    content: '';
-    position: absolute; top: 2px; left: 2px;
-    width: 18px; height: 18px;
-    border-radius: var(--r-full);
-    background: white;
-    transition: transform 180ms cubic-bezier(.2,0,0,1);
-  }
-  .toggle.on { background: var(--brand-accent); }
-  .toggle.on::after { transform: translateX(18px); }
+  .icon-btn:hover { background: var(--brand-soft); color: var(--ink); }
 
   /* ========== FOOTER ========== */
   .footer-note {
@@ -340,7 +365,6 @@
     border-top: 1px solid var(--divider);
   }
   .footer-note p { margin: 0 0 4px; }
-  .footer-note .support { color: var(--muted); }
 
   /* ========== MODAL ========== */
   .modal-backdrop {
@@ -358,7 +382,7 @@
     pointer-events: auto;
   }
   .modal {
-    width: 440px;
+    width: 520px;
     max-width: 100%;
     max-height: calc(100vh - 40px);
     background: var(--card);
@@ -368,6 +392,7 @@
     transform: translateY(-6px);
     transition: transform 150ms cubic-bezier(.2, .8, .2, 1);
   }
+  .modal.wide { width: 600px; }
   .modal-backdrop.open .modal { transform: translateY(0); }
   .modal-head {
     padding: 18px 22px 14px;
@@ -425,13 +450,7 @@
     box-shadow: 0 0 0 3px rgba(55, 32, 86, 0.15);
   }
   .textarea { resize: vertical; min-height: 72px; }
-  .select {
-    appearance: none; -webkit-appearance: none;
-    padding-right: 28px;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%235e5972' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-  }
+  .field-hint { font-size: 12px; color: var(--muted); margin-top: -2px; }
 
   /* ========== BUTTONS ========== */
   .btn {
@@ -461,49 +480,127 @@
     color: var(--danger-fg); border-color: transparent;
   }
   .btn-danger:hover { background: var(--danger-bg); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; line-height: 18px; }
 
-  /* ========== SHARE URL BOX ========== */
-  .share-url {
-    display: flex; align-items: center;
-    background: var(--brand-soft);
-    border: 1px solid var(--border);
+  /* ========== EMAIL PREVIEW ========== */
+  .preview-toggle {
+    display: flex; align-items: center; gap: 0;
+    background: var(--brand-soft-2);
+    padding: 3px;
     border-radius: var(--r-md);
-    padding: 3px 3px 3px 12px;
-    gap: 8px;
+    margin-bottom: 16px;
+    width: fit-content;
   }
-  .share-url input {
-    flex: 1;
-    border: 0; outline: 0;
-    background: transparent;
-    font-size: 13px;
-    color: var(--ink);
-    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-    padding: 8px 0;
-  }
-  .share-url button {
-    padding: 7px 14px;
+  .preview-toggle button {
+    padding: 5px 14px;
+    font-size: 12px; font-weight: 500;
+    color: var(--muted);
     border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+  .preview-toggle button.active {
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .email-preview {
+    background: var(--brand-soft-2);
+    border-radius: var(--r-md);
+    padding: 16px;
+  }
+  .email-preview-frame {
+    background: var(--card);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(25, 18, 54, 0.06), 0 4px 16px rgba(25, 18, 54, 0.04);
+  }
+  .email-meta {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--divider);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .email-meta strong { color: var(--ink); font-weight: 500; }
+  .email-body {
+    padding: 24px 28px;
+    font-size: 14px;
+    color: var(--body);
+    line-height: 22px;
+  }
+  .email-body h3 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0 0 8px;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+  .email-body .event-line {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+  .email-body p { margin: 0 0 14px; }
+  .email-body .cta-btn {
+    display: inline-block;
+    padding: 10px 22px;
     background: var(--brand);
     color: white;
-    font-size: 13px; font-weight: 500;
-  }
-  .share-url button:hover { background: var(--brand-hover); }
-
-  .qr-placeholder {
-    width: 140px; height: 140px;
-    margin: 16px auto;
-    background:
-      linear-gradient(45deg, transparent 47%, var(--ink) 47%, var(--ink) 53%, transparent 53%),
-      linear-gradient(-45deg, transparent 47%, var(--ink) 47%, var(--ink) 53%, transparent 53%),
-      repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
-    background-color: white;
-    border: 1px solid var(--border);
     border-radius: var(--r-md);
-    position: relative;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 4px;
   }
-  .qr-note {
-    text-align: center; color: var(--muted);
-    font-size: 12px; margin-top: 8px;
+  .email-body .from {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--divider);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .email-body .from strong { color: var(--ink); font-weight: 500; }
+  .email-personal-note {
+    background: var(--brand-soft);
+    border-left: 3px solid var(--brand);
+    padding: 10px 14px;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    margin: 14px 0;
+    font-style: italic;
+    color: var(--body);
+  }
+
+  /* ========== DETAIL PANEL ========== */
+  .detail-section { margin-bottom: 18px; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-section h3 {
+    font-size: 11px; font-weight: 500;
+    color: var(--caps);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 0 0 8px;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--divider);
+    font-size: 13px;
+  }
+  .detail-row:last-child { border-bottom: 0; }
+  .detail-row .dkey { color: var(--muted); flex-shrink: 0; }
+  .detail-row .dval { color: var(--ink); font-weight: 500; text-align: right; word-break: break-word; }
+  .connection-quote {
+    padding: 12px 14px;
+    background: var(--brand-soft);
+    border-radius: var(--r-md);
+    font-size: 13px;
+    color: var(--body);
+    line-height: 19px;
+    font-style: italic;
   }
 
   /* ========== TOAST ========== */
@@ -522,19 +619,16 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ========== MOBILE ========== */
-  @media (max-width: 640px) {
+  @media (max-width: 720px) {
     .app-header { padding: 12px 16px; }
-    .portal { padding: 20px 16px 48px; gap: 22px; }
-    .event-name { font-size: 26px; }
-    .event-meta { font-size: 13px; }
-    .hero { padding: 20px; }
-    .stat-big { font-size: 36px; }
-    .actions { grid-template-columns: 1fr; gap: 10px; }
-    .seat-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (min-width: 800px) {
-    .seat-grid { grid-template-columns: repeat(5, 1fr); }
+    .portal { padding: 20px 16px 56px; gap: 20px; }
+    .event-name { font-size: 24px; }
+    .event-meta { font-size: 12px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .actions { grid-template-columns: 1fr; }
+    .dt thead th.th-seat,
+    .dt tbody td.td-seat { display: none; }
+    .dt thead th.th-status { width: auto; }
   }
 </style>
 </head>
@@ -568,43 +662,44 @@
         Click to rename
       </span>
     </div>
-
-    <div class="order-context" id="order-context">
-      You sponsored 1 Standard table · paid $2,500
-    </div>
   </section>
 
-  <!-- PROGRESS HERO -->
-  <section class="hero">
-    <div class="stat-row">
-      <div class="stat-big"><span id="filled-count">1</span> <span class="muted">of <span id="total-count">10</span></span></div>
-      <div class="stat-label">seats filled</div>
+  <!-- STATS -->
+  <section class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Confirmed</div>
+      <div class="stat-value" id="stat-confirmed">—</div>
+      <div class="stat-sub">guests responded</div>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
+    <div class="stat-card">
+      <div class="stat-label">Invited</div>
+      <div class="stat-value" id="stat-invited">—</div>
+      <div class="stat-sub">awaiting response</div>
     </div>
-    <div class="stat-sub" id="stat-sub"><strong>9 seats</strong> to go. Invite your guests below.</div>
+    <div class="stat-card">
+      <div class="stat-label">Open</div>
+      <div class="stat-value" id="stat-open">—</div>
+      <div class="stat-sub">to fill</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Of <span id="stat-total">10</span> seats</div>
+      <div class="stat-value muted"><span id="stat-filled-pct">—</span>%</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+    </div>
   </section>
 
   <!-- ACTIONS -->
   <section class="actions">
-    <button class="action-card" data-action="open-share">
-      <span class="action-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 4l3 3-3 3"/><path d="M13 7H6a3 3 0 0 0-3 3v2"/>
-        </svg>
-      </span>
-      <span class="action-title">Share a link</span>
-      <span class="action-sub">Post it in Slack or text it. Anyone with the link can claim a seat.</span>
-    </button>
     <button class="action-card" data-action="open-invite">
       <span class="action-icon">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 4.5l6 4 6-4"/>
         </svg>
       </span>
-      <span class="action-title">Invite by email</span>
-      <span class="action-sub">Send each guest a personal link to fill their seat.</span>
+      <span class="action-body">
+        <span class="action-title">Invite by email</span>
+        <span class="action-sub">Send a personal link — preview before sending.</span>
+      </span>
     </button>
     <button class="action-card" data-action="open-add">
       <span class="action-icon">
@@ -612,26 +707,39 @@
           <circle cx="7" cy="6" r="3"/><path d="M2 14a5 5 0 0 1 10 0"/><path d="M13 4v4 M11 6h4"/>
         </svg>
       </span>
-      <span class="action-title">Add a guest directly</span>
-      <span class="action-sub">Know who's coming? Enter their details yourself.</span>
+      <span class="action-body">
+        <span class="action-title">Add a guest directly</span>
+        <span class="action-sub">Know who's coming? Enter their details yourself.</span>
+      </span>
     </button>
   </section>
 
-  <!-- SEATS -->
+  <!-- GUESTS LIST -->
   <section class="seats-section">
     <div class="seats-head">
-      <h2>Your seats</h2>
-      <p>Click any seat to add or edit a guest.</p>
+      <h2>Your guests</h2>
+      <p>Click any row for details. Release seats you don't plan to fill.</p>
     </div>
-    <div class="seat-grid" id="seat-grid">
-      <!-- rendered by JS -->
+
+    <div class="table-wrap">
+      <table class="dt">
+        <thead>
+          <tr>
+            <th class="th-seat">SEAT</th>
+            <th>GUEST</th>
+            <th class="th-status">STATUS</th>
+            <th class="th-actions"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"><!-- rendered --></tbody>
+      </table>
     </div>
   </section>
 
   <!-- FOOTER -->
   <section class="footer-note">
-    <p>Your guests will receive a confirmation email when they respond. We'll send you a digest whenever new responses come in.</p>
-    <p class="support">Questions? <a href="mailto:help@rsvpify.com">help@rsvpify.com</a></p>
+    <p>Your guests will get a confirmation email when they respond. We'll send you a digest as new responses come in.</p>
+    <p>Questions? <a href="mailto:help@rsvpify.com">help@rsvpify.com</a></p>
   </section>
 
 </main>
@@ -657,16 +765,12 @@
         <input class="input" id="g-email" type="email" placeholder="jordan@example.com" autocomplete="off" />
       </div>
       <div class="field">
-        <label for="g-meal">Meal preference</label>
-        <select class="select" id="g-meal">
-          <option>Chicken</option>
-          <option>Beef</option>
-          <option>Vegetarian</option>
-        </select>
+        <label for="g-connection">How they're connected to the cause <span style="color: var(--muted); font-weight: 400;">(from their RSVP)</span></label>
+        <textarea class="textarea" id="g-connection" placeholder="Their note when they signed up — read-only here." readonly></textarea>
       </div>
       <div class="field">
-        <label for="g-diet">Dietary notes <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
-        <input class="input" id="g-diet" placeholder="Allergies, kosher, halal, etc." />
+        <label for="g-note">Your private note <span style="color: var(--muted); font-weight: 400;">(only you see this)</span></label>
+        <textarea class="textarea" id="g-note" placeholder="College roommate. Sat next to Maya last year. Knows the ED."></textarea>
       </div>
     </div>
     <div class="modal-foot">
@@ -680,47 +784,9 @@
 </div>
 
 
-<!-- ========== SHARE LINK MODAL ========== -->
-<div class="modal-backdrop" id="modal-share" role="dialog" aria-modal="true">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <h2>Share the link</h2>
-        <p>Anyone with this link can claim the next open seat at your table.</p>
-      </div>
-      <button class="modal-close" data-close aria-label="Close">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="field">
-        <label>Your table's shareable link</label>
-        <div class="share-url">
-          <input id="share-url-input" readonly value="https://captain.rsvpify.com/spring-gala-2026/t/m4y4-xq7z" />
-          <button id="copy-url">Copy link</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Or paste this message</label>
-        <textarea class="textarea" id="share-msg" readonly>Hey — I've got a table at the Spring Gala on May 16 and I'd love for you to join. Grab a seat here: https://captain.rsvpify.com/spring-gala-2026/t/m4y4-xq7z</textarea>
-        <button class="btn btn-secondary" id="copy-msg" style="margin-top: 8px;">Copy message</button>
-      </div>
-
-      <details style="margin-top: 16px;">
-        <summary style="cursor: pointer; font-size: 13px; color: var(--muted);">Show QR code (for screen-to-phone)</summary>
-        <div class="qr-placeholder"></div>
-        <div class="qr-note">Scan to open the shareable link on a phone.</div>
-      </details>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" data-close>Done</button>
-    </div>
-  </div>
-</div>
-
-
 <!-- ========== INVITE BY EMAIL MODAL ========== -->
 <div class="modal-backdrop" id="modal-invite" role="dialog" aria-modal="true">
-  <div class="modal">
+  <div class="modal wide">
     <div class="modal-head">
       <div>
         <h2>Invite by email</h2>
@@ -729,21 +795,81 @@
       <button class="modal-close" data-close aria-label="Close">×</button>
     </div>
     <div class="modal-body">
-      <div class="field">
-        <label for="inv-emails">Email addresses</label>
-        <textarea class="textarea" id="inv-emails" rows="4" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
-        <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">One per line, or separated by commas.</div>
+      <div class="preview-toggle">
+        <button id="tab-write" class="active" type="button">Write</button>
+        <button id="tab-preview" type="button">Preview email</button>
       </div>
-      <div class="field">
-        <label for="inv-msg">Personal note <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
-        <textarea class="textarea" id="inv-msg" rows="3" placeholder="Can't wait to see you there!"></textarea>
+
+      <div id="invite-write">
+        <div class="field">
+          <label for="inv-emails">Email addresses</label>
+          <textarea class="textarea" id="inv-emails" rows="4" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
+          <div class="field-hint">One per line, or separated by commas.</div>
+        </div>
+        <div class="field">
+          <label for="inv-msg">Personal note <span style="color: var(--muted); font-weight: 400;">(optional — appears at the top of the email)</span></label>
+          <textarea class="textarea" id="inv-msg" rows="3" placeholder="Can't wait to see you there!"></textarea>
+        </div>
+      </div>
+
+      <div id="invite-preview" style="display: none;">
+        <div class="email-preview">
+          <div class="email-preview-frame">
+            <div class="email-meta">
+              <div><strong>From:</strong> Maya Rodriguez via RSVPify &lt;noreply@rsvpify.com&gt;</div>
+              <div><strong>To:</strong> <span id="preview-to">your guests</span></div>
+              <div><strong>Subject:</strong> Maya saved you a seat at the Spring Gala</div>
+            </div>
+            <div class="email-body">
+              <h3>You're invited to the Spring Gala</h3>
+              <p class="event-line">Sat · May 16, 2026 · 6:30 pm · The Plaza Hotel, New York NY</p>
+
+              <p>Hi there —</p>
+              <p>Maya Rodriguez has saved you a seat at her table for the Acme Foundation's Spring Gala. The evening supports the Foundation's scholarship program, and Maya wanted you there.</p>
+
+              <div id="preview-personal-wrap" class="email-personal-note" style="display: none;">
+                <span id="preview-personal"></span>
+              </div>
+
+              <p>Tap below to confirm your seat and tell us a bit about how you're connected to the cause.</p>
+              <a href="#" class="cta-btn">Claim your seat →</a>
+
+              <div class="from">
+                Sent on behalf of <strong>Maya Rodriguez</strong> · table captain<br/>
+                Acme Foundation · Spring Gala 2026
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="modal-foot">
-      <div id="invite-count" style="font-size: 13px; color: var(--muted);">0 invites · 9 open seats</div>
+      <div id="invite-count" style="font-size: 13px; color: var(--muted);">0 invites · 0 open seats</div>
       <div style="display: flex; gap: 8px;">
         <button class="btn btn-ghost" data-close>Cancel</button>
         <button class="btn btn-primary" id="send-invites" disabled>Send invites</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== GUEST DETAIL MODAL ========== -->
+<div class="modal-backdrop" id="modal-detail" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="detail-title">Guest details</h2>
+        <p id="detail-sub">Seat 2 of your table</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-danger btn-sm" id="release-seat" style="display: none;">Release this seat</button>
+      <div style="display: flex; gap: 8px; margin-left: auto;">
+        <button class="btn btn-ghost" data-close>Close</button>
+        <button class="btn btn-secondary" id="detail-edit">Edit guest</button>
       </div>
     </div>
   </div>
@@ -754,284 +880,422 @@
 
 
 <script>
-  // ---- Shared storage (synced with organizer and captain purchase) ----
+  // ====================== STORAGE ======================
   const STORAGE_KEY = 'tablecaptains.data.v1';
 
-  function loadPackages() {
+  function loadData() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (Array.isArray(data.packages)) return { event: data.event, packages: data.packages };
-      }
+      if (raw) return JSON.parse(raw);
     } catch {}
-    return { event: null, packages: null };
+    return null;
   }
 
-  // Initial event + package info: use stored if present, fall back to hardcoded.
-  const stored = loadPackages();
-  const eventInfo = stored.event || {
+  const stored = loadData();
+  const eventInfo = stored?.event || {
     name: 'Spring Gala 2026',
     organization: 'Acme Foundation',
     date: 'Sat · May 16, 2026 · 6:30 pm',
     venue: 'The Plaza Hotel, New York NY',
   };
-  // Pick the first "Standard table" (or first live) as the one Maya bought.
-  const boughtPackage = (stored.packages || []).find(p => p.name === 'Standard table')
-    || (stored.packages || []).find(p => p.show)
-    || { name: 'Standard table', seats: 10, price: 2500 };
+  const captainInfo = stored?.captain || {
+    name: 'Maya Rodriguez',
+    email: 'maya@acme.co',
+    company: 'Acme Co.',
+    seats: 10,
+    connection: '',
+  };
 
-  const TOTAL_SEATS = boughtPackage.seats || 10;
-  const MEAL_OPTIONS = ['Chicken', 'Beef', 'Vegetarian'];
+  let totalSeats = captainInfo.seats || 10;
 
-  // ---- Seat state ----
-  let seats = makeInitialSeats();
+  // ====================== SEAT STATE — well-populated ======================
+  // Mix of confirmed, invited, open, released so the UX shows up.
+  let seats = [
+    {
+      n: 1, status: 'captain',
+      name: captainInfo.name || 'Maya Rodriguez',
+      email: captainInfo.email || 'maya@acme.co',
+      connection: captainInfo.connection || "Acme matched a donation to the Foundation's scholarship program last year — I went to the ribbon-cutting and want to bring our team to see what we helped build.",
+      note: '',
+    },
+    {
+      n: 2, status: 'confirmed',
+      name: 'Jordan Chen', email: 'jordan@acme.co',
+      connection: 'Maya and I were on the original Acme founding team — we both went to the Foundation gala in 2019 when this was just an idea on a napkin.',
+      note: "Quiet but always shows up. Make sure he's near the stage.",
+    },
+    {
+      n: 3, status: 'confirmed',
+      name: 'Sam Patel', email: 'sam@acme.co',
+      connection: "I came up through the Foundation's mentorship program in college. This is personal — I want to show up for the next round of kids.",
+      note: '',
+    },
+    {
+      n: 4, status: 'confirmed',
+      name: 'Taylor Kim', email: 'taylor@acme.co',
+      connection: '',
+      note: '',
+    },
+    {
+      n: 5, status: 'confirmed',
+      name: 'Morgan Rivera', email: 'morgan@acme.co',
+      connection: 'My partner volunteers at the Foundation\'s after-school program. I have heard a lot about this gala for years and finally have an excuse to come.',
+      note: 'Bringing partner — let me know if I need to add them.',
+    },
+    {
+      n: 6, status: 'confirmed',
+      name: 'Casey Park', email: 'casey@acme.co',
+      connection: '',
+      note: '',
+    },
+    {
+      n: 7, status: 'invited',
+      email: 'alex@acme.co',
+      sentAt: 'Apr 22',
+    },
+    {
+      n: 8, status: 'invited',
+      email: 'jamie@acme.co',
+      sentAt: 'Apr 22',
+    },
+    { n: 9, status: 'open' },
+    { n: 10, status: 'open' },
+  ];
 
-  function makeInitialSeats() {
-    const arr = [];
-    arr.push({ n: 1, status: 'captain', name: 'Maya Rodriguez', email: 'maya@acme.co', meal: 'Vegetarian', diet: '' });
-    for (let i = 2; i <= TOTAL_SEATS; i++) arr.push({ n: i, status: 'open' });
-    return arr;
+  // ====================== HELPERS ======================
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ====================== MASTHEAD ======================
+  $('event-name').textContent = eventInfo.name;
+  $('event-meta').textContent = `${eventInfo.date} · ${eventInfo.venue} · ${eventInfo.organization}`;
+  $('group-name').textContent = captainInfo.company || 'Your table';
+
+  // ====================== RENDER ======================
+  const tbody = $('tbody');
+
+  function statusPill(s) {
+    if (s.status === 'captain') return `<span class="pill pill-you"><span class="pill-dot"></span>You</span>`;
+    if (s.status === 'confirmed') return `<span class="pill pill-success"><span class="pill-dot"></span>Confirmed</span>`;
+    if (s.status === 'invited') return `<span class="pill pill-invited"><span class="pill-dot"></span>Invited</span>`;
+    if (s.status === 'released') return `<span class="pill pill-released"><span class="pill-dot"></span>Released</span>`;
+    return `<span class="pill pill-open"><span class="pill-dot"></span>Open</span>`;
   }
 
-  // ---- Masthead ----
-  document.getElementById('event-name').textContent = eventInfo.name;
-  document.getElementById('event-meta').textContent = `${eventInfo.date} · ${eventInfo.venue} · ${eventInfo.organization}`;
-  document.getElementById('order-context').textContent =
-    `You sponsored 1 ${boughtPackage.name} · paid $${Number(boughtPackage.price).toLocaleString('en-US')}`;
-  document.getElementById('total-count').textContent = TOTAL_SEATS;
+  function renderRow(s, i) {
+    const released = s.status === 'released';
+    const cls = ['guest-row'];
+    if (released) cls.push('released-row');
 
-  // Live-update if organizer changes anything while portal is open
-  window.addEventListener('storage', (e) => {
-    if (e.key !== STORAGE_KEY) return;
-    const s = loadPackages();
-    if (s.event) {
-      document.getElementById('event-name').textContent = s.event.name;
-      document.getElementById('event-meta').textContent = `${s.event.date} · ${s.event.venue} · ${s.event.organization}`;
-    }
-  });
+    const seatCell = `<td class="td-seat"><span class="seat-n${released ? ' dim' : ''}">${s.n}</span></td>`;
 
-  // ---- Seat render ----
-  const grid = document.getElementById('seat-grid');
-
-  function renderSeats() {
-    grid.innerHTML = '';
-    seats.forEach(s => {
-      const el = document.createElement('button');
-      el.className = 'seat ' + s.status;
-      el.dataset.seat = s.n;
-      el.type = 'button';
-      el.innerHTML = seatInner(s);
-      grid.appendChild(el);
-    });
-    updateProgress();
-    updateInviteCount();
-  }
-
-  function seatInner(s) {
+    let guestCell;
     if (s.status === 'captain') {
-      return `
-        <div class="seat-head">Seat ${s.n} <span class="seat-tag you">You</span></div>
-        <div class="seat-name">${esc(s.name)}</div>
-        <div class="seat-meta">${esc(s.meal)}${s.diet ? `<span class="sep">·</span>${esc(s.diet)}` : ''}</div>
+      guestCell = `
+        <div class="guest-cell">
+          <div class="guest-name">${esc(s.name)}</div>
+          <div class="guest-email">${esc(s.email)}</div>
+          ${s.connection ? `<div class="connection-line">"${esc(s.connection)}"</div>` : ''}
+        </div>
       `;
-    }
-    if (s.status === 'confirmed') {
-      return `
-        <div class="seat-head">Seat ${s.n} <span class="seat-tag confirmed">Confirmed</span></div>
-        <div class="seat-name">${esc(s.name)}</div>
-        <div class="seat-meta">${esc(s.meal)}${s.diet ? `<span class="sep">·</span>${esc(s.diet)}` : ''}</div>
+    } else if (s.status === 'confirmed') {
+      guestCell = `
+        <div class="guest-cell">
+          <div class="guest-name">${esc(s.name)}</div>
+          <div class="guest-email">${esc(s.email)}</div>
+          ${s.connection ? `<div class="connection-line">"${esc(s.connection)}"</div>` : ''}
+        </div>
       `;
-    }
-    if (s.status === 'invited') {
-      return `
-        <div class="seat-head">Seat ${s.n} <span class="seat-tag invited">Invited</span></div>
-        <div class="seat-name">${esc(s.email)}</div>
-        <div class="seat-meta">Sent just now</div>
+    } else if (s.status === 'invited') {
+      guestCell = `
+        <div class="guest-cell">
+          <div class="guest-name">${esc(s.email)}</div>
+          <div class="guest-email">Sent ${esc(s.sentAt || 'just now')}</div>
+        </div>
       `;
+    } else if (s.status === 'released') {
+      guestCell = `<div class="guest-empty">Released — won't be filled</div>`;
+    } else {
+      guestCell = `<div class="guest-empty">Open seat — click to add</div>`;
     }
+
+    let actions;
+    if (s.status === 'open') {
+      actions = `<button class="icon-btn" title="Release seat" data-release="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8 M7 3l4 4-4 4"/></svg></button>`;
+    } else if (s.status === 'released') {
+      actions = `<button class="icon-btn" title="Reopen seat" data-reopen="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7l4-4 4 4 M7 3v8"/></svg></button>`;
+    } else if (s.status === 'invited') {
+      actions = `<button class="icon-btn" title="Edit" data-edit="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2l2.5 2.5-7 7H2.5V9z"/></svg></button>`;
+    } else {
+      actions = `<button class="icon-btn" title="Edit" data-edit="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2l2.5 2.5-7 7H2.5V9z"/></svg></button>`;
+    }
+
     return `
-      <div class="seat-head">Seat ${s.n} <span class="seat-tag open">Open</span></div>
-      <div class="seat-empty">+ Add a guest</div>
+      <tr class="${cls.join(' ')}" data-i="${i}">
+        ${seatCell}
+        <td>${guestCell}</td>
+        <td>${statusPill(s)}</td>
+        <td><div class="row-actions">${actions}</div></td>
+      </tr>
     `;
   }
 
-  function updateProgress() {
-    const filled = seats.filter(s => s.status === 'captain' || s.status === 'confirmed').length;
+  function render() {
+    tbody.innerHTML = seats.map((s, i) => renderRow(s, i)).join('');
+    updateStats();
+    updateInviteCount();
+  }
+
+  function updateStats() {
+    const confirmed = seats.filter(s => s.status === 'captain' || s.status === 'confirmed').length;
     const invited = seats.filter(s => s.status === 'invited').length;
     const open = seats.filter(s => s.status === 'open').length;
-
-    document.getElementById('filled-count').textContent = filled;
-    document.getElementById('progress-fill').style.width = (filled / TOTAL_SEATS * 100) + '%';
-
-    const sub = document.getElementById('stat-sub');
-    if (open === 0 && invited === 0) {
-      sub.innerHTML = `<strong>You're all set.</strong> Every seat is filled.`;
-    } else if (invited > 0) {
-      sub.innerHTML = `<strong>${invited} invited</strong>, waiting to respond · <strong>${open} open</strong> to go.`;
-    } else {
-      sub.innerHTML = `<strong>${open} seat${open === 1 ? '' : 's'}</strong> to go. Invite your guests below.`;
-    }
+    const active = seats.filter(s => s.status !== 'released').length;
+    $('stat-confirmed').textContent = confirmed;
+    $('stat-invited').textContent = invited;
+    $('stat-open').textContent = open;
+    $('stat-total').textContent = active;
+    const pct = active === 0 ? 0 : Math.round(confirmed / active * 100);
+    $('stat-filled-pct').textContent = pct;
+    $('progress-fill').style.width = pct + '%';
   }
 
-  // ---- Modal plumbing ----
-  function openModal(id) {
-    document.getElementById(id).classList.add('open');
-  }
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-  }
+  // ====================== MODAL PLUMBING ======================
+  function openModal(id) { $(id).classList.add('open'); }
   function closeAll() {
     document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
   }
 
   document.addEventListener('click', e => {
     const action = e.target.closest('[data-action]')?.dataset.action;
-    const close = e.target.closest('[data-close]');
-    if (close) { closeAll(); return; }
-    if (action === 'open-share') openModal('modal-share');
-    if (action === 'open-invite') { resetInviteForm(); openModal('modal-invite'); }
-    if (action === 'open-add') openGuestModalForSeat(nextOpenSeat());
+    if (e.target.closest('[data-close]')) { closeAll(); return; }
+    if (action === 'open-invite') { resetInviteForm(); openModal('modal-invite'); return; }
+    if (action === 'open-add') { openGuestEditor(seats.findIndex(s => s.status === 'open')); return; }
   });
-
-  // Click on backdrop closes
   document.querySelectorAll('.modal-backdrop').forEach(bd => {
     bd.addEventListener('click', e => { if (e.target === bd) closeAll(); });
   });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeAll();
+  // ====================== ROW INTERACTIONS ======================
+  tbody.addEventListener('click', e => {
+    const releaseI = e.target.closest('[data-release]')?.dataset.release;
+    const reopenI = e.target.closest('[data-reopen]')?.dataset.reopen;
+    const editI = e.target.closest('[data-edit]')?.dataset.edit;
+    if (releaseI != null) { releaseSeat(parseInt(releaseI, 10)); return; }
+    if (reopenI != null) { reopenSeat(parseInt(reopenI, 10)); return; }
+    if (editI != null) { openGuestEditor(parseInt(editI, 10)); return; }
+    const row = e.target.closest('.guest-row');
+    if (row) {
+      const i = parseInt(row.dataset.i, 10);
+      const s = seats[i];
+      if (!s) return;
+      if (s.status === 'open') openGuestEditor(i);
+      else openDetail(i);
+    }
   });
 
-  // ---- Click a seat → open guest modal for that seat ----
-  grid.addEventListener('click', e => {
-    const btn = e.target.closest('.seat');
-    if (!btn) return;
-    const n = parseInt(btn.dataset.seat, 10);
-    const s = seats.find(x => x.n === n);
+  function releaseSeat(i) {
+    const s = seats[i];
+    if (!s || s.status !== 'open') return;
+    s.status = 'released';
+    render();
+    showToast(`Seat ${s.n} released — it won't be filled`);
+  }
+  function reopenSeat(i) {
+    const s = seats[i];
+    if (!s || s.status !== 'released') return;
+    s.status = 'open';
+    render();
+    showToast(`Seat ${s.n} is open again`);
+  }
+
+  // ====================== GUEST EDITOR ======================
+  const gName = $('g-name');
+  const gEmail = $('g-email');
+  const gConnection = $('g-connection');
+  const gNote = $('g-note');
+  const saveBtn = $('save-guest');
+  const removeBtn = $('remove-guest');
+  let editingIndex = null;
+
+  function openGuestEditor(i) {
+    if (i == null || i < 0) return;
+    const s = seats[i];
     if (!s) return;
-    openGuestModalForSeat(n);
-  });
+    editingIndex = i;
+    $('guest-modal-seat').textContent = `seat ${s.n}`;
 
-  // ---- Guest modal (add / edit) ----
-  const gName = document.getElementById('g-name');
-  const gEmail = document.getElementById('g-email');
-  const gMeal = document.getElementById('g-meal');
-  const gDiet = document.getElementById('g-diet');
-  const saveGuestBtn = document.getElementById('save-guest');
-  const removeGuestBtn = document.getElementById('remove-guest');
-  const guestModalTitle = document.getElementById('guest-modal-title');
-  const guestModalSeat = document.getElementById('guest-modal-seat');
-
-  let editingSeat = null;
-
-  function openGuestModalForSeat(n) {
-    const s = seats.find(x => x.n === n);
-    if (!s) return;
-    editingSeat = n;
-
-    guestModalSeat.textContent = `seat ${n}`;
-
-    if (s.status === 'open') {
-      guestModalTitle.textContent = 'Add a guest';
+    if (s.status === 'open' || s.status === 'released') {
+      $('guest-modal-title').textContent = 'Add a guest';
       gName.value = '';
       gEmail.value = '';
-      gMeal.value = 'Chicken';
-      gDiet.value = '';
-      removeGuestBtn.style.display = 'none';
+      gConnection.value = '';
+      gNote.value = '';
+      removeBtn.style.display = 'none';
     } else if (s.status === 'captain') {
-      guestModalTitle.textContent = 'Edit your details';
-      gName.value = s.name;
-      gEmail.value = s.email;
-      gMeal.value = s.meal;
-      gDiet.value = s.diet || '';
-      removeGuestBtn.style.display = 'none'; // can't remove self here
-    } else if (s.status === 'confirmed') {
-      guestModalTitle.textContent = 'Edit guest';
-      gName.value = s.name;
-      gEmail.value = s.email;
-      gMeal.value = s.meal;
-      gDiet.value = s.diet || '';
-      removeGuestBtn.style.display = 'inline-flex';
+      $('guest-modal-title').textContent = 'Edit your details';
+      gName.value = s.name || '';
+      gEmail.value = s.email || '';
+      gConnection.value = s.connection || '';
+      gNote.value = s.note || '';
+      removeBtn.style.display = 'none';
     } else if (s.status === 'invited') {
-      guestModalTitle.textContent = 'Replace invite';
+      $('guest-modal-title').textContent = 'Replace invite';
       gName.value = '';
-      gEmail.value = s.email;
-      gMeal.value = 'Chicken';
-      gDiet.value = '';
-      removeGuestBtn.style.display = 'inline-flex';
+      gEmail.value = s.email || '';
+      gConnection.value = '';
+      gNote.value = '';
+      removeBtn.style.display = 'inline-flex';
+    } else {
+      $('guest-modal-title').textContent = 'Edit guest';
+      gName.value = s.name || '';
+      gEmail.value = s.email || '';
+      gConnection.value = s.connection || '';
+      gNote.value = s.note || '';
+      removeBtn.style.display = 'inline-flex';
     }
-
     validateGuest();
     openModal('modal-guest');
     setTimeout(() => gName.focus(), 50);
   }
 
   function validateGuest() {
-    const ok = gName.value.trim().length > 0 && gEmail.value.trim().length > 0;
-    saveGuestBtn.disabled = !ok;
+    saveBtn.disabled = !(gName.value.trim() && gEmail.value.trim());
   }
   [gName, gEmail].forEach(el => el.addEventListener('input', validateGuest));
 
-  saveGuestBtn.addEventListener('click', () => {
-    if (saveGuestBtn.disabled) return;
-    const s = seats.find(x => x.n === editingSeat);
+  saveBtn.addEventListener('click', () => {
+    if (saveBtn.disabled) return;
+    const s = seats[editingIndex];
     if (!s) return;
-
-    const wasOpen = s.status === 'open' || s.status === 'invited';
+    const wasOpen = s.status === 'open' || s.status === 'invited' || s.status === 'released';
     s.name = gName.value.trim();
     s.email = gEmail.value.trim();
-    s.meal = gMeal.value;
-    s.diet = gDiet.value.trim();
+    s.note = gNote.value.trim();
     if (s.status !== 'captain') s.status = 'confirmed';
-
-    renderSeats();
+    render();
     closeAll();
     showToast(wasOpen ? `${s.name} added to seat ${s.n}` : `${s.name} updated`);
   });
 
-  removeGuestBtn.addEventListener('click', () => {
-    const s = seats.find(x => x.n === editingSeat);
+  removeBtn.addEventListener('click', () => {
+    const s = seats[editingIndex];
     if (!s || s.status === 'captain') return;
     const name = s.name || s.email;
     s.status = 'open';
-    delete s.name;
-    delete s.email;
-    delete s.meal;
-    delete s.diet;
-    renderSeats();
+    delete s.name; delete s.email; delete s.connection; delete s.note;
+    render();
     closeAll();
     showToast(`${name} removed · seat ${s.n} is open again`);
   });
 
-  // ---- Share link ----
-  document.getElementById('copy-url').addEventListener('click', () => {
-    copyText(document.getElementById('share-url-input').value, 'Link copied');
-  });
-  document.getElementById('copy-msg').addEventListener('click', () => {
-    copyText(document.getElementById('share-msg').value, 'Message copied');
-  });
+  // ====================== DETAIL MODAL ======================
+  function openDetail(i) {
+    const s = seats[i];
+    if (!s) return;
+    editingIndex = i;
 
-  function copyText(text, toast) {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => showToast(toast));
+    $('detail-title').textContent = s.status === 'invited'
+      ? 'Invite pending'
+      : (s.name || s.email);
+    $('detail-sub').textContent = `Seat ${s.n} of your table`;
+
+    const body = $('detail-body');
+    let html = '';
+
+    if (s.status === 'invited') {
+      html = `
+        <div class="detail-section">
+          <h3>Invite</h3>
+          <div class="detail-row"><span class="dkey">Email</span><span class="dval">${esc(s.email)}</span></div>
+          <div class="detail-row"><span class="dkey">Sent</span><span class="dval">${esc(s.sentAt || 'just now')}</span></div>
+        </div>
+      `;
     } else {
-      const ta = document.createElement('textarea');
-      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-      document.body.appendChild(ta); ta.select();
-      try { document.execCommand('copy'); showToast(toast); } catch {}
-      ta.remove();
+      html += `
+        <div class="detail-section">
+          <h3>Guest</h3>
+          <div class="detail-row"><span class="dkey">Name</span><span class="dval">${esc(s.name || '')}</span></div>
+          <div class="detail-row"><span class="dkey">Email</span><span class="dval">${esc(s.email || '')}</span></div>
+          ${s.status === 'captain' ? `<div class="detail-row"><span class="dkey">Role</span><span class="dval">You — table captain</span></div>` : ''}
+        </div>
+      `;
+      if (s.connection) {
+        html += `
+          <div class="detail-section">
+            <h3>How they're connected to the cause</h3>
+            <div class="connection-quote">"${esc(s.connection)}"</div>
+          </div>
+        `;
+      }
+      html += `
+        <div class="detail-section">
+          <h3>Your private note</h3>
+          ${s.note ? `<div style="font-size: 13px; color: var(--body); line-height: 19px;">${esc(s.note)}</div>` : `<div style="font-size: 13px; color: var(--faint); font-style: italic;">No note yet — add one when you click Edit.</div>`}
+        </div>
+      `;
     }
+
+    body.innerHTML = html;
+    $('release-seat').style.display = (s.status === 'invited' || s.status === 'confirmed') ? 'inline-flex' : 'none';
+    openModal('modal-detail');
   }
 
-  // ---- Invite by email ----
-  const invEmails = document.getElementById('inv-emails');
-  const sendInvitesBtn = document.getElementById('send-invites');
+  $('detail-edit').addEventListener('click', () => {
+    closeAll();
+    openGuestEditor(editingIndex);
+  });
+
+  $('release-seat').addEventListener('click', () => {
+    const s = seats[editingIndex];
+    if (!s) return;
+    const name = s.name || s.email;
+    s.status = 'released';
+    delete s.name; delete s.email; delete s.connection; delete s.note;
+    render();
+    closeAll();
+    showToast(`Seat ${s.n} released${name ? ` (${name} removed)` : ''}`);
+  });
+
+  // ====================== INVITE BY EMAIL ======================
+  const invEmails = $('inv-emails');
+  const invMsg = $('inv-msg');
+  const sendBtn = $('send-invites');
+  const tabWrite = $('tab-write');
+  const tabPreview = $('tab-preview');
 
   function resetInviteForm() {
     invEmails.value = '';
-    document.getElementById('inv-msg').value = '';
+    invMsg.value = '';
+    syncPreview();
+    showInviteTab('write');
     updateInviteCount();
+  }
+
+  function showInviteTab(t) {
+    if (t === 'write') {
+      tabWrite.classList.add('active'); tabPreview.classList.remove('active');
+      $('invite-write').style.display = ''; $('invite-preview').style.display = 'none';
+    } else {
+      tabPreview.classList.add('active'); tabWrite.classList.remove('active');
+      $('invite-write').style.display = 'none'; $('invite-preview').style.display = '';
+      syncPreview();
+    }
+  }
+  tabWrite.addEventListener('click', () => showInviteTab('write'));
+  tabPreview.addEventListener('click', () => showInviteTab('preview'));
+
+  function syncPreview() {
+    const emails = parseEmails(invEmails.value);
+    $('preview-to').textContent = emails.length ? emails.slice(0, 3).join(', ') + (emails.length > 3 ? `, +${emails.length - 3} more` : '') : 'your guests';
+    const note = invMsg.value.trim();
+    if (note) {
+      $('preview-personal').textContent = note;
+      $('preview-personal-wrap').style.display = '';
+    } else {
+      $('preview-personal-wrap').style.display = 'none';
+    }
   }
 
   function parseEmails(text) {
@@ -1041,41 +1305,38 @@
   function updateInviteCount() {
     const open = seats.filter(s => s.status === 'open').length;
     const count = parseEmails(invEmails?.value || '').length;
-    const el = document.getElementById('invite-count');
-    if (el) {
-      if (count === 0) {
-        el.textContent = `0 invites · ${open} open seat${open === 1 ? '' : 's'}`;
-      } else if (count > open) {
-        el.innerHTML = `<span style="color: var(--danger-fg);">${count} emails, only ${open} open seat${open === 1 ? '' : 's'}</span>`;
-      } else {
-        el.textContent = `${count} invite${count === 1 ? '' : 's'} · ${open - count} will stay open`;
-      }
+    const el = $('invite-count');
+    if (count === 0) {
+      el.textContent = `0 invites · ${open} open seat${open === 1 ? '' : 's'}`;
+    } else if (count > open) {
+      el.innerHTML = `<span style="color: var(--danger-fg);">${count} emails, only ${open} open seat${open === 1 ? '' : 's'}</span>`;
+    } else {
+      el.textContent = `${count} invite${count === 1 ? '' : 's'} · ${open - count} will stay open`;
     }
-    if (sendInvitesBtn) {
-      sendInvitesBtn.disabled = count === 0 || count > open;
-    }
+    sendBtn.disabled = count === 0 || count > open;
   }
-  invEmails.addEventListener('input', updateInviteCount);
+  invEmails.addEventListener('input', () => { syncPreview(); updateInviteCount(); });
+  invMsg.addEventListener('input', syncPreview);
 
-  sendInvitesBtn.addEventListener('click', () => {
+  sendBtn.addEventListener('click', () => {
     const emails = parseEmails(invEmails.value);
     if (!emails.length) return;
     const openSeats = seats.filter(s => s.status === 'open');
     emails.slice(0, openSeats.length).forEach((email, i) => {
       openSeats[i].status = 'invited';
       openSeats[i].email = email;
+      openSeats[i].sentAt = 'just now';
     });
-    renderSeats();
+    render();
     closeAll();
     showToast(`${emails.length} invite${emails.length === 1 ? '' : 's'} sent`);
   });
 
-  // ---- Group name edit ----
-  const groupName = document.getElementById('group-name');
+  // ====================== GROUP NAME EDIT ======================
+  const groupName = $('group-name');
   const editHint = document.querySelector('.edit-hint');
   function focusGroupName() {
     groupName.focus();
-    // place caret at end
     const range = document.createRange();
     range.selectNodeContents(groupName);
     range.collapse(false);
@@ -1090,21 +1351,13 @@
     showToast(`Table renamed to "${groupName.textContent.trim()}"`);
   });
   groupName.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); groupName.blur(); }
-    if (e.key === 'Escape') { e.preventDefault(); groupName.blur(); }
+    if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); groupName.blur(); }
   });
 
-  // ---- Utils ----
-  function nextOpenSeat() {
-    const s = seats.find(x => x.status === 'open');
-    return s ? s.n : seats[1]?.n;
-  }
-  function esc(s) {
-    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
+  // ====================== TOAST ======================
   let toastTimer = null;
   function showToast(msg) {
-    const t = document.getElementById('toast');
+    const t = $('toast');
     t.textContent = msg;
     t.classList.add('show');
     clearTimeout(toastTimer);
@@ -1112,7 +1365,7 @@
   }
 
   // Init
-  renderSeats();
+  render();
 </script>
 
 </body>
