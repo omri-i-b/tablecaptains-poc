@@ -1058,6 +1058,13 @@
   let totalSeats = captainInfo.seats || 10;
 
   // ====================== SEAT STATE — well-populated ======================
+  // Each seat has a stable `id` so plus-ones can link to a primary by id (not by
+  // array index). That way we can splice out rows on remove without breaking
+  // other plus-one references.
+  let _nextId = 1;
+  function nextSeatId() { return 's' + (_nextId++); }
+  function withId(seat) { seat.id = nextSeatId(); return seat; }
+
   // Mix of confirmed, invited, open, released so the UX shows up.
   let seats = [
     {
@@ -1109,7 +1116,7 @@
     },
     { n: 9, status: 'open' },
     { n: 10, status: 'open' },
-  ];
+  ].map(withId);
 
   // ====================== HELPERS ======================
   const $ = id => document.getElementById(id);
@@ -1132,10 +1139,16 @@
     return `<span class="pill pill-open"><span class="pill-dot"></span>Open</span>`;
   }
 
-  function primaryName(idx) {
-    const p = seats[idx];
+  function primaryNameById(id) {
+    const p = seats.find(x => x.id === id);
     if (!p) return 'a guest';
     return p.name || p.email || 'a guest';
+  }
+  function indexOfId(id) {
+    return seats.findIndex(x => x.id === id);
+  }
+  function renumber() {
+    seats.forEach((s, i) => { s.n = i + 1; });
   }
 
   function renderRow(s, i) {
@@ -1171,7 +1184,7 @@
         </div>
       `;
     } else if (s.status === 'plus-one') {
-      const linkedName = primaryName(s.linkedTo);
+      const linkedName = primaryNameById(s.linkedToId);
       guestCell = `
         <div class="guest-cell">
           <div class="guest-name">Plus-one of ${esc(linkedName)}</div>
@@ -1370,7 +1383,7 @@
     s.connection = gConnection.value.trim();
     s.note = gNote.value.trim();
     if (s.status !== 'captain') {
-      delete s.linkedTo;
+      delete s.linkedToId;
       s.status = 'confirmed';
     }
 
@@ -1390,17 +1403,19 @@
   });
 
   function addPlusOnesAfter(primaryIdx, count) {
+    const primary = seats[primaryIdx];
+    if (!primary) return 0;
+    const primaryId = primary.id;
     let added = 0;
     for (let i = 0; i < count; i++) {
       // Find next open seat to convert into a plus-one
       const openIdx = seats.findIndex(x => x.status === 'open');
       if (openIdx === -1) {
-        // Need to extend the table — add a new seat
-        const nextN = (seats[seats.length - 1]?.n || 0) + 1;
-        seats.push({ n: nextN, status: 'plus-one', linkedTo: primaryIdx });
+        // Extend the table with a fresh plus-one seat
+        seats.push(withId({ n: seats.length + 1, status: 'plus-one', linkedToId: primaryId }));
         added += 1;
       } else {
-        seats[openIdx] = { n: seats[openIdx].n, status: 'plus-one', linkedTo: primaryIdx };
+        seats[openIdx] = withId({ n: seats[openIdx].n, status: 'plus-one', linkedToId: primaryId });
         added += 1;
       }
     }
@@ -1410,19 +1425,29 @@
   removeBtn.addEventListener('click', () => {
     const s = seats[editingIndex];
     if (!s || s.status === 'captain') return;
-    const name = s.name || s.email || `Plus-one`;
-    // Reset this seat to open
+    const name = s.name || s.email || 'Plus-one';
+    const primaryId = s.id;
     const seatN = s.n;
-    seats[editingIndex] = { n: seatN, status: 'open' };
-    // Also reset any plus-one seats linked to this guest back to open
-    seats.forEach((x, i) => {
-      if (x.status === 'plus-one' && x.linkedTo === editingIndex) {
-        seats[i] = { n: x.n, status: 'open' };
-      }
-    });
+
+    // Drop any plus-one rows that were tied to this guest — the +1 was a
+    // courtesy extended to them specifically, so it goes when they go.
+    const droppedPlusOnes = seats.filter(x => x.status === 'plus-one' && x.linkedToId === primaryId).length;
+    seats = seats.filter(x => !(x.status === 'plus-one' && x.linkedToId === primaryId));
+
+    // Reset the primary seat to Open in place (don't delete the row).
+    const newPrimaryIdx = seats.findIndex(x => x.id === primaryId);
+    if (newPrimaryIdx !== -1) {
+      seats[newPrimaryIdx] = { id: primaryId, n: seats[newPrimaryIdx].n, status: 'open' };
+    }
+    renumber();
     render();
     closeAll();
-    showToast(`${name} removed · seat ${seatN} is open again`);
+
+    if (droppedPlusOnes > 0) {
+      showToast(`${name} removed · seat ${seatN} open again, ${droppedPlusOnes} plus-one${droppedPlusOnes === 1 ? '' : 's'} cleared`);
+    } else {
+      showToast(`${name} removed · seat ${seatN} is open again`);
+    }
   });
 
   // ====================== DETAIL MODAL ======================
@@ -1487,7 +1512,7 @@
     const s = seats[editingIndex];
     if (!s) return;
     const seatN = s.n;
-    seats[editingIndex] = { n: seatN, status: 'released' };
+    seats[editingIndex] = { id: s.id, n: seatN, status: 'released' };
     render();
     closeAll();
     showToast(`Seat ${seatN} released — won't be filled`);
@@ -1580,7 +1605,9 @@
     let cursor = 0;
     emails.forEach(email => {
       const primaryIdx = openIndices[cursor++];
+      const primaryId = seats[primaryIdx].id;
       seats[primaryIdx] = {
+        id: primaryId,
         n: seats[primaryIdx].n,
         status: 'invited',
         email: email,
@@ -1590,9 +1617,10 @@
       for (let p = 0; p < invPlusOnes; p++) {
         const plusIdx = openIndices[cursor++];
         seats[plusIdx] = {
+          id: seats[plusIdx].id,
           n: seats[plusIdx].n,
           status: 'plus-one',
-          linkedTo: primaryIdx,
+          linkedToId: primaryId,
         };
       }
     });
