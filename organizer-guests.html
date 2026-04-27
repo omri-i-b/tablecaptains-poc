@@ -686,6 +686,102 @@
     font-size: 13px;
     background: var(--card);
   }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: var(--brand-veil);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms linear;
+  }
+  .modal-backdrop.open {
+    opacity: 1; pointer-events: auto;
+  }
+  .modal {
+    width: 480px; max-width: 100%;
+    max-height: calc(100vh - 40px);
+    background: var(--card);
+    border-radius: 12px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transform: translateY(-6px);
+    transition: transform 150ms cubic-bezier(.2, .8, .2, 1);
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px;
+  }
+  .modal-head h2 { font-size: 17px; font-weight: 500; color: var(--ink); margin: 0; }
+  .modal-head p { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: var(--r-full);
+    color: var(--muted);
+    font-size: 18px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; border: 0;
+  }
+  .modal-close:hover { background: var(--brand-soft); color: var(--ink); }
+  .modal-body { padding: 20px 22px; overflow-y: auto; }
+  .modal-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--divider);
+    display: flex; justify-content: flex-end; align-items: center;
+    gap: 8px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field + .field { margin-top: 14px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .input, .textarea, .select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--card);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 20px;
+    outline: none;
+  }
+  .input::placeholder, .textarea::placeholder { color: var(--faint); }
+  .input:focus, .select:focus, .textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(55, 32, 86, 0.15);
+  }
+  .textarea { resize: vertical; min-height: 60px; }
+  .select {
+    appearance: none; -webkit-appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%235e5972' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .field-hint { font-size: 12px; color: var(--muted); margin-top: -2px; }
+
+  /* Group request notice */
+  .request-notice {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px;
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    border-radius: var(--r-pill);
+    font-size: 11px; font-weight: 500;
+    margin-left: 8px;
+  }
+  .request-notice button {
+    background: transparent; border: 0; color: var(--warning-fg);
+    font-size: 10px; padding: 0; cursor: pointer;
+    text-decoration: underline;
+  }
 </style>
 </head>
 <body>
@@ -767,9 +863,8 @@
           </div>
         </div>
         <div class="page-head-right">
-          <button class="btn btn-secondary">+ Add guest</button>
-          <button class="btn btn-secondary">Export</button>
-          <button class="btn btn-primary">Email guests</button>
+          <button class="btn btn-secondary" id="open-add-table">+ New table</button>
+          <button class="btn btn-primary" id="open-add-guest">+ Add guest</button>
         </div>
       </div>
 
@@ -860,6 +955,91 @@
 </aside>
 
 
+<!-- ADD GUEST MODAL -->
+<div class="modal-backdrop" id="modal-add-guest" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Add a guest</h2>
+        <p>Place a guest at any captain's table or at a direct seat.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="ag-table">Place at table</label>
+        <select class="select" id="ag-table"></select>
+        <div class="field-hint" id="ag-table-hint">Pick which captain's table they belong to.</div>
+      </div>
+      <div class="field-grid-2">
+        <div class="field" style="margin-top: 0;">
+          <label for="ag-name">Full name</label>
+          <input class="input" id="ag-name" placeholder="Jordan Chen" />
+        </div>
+        <div class="field" style="margin-top: 0;">
+          <label for="ag-email">Email</label>
+          <input class="input" id="ag-email" type="email" placeholder="jordan@acme.co" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="ag-meal">Meal preference</label>
+        <select class="select" id="ag-meal">
+          <option>Chicken</option>
+          <option>Beef</option>
+          <option>Vegetarian</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="ag-connection">How they're connected to the cause <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
+        <textarea class="textarea" id="ag-connection" placeholder="A few words on how they're connected — useful for table seating decisions."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="ag-save" disabled>Add guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TABLE MODAL -->
+<div class="modal-backdrop" id="modal-add-table" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Add a new table</h2>
+        <p>Set up a table for a captain you're adding manually.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="at-name">Table name</label>
+        <input class="input" id="at-name" placeholder="Smith Family · or company name" />
+        <div class="field-hint">Captains can rename this themselves later.</div>
+      </div>
+      <div class="field-grid-2">
+        <div class="field" style="margin-top: 0;">
+          <label for="at-captain-name">Captain name</label>
+          <input class="input" id="at-captain-name" placeholder="Pat Smith" />
+        </div>
+        <div class="field" style="margin-top: 0;">
+          <label for="at-captain-email">Captain email</label>
+          <input class="input" id="at-captain-email" type="email" placeholder="pat@example.com" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="at-seats">Number of seats</label>
+        <input class="input" id="at-seats" type="number" min="1" max="30" value="10" />
+        <div class="field-hint">The captain can release or request more seats from their portal.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="at-save" disabled>Create table</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 
@@ -873,6 +1053,7 @@
     {
       id: 'acme', name: 'Acme Co.',
       captain: { name: 'Maya Rodriguez', email: 'maya@acme.co', initials: 'MR' },
+      seatRequest: { amount: 4, note: 'A few colleagues asked to come — happy to cover any extra seats.', requestedAt: 'Apr 23' },
       seats: [
         { n: 1, role: 'captain', status: 'confirmed', name: 'Maya Rodriguez', email: 'maya@acme.co', meal: 'Vegetarian', source: 'Captain · self', joined: 'Reserved Apr 12', connection: "Acme matched a donation to the Foundation's scholarship program last year — I went to the ribbon-cutting and want to bring our team to see what we helped build." },
         { n: 2, role: 'guest', status: 'confirmed', name: 'Jordan Chen', email: 'jordan@acme.co', meal: 'Chicken', source: 'Captain · manual add', joined: 'Added Apr 14', connection: 'Maya and I were on the original Acme founding team — we both went to the Foundation gala in 2019 when this was just an idea on a napkin.' },
@@ -1114,6 +1295,9 @@
       const barClass = open === 0 && invited === 0 ? 'full' : (open > total / 2 ? 'warn' : '');
       const progressText = `${confirmed} of ${total}${invited ? ` · ${invited} invited` : ''}${open ? ` · ${open} open` : ''}${released ? ` · ${released} released` : ''}`;
 
+      const reqNotice = t.seatRequest
+        ? `<span class="request-notice" title="${esc(t.seatRequest.note || '')}">+${t.seatRequest.amount} requested ${esc(t.seatRequest.requestedAt)} <button data-approve="${t.id}">Approve</button> <button data-deny="${t.id}">Deny</button></span>`
+        : '';
       rows.push(`
         <tr class="group-header" data-group="${t.id}">
           <td colspan="3">
@@ -1123,6 +1307,7 @@
                 <span class="captain-avatar">${esc(t.captain.initials)}</span>
                 <span>Captain: ${esc(t.captain.name)}</span>
               </span>
+              ${reqNotice}
             </div>
           </td>
           <td colspan="2">
@@ -1333,6 +1518,165 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
   document.getElementById('drawer-email').addEventListener('click', () => showToast('Email composer opened'));
   document.getElementById('drawer-edit').addEventListener('click', () => showToast('Edit mode coming in full build'));
+
+  // =====================================================
+  // SEAT REQUEST APPROVE / DENY
+  // =====================================================
+  tbody.addEventListener('click', e => {
+    const approveId = e.target.closest('[data-approve]')?.dataset.approve;
+    const denyId = e.target.closest('[data-deny]')?.dataset.deny;
+    if (approveId) {
+      e.stopPropagation();
+      const t = TABLES.find(x => x.id === approveId);
+      if (!t || !t.seatRequest) return;
+      const amount = t.seatRequest.amount;
+      const startN = t.seats[t.seats.length - 1].n + 1;
+      for (let i = 0; i < amount; i++) {
+        t.seats.push({ n: startN + i, role: 'guest', status: 'open' });
+      }
+      delete t.seatRequest;
+      render();
+      showToast(`Approved +${amount} seats for ${t.name}`);
+    }
+    if (denyId) {
+      e.stopPropagation();
+      const t = TABLES.find(x => x.id === denyId);
+      if (!t) return;
+      delete t.seatRequest;
+      render();
+      showToast(`Request from ${t.captain.name} declined`);
+    }
+  });
+
+  // =====================================================
+  // ADD GUEST MODAL
+  // =====================================================
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeAll() {
+    document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
+  }
+  document.querySelectorAll('.modal-backdrop').forEach(bd => {
+    bd.addEventListener('click', e => { if (e.target === bd) closeAll(); });
+    bd.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+  const agSelect = document.getElementById('ag-table');
+  const agName = document.getElementById('ag-name');
+  const agEmail = document.getElementById('ag-email');
+  const agMeal = document.getElementById('ag-meal');
+  const agConn = document.getElementById('ag-connection');
+  const agSave = document.getElementById('ag-save');
+  const agHint = document.getElementById('ag-table-hint');
+
+  function refreshAgTables() {
+    agSelect.innerHTML = TABLES.map(t => {
+      const open = t.seats.filter(s => s.status === 'open').length;
+      const released = t.seats.filter(s => s.status === 'released').length;
+      const label = `${t.name} · ${t.captain.name} (${open} open seat${open === 1 ? '' : 's'}${released ? `, ${released} released` : ''})`;
+      return `<option value="${esc(t.id)}">${esc(label)}</option>`;
+    }).join('');
+    updateAgHint();
+  }
+  function updateAgHint() {
+    const t = TABLES.find(x => x.id === agSelect.value);
+    if (!t) { agHint.textContent = ''; agSave.disabled = true; return; }
+    const open = t.seats.filter(s => s.status === 'open').length;
+    if (open === 0) {
+      agHint.innerHTML = `<span style="color: var(--danger-fg);">No open seats — captain needs to release or request more.</span>`;
+      agSave.disabled = true;
+    } else {
+      agHint.textContent = `Will fill the next open seat at ${t.name}.`;
+      validateAg();
+    }
+  }
+  function validateAg() {
+    const t = TABLES.find(x => x.id === agSelect.value);
+    if (!t || !t.seats.some(s => s.status === 'open')) { agSave.disabled = true; return; }
+    agSave.disabled = !(agName.value.trim() && agEmail.value.trim());
+  }
+  agSelect.addEventListener('change', updateAgHint);
+  [agName, agEmail].forEach(el => el.addEventListener('input', validateAg));
+
+  document.getElementById('open-add-guest').addEventListener('click', () => {
+    refreshAgTables();
+    agName.value = ''; agEmail.value = ''; agConn.value = ''; agMeal.value = 'Chicken';
+    agSelect.value = TABLES[0]?.id || '';
+    updateAgHint();
+    openModal('modal-add-guest');
+    setTimeout(() => agName.focus(), 50);
+  });
+
+  agSave.addEventListener('click', () => {
+    if (agSave.disabled) return;
+    const t = TABLES.find(x => x.id === agSelect.value);
+    if (!t) return;
+    const openIdx = t.seats.findIndex(s => s.status === 'open');
+    if (openIdx === -1) return;
+    t.seats[openIdx] = {
+      n: t.seats[openIdx].n,
+      role: 'guest',
+      status: 'confirmed',
+      name: agName.value.trim(),
+      email: agEmail.value.trim(),
+      meal: agMeal.value,
+      connection: agConn.value.trim(),
+      source: 'Organizer · manual add',
+      joined: 'Just added',
+    };
+    render();
+    closeAll();
+    showToast(`${agName.value.trim()} added to ${t.name}`);
+  });
+
+  // =====================================================
+  // ADD TABLE MODAL
+  // =====================================================
+  const atName = document.getElementById('at-name');
+  const atCapName = document.getElementById('at-captain-name');
+  const atCapEmail = document.getElementById('at-captain-email');
+  const atSeats = document.getElementById('at-seats');
+  const atSave = document.getElementById('at-save');
+
+  function validateAt() {
+    atSave.disabled = !(atName.value.trim() && atCapName.value.trim() && atCapEmail.value.trim() && parseInt(atSeats.value, 10) >= 1);
+  }
+  [atName, atCapName, atCapEmail, atSeats].forEach(el => el.addEventListener('input', validateAt));
+
+  function initialsFor(name) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  document.getElementById('open-add-table').addEventListener('click', () => {
+    atName.value = ''; atCapName.value = ''; atCapEmail.value = ''; atSeats.value = '10';
+    validateAt();
+    openModal('modal-add-table');
+    setTimeout(() => atName.focus(), 50);
+  });
+
+  atSave.addEventListener('click', () => {
+    if (atSave.disabled) return;
+    const seatCount = Math.max(1, Math.min(30, parseInt(atSeats.value, 10) || 10));
+    const id = atName.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'table-' + Date.now();
+    const captain = {
+      name: atCapName.value.trim(),
+      email: atCapEmail.value.trim(),
+      initials: initialsFor(atCapName.value),
+    };
+    const seats = [];
+    seats.push({ n: 1, role: 'captain', status: 'confirmed', name: captain.name, email: captain.email, meal: 'Chicken', source: 'Organizer · added directly', joined: 'Just added' });
+    for (let i = 2; i <= seatCount; i++) seats.push({ n: i, role: 'guest', status: 'open' });
+    TABLES.push({ id, name: atName.value.trim(), captain, seats });
+    view = 'tables';
+    document.getElementById('view-tables').classList.add('active');
+    document.getElementById('view-flat').classList.remove('active');
+    render();
+    closeAll();
+    showToast(`Added "${atName.value.trim()}" with ${seatCount} seats`);
+  });
 
   // =====================================================
   // TOAST

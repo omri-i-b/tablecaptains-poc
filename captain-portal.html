@@ -35,6 +35,8 @@
     --invited-bg:      #fef4d8;
     --released-fg:     #5e5972;
     --released-bg:     #ededf1;
+    --plusone-fg:      #45286b;
+    --plusone-bg:      #ebecf6;
     --danger-fg:       #b11a2b;
     --danger-bg:       #fde3e7;
 
@@ -231,9 +233,10 @@
   /* ========== SEATS LIST ========== */
   .seats-section { display: flex; flex-direction: column; gap: 12px; }
   .seats-head {
-    display: flex; align-items: baseline; justify-content: space-between;
+    display: flex; align-items: flex-end; justify-content: space-between;
     gap: 12px;
   }
+  .seats-head > div { display: flex; flex-direction: column; gap: 4px; }
   .seats-head h2 {
     font-size: 16px; font-weight: 500;
     margin: 0;
@@ -338,8 +341,76 @@
   .pill-open .pill-dot { background: var(--faint); }
   .pill-released { background: var(--released-bg); color: var(--released-fg); }
   .pill-released .pill-dot { background: var(--faint); }
+  .pill-plusone { background: var(--plusone-bg); color: var(--plusone-fg); }
+  .pill-plusone .pill-dot { background: var(--plusone-fg); }
   .pill-you { background: var(--brand); color: white; }
   .pill-you .pill-dot { background: white; }
+
+  /* Pending seat request banner */
+  .request-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--invited-bg);
+    border: 1px solid #f0d8a4;
+    border-radius: var(--r-md);
+    color: var(--invited-fg);
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .request-banner svg { flex-shrink: 0; }
+  .request-banner strong { font-weight: 500; }
+  .request-banner .cancel-req {
+    margin-left: auto;
+    color: var(--invited-fg);
+    font-size: 12px;
+    background: transparent;
+    border: 0;
+    padding: 4px 8px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+  .request-banner .cancel-req:hover { background: rgba(0,0,0,0.06); }
+
+  /* Mini stepper in modals */
+  .mini-stepper {
+    display: inline-flex;
+    align-items: stretch;
+    height: 34px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--card);
+    overflow: hidden;
+  }
+  .mini-stepper button {
+    width: 32px;
+    background: var(--card);
+    border: none;
+    color: var(--ink);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .mini-stepper button:hover { background: var(--brand-soft); }
+  .mini-stepper button:disabled { color: var(--faint); cursor: not-allowed; background: var(--card); }
+  .mini-stepper .count {
+    min-width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+  }
+  .stepper-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    background: var(--brand-soft-2);
+    border-radius: var(--r-md);
+  }
+  .stepper-copy { flex: 1; }
+  .stepper-copy strong { display: block; font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .stepper-copy span { display: block; font-size: 12px; color: var(--muted); line-height: 16px; }
 
   .row-actions {
     display: flex; justify-content: flex-end; gap: 4px;
@@ -714,11 +785,21 @@
     </button>
   </section>
 
+  <!-- PENDING REQUEST BANNER -->
+  <div id="request-banner" class="request-banner" style="display: none;">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>
+    <span><strong>Pending: <span id="request-amount">+0 seats</span> requested from organizer.</strong> <span id="request-when"></span></span>
+    <button class="cancel-req" id="cancel-request">Cancel request</button>
+  </div>
+
   <!-- GUESTS LIST -->
   <section class="seats-section">
     <div class="seats-head">
-      <h2>Your guests</h2>
-      <p>Click any row for details. Release seats you don't plan to fill.</p>
+      <div>
+        <h2>Your guests</h2>
+        <p>Click any row for details. Release seats you don't plan to fill.</p>
+      </div>
+      <button class="btn btn-secondary btn-sm" data-action="open-request">+ Request more seats</button>
     </div>
 
     <div class="table-wrap">
@@ -765,12 +846,26 @@
         <input class="input" id="g-email" type="email" placeholder="jordan@example.com" autocomplete="off" />
       </div>
       <div class="field">
-        <label for="g-connection">How they're connected to the cause <span style="color: var(--muted); font-weight: 400;">(from their RSVP)</span></label>
-        <textarea class="textarea" id="g-connection" placeholder="Their note when they signed up — read-only here." readonly></textarea>
+        <label for="g-connection">How they're connected to the cause <span id="g-connection-hint" style="color: var(--muted); font-weight: 400;">(from their RSVP — fill in for them if you like)</span></label>
+        <textarea class="textarea" id="g-connection" placeholder="A few words on how they're connected — fundraising context for the room."></textarea>
       </div>
       <div class="field">
         <label for="g-note">Your private note <span style="color: var(--muted); font-weight: 400;">(only you see this)</span></label>
         <textarea class="textarea" id="g-note" placeholder="College roommate. Sat next to Maya last year. Knows the ED."></textarea>
+      </div>
+      <div class="field" id="g-plusone-row">
+        <label>Can they bring guests of their own?</label>
+        <div class="stepper-row">
+          <span class="stepper-copy">
+            <strong><span id="g-plusone-count">0</span> additional seats</strong>
+            <span>Each plus-one takes a seat from your table. Default is 0 — they come solo.</span>
+          </span>
+          <div class="mini-stepper">
+            <button type="button" id="g-plusone-minus" aria-label="Fewer">−</button>
+            <span class="count" id="g-plusone-stepper">0</span>
+            <button type="button" id="g-plusone-plus" aria-label="More">+</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="modal-foot">
@@ -778,6 +873,46 @@
       <div style="display: flex; gap: 8px; margin-left: auto;">
         <button class="btn btn-ghost" data-close>Cancel</button>
         <button class="btn btn-primary" id="save-guest" disabled>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== REQUEST MORE SEATS MODAL ========== -->
+<div class="modal-backdrop" id="modal-request" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Request more seats</h2>
+        <p>Ask the organizer to expand your table. They'll review and approve.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>How many additional seats?</label>
+        <div class="stepper-row">
+          <span class="stepper-copy">
+            <strong><span id="req-count">2</span> more seats</strong>
+            <span>Your current table has <span id="req-current">10</span> active seats.</span>
+          </span>
+          <div class="mini-stepper">
+            <button type="button" id="req-minus" aria-label="Fewer">−</button>
+            <span class="count" id="req-stepper">2</span>
+            <button type="button" id="req-plus" aria-label="More">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="req-note">Note for organizer <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
+        <textarea class="textarea" id="req-note" placeholder="A few colleagues asked to come — happy to cover the extra seats."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div style="display: flex; gap: 8px; margin-left: auto;">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="send-request">Send request</button>
       </div>
     </div>
   </div>
@@ -805,6 +940,20 @@
           <label for="inv-emails">Email addresses</label>
           <textarea class="textarea" id="inv-emails" rows="4" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
           <div class="field-hint">One per line, or separated by commas.</div>
+        </div>
+        <div class="field">
+          <label>Can each invitee bring guests?</label>
+          <div class="stepper-row">
+            <span class="stepper-copy">
+              <strong><span id="inv-plusone-count">0</span> plus-ones per invite</strong>
+              <span>Default is 0 — they come solo. Add 1+ to let each person bring a guest.</span>
+            </span>
+            <div class="mini-stepper">
+              <button type="button" id="inv-plusone-minus" aria-label="Fewer">−</button>
+              <span class="count" id="inv-plusone-stepper">0</span>
+              <button type="button" id="inv-plusone-plus" aria-label="More">+</button>
+            </div>
+          </div>
         </div>
         <div class="field">
           <label for="inv-msg">Personal note <span style="color: var(--muted); font-weight: 400;">(optional — appears at the top of the email)</span></label>
@@ -979,7 +1128,14 @@
     if (s.status === 'confirmed') return `<span class="pill pill-success"><span class="pill-dot"></span>Confirmed</span>`;
     if (s.status === 'invited') return `<span class="pill pill-invited"><span class="pill-dot"></span>Invited</span>`;
     if (s.status === 'released') return `<span class="pill pill-released"><span class="pill-dot"></span>Released</span>`;
+    if (s.status === 'plus-one') return `<span class="pill pill-plusone"><span class="pill-dot"></span>Plus-one</span>`;
     return `<span class="pill pill-open"><span class="pill-dot"></span>Open</span>`;
+  }
+
+  function primaryName(idx) {
+    const p = seats[idx];
+    if (!p) return 'a guest';
+    return p.name || p.email || 'a guest';
   }
 
   function renderRow(s, i) {
@@ -1007,10 +1163,19 @@
         </div>
       `;
     } else if (s.status === 'invited') {
+      const plusNote = s.plusOnes ? ` · +${s.plusOnes} plus-one${s.plusOnes === 1 ? '' : 's'}` : '';
       guestCell = `
         <div class="guest-cell">
           <div class="guest-name">${esc(s.email)}</div>
-          <div class="guest-email">Sent ${esc(s.sentAt || 'just now')}</div>
+          <div class="guest-email">Sent ${esc(s.sentAt || 'just now')}${plusNote}</div>
+        </div>
+      `;
+    } else if (s.status === 'plus-one') {
+      const linkedName = primaryName(s.linkedTo);
+      guestCell = `
+        <div class="guest-cell">
+          <div class="guest-name">Plus-one of ${esc(linkedName)}</div>
+          <div class="guest-email">Awaiting name from ${esc(linkedName)}</div>
         </div>
       `;
     } else if (s.status === 'released') {
@@ -1024,7 +1189,7 @@
       actions = `<button class="icon-btn" title="Release seat" data-release="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8 M7 3l4 4-4 4"/></svg></button>`;
     } else if (s.status === 'released') {
       actions = `<button class="icon-btn" title="Reopen seat" data-reopen="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7l4-4 4 4 M7 3v8"/></svg></button>`;
-    } else if (s.status === 'invited') {
+    } else if (s.status === 'plus-one') {
       actions = `<button class="icon-btn" title="Edit" data-edit="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2l2.5 2.5-7 7H2.5V9z"/></svg></button>`;
     } else {
       actions = `<button class="icon-btn" title="Edit" data-edit="${i}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2l2.5 2.5-7 7H2.5V9z"/></svg></button>`;
@@ -1071,6 +1236,7 @@
     if (e.target.closest('[data-close]')) { closeAll(); return; }
     if (action === 'open-invite') { resetInviteForm(); openModal('modal-invite'); return; }
     if (action === 'open-add') { openGuestEditor(seats.findIndex(s => s.status === 'open')); return; }
+    if (action === 'open-request') { openRequestModal(); return; }
   });
   document.querySelectorAll('.modal-backdrop').forEach(bd => {
     bd.addEventListener('click', e => { if (e.target === bd) closeAll(); });
@@ -1115,9 +1281,23 @@
   const gEmail = $('g-email');
   const gConnection = $('g-connection');
   const gNote = $('g-note');
+  const gPlusOneRow = $('g-plusone-row');
+  const gPlusOneStepper = $('g-plusone-stepper');
+  const gPlusOneCount = $('g-plusone-count');
   const saveBtn = $('save-guest');
   const removeBtn = $('remove-guest');
   let editingIndex = null;
+  let editPlusOnes = 0;
+
+  function setEditPlusOnes(n) {
+    editPlusOnes = Math.max(0, Math.min(5, n));
+    gPlusOneStepper.textContent = editPlusOnes;
+    gPlusOneCount.textContent = editPlusOnes;
+    $('g-plusone-minus').disabled = editPlusOnes <= 0;
+    $('g-plusone-plus').disabled = editPlusOnes >= 5;
+  }
+  $('g-plusone-minus').addEventListener('click', () => setEditPlusOnes(editPlusOnes - 1));
+  $('g-plusone-plus').addEventListener('click',  () => setEditPlusOnes(editPlusOnes + 1));
 
   function openGuestEditor(i) {
     if (i == null || i < 0) return;
@@ -1125,6 +1305,8 @@
     if (!s) return;
     editingIndex = i;
     $('guest-modal-seat').textContent = `seat ${s.n}`;
+    setEditPlusOnes(0);
+    gPlusOneRow.style.display = '';
 
     if (s.status === 'open' || s.status === 'released') {
       $('guest-modal-title').textContent = 'Add a guest';
@@ -1140,6 +1322,7 @@
       gConnection.value = s.connection || '';
       gNote.value = s.note || '';
       removeBtn.style.display = 'none';
+      gPlusOneRow.style.display = 'none';
     } else if (s.status === 'invited') {
       $('guest-modal-title').textContent = 'Replace invite';
       gName.value = '';
@@ -1147,6 +1330,15 @@
       gConnection.value = '';
       gNote.value = '';
       removeBtn.style.display = 'inline-flex';
+      gPlusOneRow.style.display = 'none';
+    } else if (s.status === 'plus-one') {
+      $('guest-modal-title').textContent = 'Fill in plus-one';
+      gName.value = '';
+      gEmail.value = '';
+      gConnection.value = '';
+      gNote.value = '';
+      removeBtn.style.display = 'inline-flex';
+      gPlusOneRow.style.display = 'none';
     } else {
       $('guest-modal-title').textContent = 'Edit guest';
       gName.value = s.name || '';
@@ -1154,6 +1346,8 @@
       gConnection.value = s.connection || '';
       gNote.value = s.note || '';
       removeBtn.style.display = 'inline-flex';
+      // editing existing — no extra plus-ones from here
+      gPlusOneRow.style.display = 'none';
     }
     validateGuest();
     openModal('modal-guest');
@@ -1169,25 +1363,66 @@
     if (saveBtn.disabled) return;
     const s = seats[editingIndex];
     if (!s) return;
-    const wasOpen = s.status === 'open' || s.status === 'invited' || s.status === 'released';
+    const wasOpenOrInvite = s.status === 'open' || s.status === 'invited' || s.status === 'released' || s.status === 'plus-one';
+    const isFreshAdd = s.status === 'open' || s.status === 'released';
     s.name = gName.value.trim();
     s.email = gEmail.value.trim();
+    s.connection = gConnection.value.trim();
     s.note = gNote.value.trim();
-    if (s.status !== 'captain') s.status = 'confirmed';
+    if (s.status !== 'captain') {
+      delete s.linkedTo;
+      s.status = 'confirmed';
+    }
+
+    // Add plus-one seats if requested
+    let added = 0;
+    if (isFreshAdd && editPlusOnes > 0) {
+      added = addPlusOnesAfter(editingIndex, editPlusOnes);
+    }
+
     render();
     closeAll();
-    showToast(wasOpen ? `${s.name} added to seat ${s.n}` : `${s.name} updated`);
+    if (added > 0) {
+      showToast(`${s.name} added with ${added} plus-one${added === 1 ? '' : 's'}`);
+    } else {
+      showToast(wasOpenOrInvite ? `${s.name} added to seat ${s.n}` : `${s.name} updated`);
+    }
   });
+
+  function addPlusOnesAfter(primaryIdx, count) {
+    let added = 0;
+    for (let i = 0; i < count; i++) {
+      // Find next open seat to convert into a plus-one
+      const openIdx = seats.findIndex(x => x.status === 'open');
+      if (openIdx === -1) {
+        // Need to extend the table — add a new seat
+        const nextN = (seats[seats.length - 1]?.n || 0) + 1;
+        seats.push({ n: nextN, status: 'plus-one', linkedTo: primaryIdx });
+        added += 1;
+      } else {
+        seats[openIdx] = { n: seats[openIdx].n, status: 'plus-one', linkedTo: primaryIdx };
+        added += 1;
+      }
+    }
+    return added;
+  }
 
   removeBtn.addEventListener('click', () => {
     const s = seats[editingIndex];
     if (!s || s.status === 'captain') return;
-    const name = s.name || s.email;
-    s.status = 'open';
-    delete s.name; delete s.email; delete s.connection; delete s.note;
+    const name = s.name || s.email || `Plus-one`;
+    // Reset this seat to open
+    const seatN = s.n;
+    seats[editingIndex] = { n: seatN, status: 'open' };
+    // Also reset any plus-one seats linked to this guest back to open
+    seats.forEach((x, i) => {
+      if (x.status === 'plus-one' && x.linkedTo === editingIndex) {
+        seats[i] = { n: x.n, status: 'open' };
+      }
+    });
     render();
     closeAll();
-    showToast(`${name} removed · seat ${s.n} is open again`);
+    showToast(`${name} removed · seat ${seatN} is open again`);
   });
 
   // ====================== DETAIL MODAL ======================
@@ -1238,7 +1473,8 @@
     }
 
     body.innerHTML = html;
-    $('release-seat').style.display = (s.status === 'invited' || s.status === 'confirmed') ? 'inline-flex' : 'none';
+    // Release is reserved for empty capacity. Filled seats are removed via Edit → Remove guest.
+    $('release-seat').style.display = 'none';
     openModal('modal-detail');
   }
 
@@ -1250,12 +1486,11 @@
   $('release-seat').addEventListener('click', () => {
     const s = seats[editingIndex];
     if (!s) return;
-    const name = s.name || s.email;
-    s.status = 'released';
-    delete s.name; delete s.email; delete s.connection; delete s.note;
+    const seatN = s.n;
+    seats[editingIndex] = { n: seatN, status: 'released' };
     render();
     closeAll();
-    showToast(`Seat ${s.n} released${name ? ` (${name} removed)` : ''}`);
+    showToast(`Seat ${seatN} released — won't be filled`);
   });
 
   // ====================== INVITE BY EMAIL ======================
@@ -1264,10 +1499,23 @@
   const sendBtn = $('send-invites');
   const tabWrite = $('tab-write');
   const tabPreview = $('tab-preview');
+  let invPlusOnes = 0;
+
+  function setInvPlusOnes(n) {
+    invPlusOnes = Math.max(0, Math.min(5, n));
+    $('inv-plusone-stepper').textContent = invPlusOnes;
+    $('inv-plusone-count').textContent = invPlusOnes;
+    $('inv-plusone-minus').disabled = invPlusOnes <= 0;
+    $('inv-plusone-plus').disabled = invPlusOnes >= 5;
+    updateInviteCount();
+  }
+  $('inv-plusone-minus').addEventListener('click', () => setInvPlusOnes(invPlusOnes - 1));
+  $('inv-plusone-plus').addEventListener('click',  () => setInvPlusOnes(invPlusOnes + 1));
 
   function resetInviteForm() {
     invEmails.value = '';
     invMsg.value = '';
+    setInvPlusOnes(0);
     syncPreview();
     showInviteTab('write');
     updateInviteCount();
@@ -1305,15 +1553,19 @@
   function updateInviteCount() {
     const open = seats.filter(s => s.status === 'open').length;
     const count = parseEmails(invEmails?.value || '').length;
+    const seatsNeeded = count * (1 + invPlusOnes);
     const el = $('invite-count');
     if (count === 0) {
       el.textContent = `0 invites · ${open} open seat${open === 1 ? '' : 's'}`;
-    } else if (count > open) {
-      el.innerHTML = `<span style="color: var(--danger-fg);">${count} emails, only ${open} open seat${open === 1 ? '' : 's'}</span>`;
+    } else if (seatsNeeded > open) {
+      el.innerHTML = `<span style="color: var(--danger-fg);">${count} invite${count === 1 ? '' : 's'} × ${1 + invPlusOnes} seat${invPlusOnes === 0 ? '' : 's'} = ${seatsNeeded} needed, only ${open} open</span>`;
     } else {
-      el.textContent = `${count} invite${count === 1 ? '' : 's'} · ${open - count} will stay open`;
+      const totalDesc = invPlusOnes > 0
+        ? `${count} invite${count === 1 ? '' : 's'} · ${seatsNeeded} seats with plus-ones · ${open - seatsNeeded} will stay open`
+        : `${count} invite${count === 1 ? '' : 's'} · ${open - seatsNeeded} will stay open`;
+      el.textContent = totalDesc;
     }
-    sendBtn.disabled = count === 0 || count > open;
+    sendBtn.disabled = count === 0 || seatsNeeded > open;
   }
   invEmails.addEventListener('input', () => { syncPreview(); updateInviteCount(); });
   invMsg.addEventListener('input', syncPreview);
@@ -1321,16 +1573,98 @@
   sendBtn.addEventListener('click', () => {
     const emails = parseEmails(invEmails.value);
     if (!emails.length) return;
-    const openSeats = seats.filter(s => s.status === 'open');
-    emails.slice(0, openSeats.length).forEach((email, i) => {
-      openSeats[i].status = 'invited';
-      openSeats[i].email = email;
-      openSeats[i].sentAt = 'just now';
+    const seatsNeeded = emails.length * (1 + invPlusOnes);
+    const openIndices = seats.map((s, i) => s.status === 'open' ? i : -1).filter(i => i >= 0);
+    if (seatsNeeded > openIndices.length) return;
+
+    let cursor = 0;
+    emails.forEach(email => {
+      const primaryIdx = openIndices[cursor++];
+      seats[primaryIdx] = {
+        n: seats[primaryIdx].n,
+        status: 'invited',
+        email: email,
+        sentAt: 'just now',
+        plusOnes: invPlusOnes,
+      };
+      for (let p = 0; p < invPlusOnes; p++) {
+        const plusIdx = openIndices[cursor++];
+        seats[plusIdx] = {
+          n: seats[plusIdx].n,
+          status: 'plus-one',
+          linkedTo: primaryIdx,
+        };
+      }
     });
     render();
     closeAll();
-    showToast(`${emails.length} invite${emails.length === 1 ? '' : 's'} sent`);
+    const summary = invPlusOnes > 0
+      ? `${emails.length} invite${emails.length === 1 ? '' : 's'} sent · ${seatsNeeded} seats reserved`
+      : `${emails.length} invite${emails.length === 1 ? '' : 's'} sent`;
+    showToast(summary);
   });
+
+  // ====================== REQUEST MORE SEATS ======================
+  let reqAmount = 2;
+  function setReqAmount(n) {
+    reqAmount = Math.max(1, Math.min(20, n));
+    $('req-stepper').textContent = reqAmount;
+    $('req-count').textContent = reqAmount;
+    $('req-minus').disabled = reqAmount <= 1;
+    $('req-plus').disabled = reqAmount >= 20;
+  }
+  $('req-minus').addEventListener('click', () => setReqAmount(reqAmount - 1));
+  $('req-plus').addEventListener('click',  () => setReqAmount(reqAmount + 1));
+
+  function openRequestModal() {
+    setReqAmount(2);
+    $('req-note').value = '';
+    const active = seats.filter(s => s.status !== 'released').length;
+    $('req-current').textContent = active;
+    openModal('modal-request');
+  }
+
+  $('send-request').addEventListener('click', () => {
+    const note = $('req-note').value.trim();
+    captainInfo.seatRequest = {
+      amount: reqAmount,
+      note: note,
+      requestedAt: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      status: 'pending',
+    };
+    persistCaptain();
+    renderRequestBanner();
+    closeAll();
+    showToast(`Requested +${reqAmount} more seat${reqAmount === 1 ? '' : 's'} from organizer`);
+  });
+
+  $('cancel-request').addEventListener('click', () => {
+    delete captainInfo.seatRequest;
+    persistCaptain();
+    renderRequestBanner();
+    showToast('Request canceled');
+  });
+
+  function renderRequestBanner() {
+    const r = captainInfo.seatRequest;
+    const banner = $('request-banner');
+    if (!r || r.status !== 'pending') {
+      banner.style.display = 'none';
+      return;
+    }
+    banner.style.display = '';
+    $('request-amount').textContent = `+${r.amount} seat${r.amount === 1 ? '' : 's'}`;
+    $('request-when').textContent = r.requestedAt ? `Sent ${r.requestedAt} · awaiting organizer review.` : 'Awaiting organizer review.';
+  }
+
+  function persistCaptain() {
+    try {
+      const data = loadData() || {};
+      data.event = data.event || eventInfo;
+      data.captain = captainInfo;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {}
+  }
 
   // ====================== GROUP NAME EDIT ======================
   const groupName = $('group-name');
@@ -1366,6 +1700,7 @@
 
   // Init
   render();
+  renderRequestBanner();
 </script>
 
 </body>
