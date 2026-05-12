@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your tables · Spring Gala 2026</title>
+<style>
+  /* ==================== TOKENS ==================== */
+  :root {
+    --brand:           #372056;
+    --brand-strong:    #2a1942;
+    --brand-soft:      #f4f1f8;
+    --brand-soft-2:    #ebe6f1;
+    --brand-veil:      rgba(55, 32, 86, 0.35);
+
+    --ink:             #1a1721;
+    --muted:           #5e5972;
+    --faint:           #9c97ad;
+    --border:          #e6e3ec;
+    --border-strong:   #d3cee0;
+    --divider:         #ede9f1;
+
+    --bg:              #faf9fc;
+    --card:            #ffffff;
+
+    --success-fg:      #176a3f;
+    --success-bg:      #e1f4e6;
+    --invited-fg:      #82540a;
+    --invited-bg:      #fdf3d8;
+    --open-fg:         #5e5972;
+    --open-bg:         #ebe9f0;
+    --warning-fg:      #82540a;
+    --warning-bg:      #fdf3d8;
+    --danger-fg:       #b11a2b;
+    --danger-bg:       #fde3e7;
+    --info-fg:         #1c4a72;
+    --info-bg:         #e2effa;
+
+    --r-sm:            6px;
+    --r-md:            10px;
+    --r-lg:            14px;
+    --r-pill:          999px;
+    --r-full:          50%;
+
+    --shadow-sm:       0 1px 2px rgba(26, 23, 33, 0.05);
+    --shadow-md:       0 4px 12px rgba(26, 23, 33, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; cursor: pointer; }
+  input, textarea, select { font: inherit; color: inherit; }
+  a { color: var(--brand); }
+
+  /* ==================== APP SHELL ==================== */
+  .shell { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--divider);
+    margin-bottom: 20px;
+  }
+  .topbar .event {
+    display: flex; flex-direction: column;
+  }
+  .topbar .event .name { font-weight: 500; font-size: 15px; color: var(--ink); }
+  .topbar .event .when { font-size: 12px; color: var(--muted); }
+  .topbar .me {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--muted);
+  }
+  .topbar .me .avatar {
+    width: 28px; height: 28px;
+    border-radius: var(--r-full);
+    background: var(--brand);
+    color: white;
+    font-size: 12px; font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* Table switcher */
+  .tabs {
+    display: flex; align-items: center; gap: 4px;
+    border-bottom: 1px solid var(--divider);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .tabs .tab {
+    background: transparent;
+    border: none;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .tabs .tab:hover { color: var(--ink); }
+  .tabs .tab.active {
+    color: var(--brand);
+    font-weight: 500;
+    border-bottom-color: var(--brand);
+  }
+  .tabs .tab .badge {
+    background: var(--brand-soft);
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: var(--r-pill);
+  }
+  .tabs .tab.active .badge { background: var(--brand); color: white; }
+
+  /* ==================== TABLE HERO ==================== */
+  .table-hero {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .table-hero .row1 {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .table-hero .name-wrap { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .table-hero h1 {
+    font-size: 19px; font-weight: 500;
+    margin: 0;
+    color: var(--ink);
+    outline: none;
+    padding: 4px 6px;
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+  }
+  .table-hero h1:hover, .table-hero h1:focus {
+    border-color: var(--border-strong);
+    background: var(--bg);
+  }
+  .table-hero .last-activity {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .stats {
+    display: flex; gap: 22px;
+    margin: 10px 0 14px;
+  }
+  .stat .num { font-size: 22px; font-weight: 500; color: var(--ink); display: block; }
+  .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .progress {
+    height: 8px;
+    background: var(--brand-soft-2);
+    border-radius: var(--r-pill);
+    overflow: hidden;
+    display: flex;
+  }
+  .progress .seg-confirmed { background: var(--success-fg); }
+  .progress .seg-pending { background: var(--invited-fg); }
+
+  /* ==================== ACTIONS ==================== */
+  .actions {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 14px;
+    border-radius: var(--r-md);
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 100ms ease, border-color 100ms ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--brand);
+    color: white;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-strong); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--ink);
+    border-color: var(--border-strong);
+  }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--muted); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border-color: transparent;
+  }
+  .btn-ghost:hover { background: var(--brand-soft); color: var(--ink); }
+  .btn-danger {
+    background: var(--card);
+    color: var(--danger-fg);
+    border-color: var(--danger-bg);
+  }
+  .btn-danger:hover { background: var(--danger-bg); }
+  .btn-sm { padding: 6px 10px; font-size: 12px; }
+
+  /* ==================== REMINDER NOTICE ==================== */
+  .notice {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border: 1px solid #f0d8a4;
+    border-radius: var(--r-md);
+    color: var(--warning-fg);
+    font-size: 13px;
+    line-height: 18px;
+    margin-bottom: 16px;
+  }
+  .notice .icon { flex-shrink: 0; }
+  .notice .actions-inline { margin-left: auto; display: flex; gap: 6px; }
+
+  /* ==================== GUEST TABLE ==================== */
+  .roster-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .roster-head {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .roster-head h2 { font-size: 15px; font-weight: 500; margin: 0; }
+  .roster-head .filter { font-size: 12px; color: var(--muted); }
+  table.roster {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.roster th, table.roster td {
+    text-align: left;
+    padding: 12px 20px;
+    vertical-align: middle;
+  }
+  table.roster thead th {
+    background: var(--bg);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    border-bottom: 1px solid var(--divider);
+  }
+  table.roster tbody tr {
+    border-bottom: 1px solid var(--divider);
+    transition: background 80ms linear;
+  }
+  table.roster tbody tr:last-child { border-bottom: none; }
+  table.roster tbody tr:hover { background: var(--brand-soft); cursor: pointer; }
+  table.roster tbody tr.is-empty { color: var(--faint); font-style: italic; }
+  table.roster tbody tr.is-empty .guest { color: var(--faint); }
+
+  .slot-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: var(--r-full);
+    background: var(--brand-soft-2);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .guest-cell {
+    display: flex; flex-direction: column;
+    min-width: 0;
+  }
+  .guest-name { color: var(--ink); font-weight: 500; }
+  .guest-meta { color: var(--muted); font-size: 12px; line-height: 16px; margin-top: 1px; }
+
+  /* Pills */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: var(--r-pill);
+    line-height: 18px;
+    white-space: nowrap;
+  }
+  .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .pill-confirmed { background: var(--success-bg); color: var(--success-fg); }
+  .pill-pending { background: var(--invited-bg); color: var(--invited-fg); }
+  .pill-empty { background: var(--open-bg); color: var(--open-fg); }
+  .pill-you { background: var(--brand); color: white; }
+
+  /* Dietary chips */
+  .diet-chip {
+    display: inline-flex; align-items: center;
+    padding: 1px 8px;
+    background: var(--info-bg);
+    color: var(--info-fg);
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: var(--r-pill);
+    margin-right: 4px;
+  }
+  .diet-chip.access { background: #f3e8fa; color: #5d2b8c; }
+
+  .row-actions {
+    display: flex; gap: 4px;
+    visibility: hidden;
+  }
+  table.roster tbody tr:hover .row-actions { visibility: visible; }
+  .icon-btn {
+    width: 26px; height: 26px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: var(--r-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+  }
+  .icon-btn:hover { background: var(--card); border-color: var(--border-strong); color: var(--ink); }
+  .icon-btn.danger:hover { color: var(--danger-fg); border-color: var(--danger-bg); background: var(--danger-bg); }
+
+  /* ==================== MODAL ==================== */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: var(--brand-veil);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms linear;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    width: 520px;
+    max-width: 100%;
+    max-height: calc(100vh - 48px);
+    background: var(--card);
+    border-radius: var(--r-lg);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transform: translateY(-4px);
+    transition: transform 140ms cubic-bezier(.2, .8, .2, 1);
+    box-shadow: var(--shadow-md);
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal.wide { width: 640px; }
+  .modal-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--divider);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px;
+  }
+  .modal-head h2 { font-size: 17px; font-weight: 500; margin: 0; color: var(--ink); }
+  .modal-head p { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: var(--r-full);
+    color: var(--muted);
+    font-size: 18px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; border: 0;
+  }
+  .modal-close:hover { background: var(--brand-soft); color: var(--ink); }
+  .modal-body { padding: 18px 22px; overflow-y: auto; }
+  .modal-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--divider);
+    display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field + .field { margin-top: 14px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .grid-2 .field { margin-top: 0; }
+  .input, .textarea, .select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--card);
+    color: var(--ink);
+    line-height: 20px;
+    outline: none;
+  }
+  .input:focus, .textarea:focus, .select:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(55, 32, 86, 0.15);
+  }
+  .textarea { resize: vertical; min-height: 60px; }
+  .select {
+    appearance: none; -webkit-appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%235e5972' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .field-hint { font-size: 12px; color: var(--muted); }
+
+  /* Dietary picker */
+  .diet-picker {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .diet-pick {
+    display: inline-flex; align-items: center;
+    padding: 5px 11px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-pill);
+    font-size: 12px;
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .diet-pick:hover { border-color: var(--muted); }
+  .diet-pick.on {
+    background: var(--info-bg);
+    border-color: var(--info-fg);
+    color: var(--info-fg);
+    font-weight: 500;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background: var(--brand);
+    color: white;
+    padding: 10px 16px;
+    border-radius: var(--r-md);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 160ms linear, transform 160ms ease;
+    pointer-events: none;
+    z-index: 200;
+    box-shadow: var(--shadow-md);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="event">
+      <span class="name" id="event-name">Spring Gala 2026</span>
+      <span class="when" id="event-when">Sat · May 16, 2026 · 6:30 pm · The Plaza Hotel, New York NY</span>
+    </div>
+    <div class="me">
+      <span>Hosting as <strong id="host-name">Maya Rodriguez</strong></span>
+      <span class="avatar" id="host-initials">MR</span>
+    </div>
+  </div>
+
+  <!-- TABLE SWITCHER -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- TABLE HERO -->
+  <div class="table-hero">
+    <div class="row1">
+      <div class="name-wrap">
+        <h1 contenteditable="true" spellcheck="false" id="table-name">Acme Co. Team</h1>
+      </div>
+      <span class="last-activity" id="last-activity">Last update 2 days ago</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="num" id="stat-confirmed">0</span><span class="label">Confirmed</span></div>
+      <div class="stat"><span class="num" id="stat-pending">0</span><span class="label">Pending names</span></div>
+      <div class="stat"><span class="num" id="stat-empty">0</span><span class="label">Empty</span></div>
+      <div class="stat"><span class="num" id="stat-capacity">0</span><span class="label">Capacity</span></div>
+    </div>
+
+    <div class="progress" aria-label="Fill progress">
+      <div class="seg-confirmed" id="prog-confirmed" style="width: 0%"></div>
+      <div class="seg-pending" id="prog-pending" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn btn-primary" data-action="invite">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 4.5l6 4 6-4"/></svg>
+      Invite by email
+    </button>
+    <button class="btn btn-secondary" data-action="add-guest">+ Add a guest</button>
+    <button class="btn btn-secondary" data-action="move-guest" id="btn-move-guest">Move guest between my tables</button>
+  </div>
+
+  <!-- REMINDER NOTICE -->
+  <div class="notice" id="reminder-notice" style="display: none;">
+    <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>
+    <span id="reminder-text"></span>
+    <div class="actions-inline">
+      <button class="btn btn-secondary btn-sm" data-action="send-reminder">Send reminder</button>
+    </div>
+  </div>
+
+  <!-- ROSTER -->
+  <div class="roster-section">
+    <div class="roster-head">
+      <h2>Your guests</h2>
+      <span class="filter">Click any row to edit. Updates anytime up to May 12.</span>
+    </div>
+    <table class="roster">
+      <thead>
+        <tr>
+          <th style="width: 50px">SLOT</th>
+          <th>GUEST</th>
+          <th style="width: 110px">STATUS</th>
+          <th>DIETARY / NEEDS</th>
+          <th style="width: 90px"></th>
+        </tr>
+      </thead>
+      <tbody id="roster-body"></tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- =================== EDIT / ADD GUEST MODAL =================== -->
+<div class="modal-backdrop" id="modal-guest" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="guest-title">Add a guest</h2>
+        <p id="guest-sub">Slot 5 · Acme Co. Team</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2" style="margin-top: 0">
+        <div class="field">
+          <label for="g-name">Full name</label>
+          <input class="input" id="g-name" placeholder="Jordan Chen" />
+        </div>
+        <div class="field">
+          <label for="g-email">Email</label>
+          <input class="input" id="g-email" type="email" placeholder="jordan@acme.co" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="g-phone">Phone <span style="color: var(--muted); font-weight: 400;">(optional — useful for day-of)</span></label>
+        <input class="input" id="g-phone" type="tel" placeholder="(555) 123-4567" />
+      </div>
+      <div class="field">
+        <label>Dietary preferences</label>
+        <div class="diet-picker" id="diet-picker"></div>
+      </div>
+      <div class="field">
+        <label for="g-diet-other">Other dietary notes <span style="color: var(--muted); font-weight: 400;">(allergies, etc.)</span></label>
+        <input class="input" id="g-diet-other" placeholder="No shellfish" />
+      </div>
+      <div class="field">
+        <label for="g-access">Accessibility needs <span style="color: var(--muted); font-weight: 400;">(mobility, hearing, low vision, etc.)</span></label>
+        <input class="input" id="g-access" placeholder="Wheelchair access at the table" />
+      </div>
+      <div class="field">
+        <label for="g-note">Private note <span style="color: var(--muted); font-weight: 400;">(only you and the organizer see this)</span></label>
+        <textarea class="textarea" id="g-note" placeholder="Sat next to the ED last year. Knows Maya from the board."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger btn-sm" id="remove-guest" style="display: none;">Remove guest</button>
+      <div style="display: flex; gap: 8px; margin-left: auto;">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="save-guest" disabled>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== INVITE BY EMAIL MODAL =================== -->
+<div class="modal-backdrop" id="modal-invite" role="dialog" aria-modal="true">
+  <div class="modal wide">
+    <div class="modal-head">
+      <div>
+        <h2>Invite by email</h2>
+        <p id="invite-sub">Acme Co. Team · 4 empty slots</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="inv-emails">Email addresses</label>
+        <textarea class="textarea" id="inv-emails" rows="4" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
+        <div class="field-hint">One per line, or comma-separated. Each consumes 1 slot.</div>
+      </div>
+      <div class="field">
+        <label for="inv-msg">Personal note <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
+        <textarea class="textarea" id="inv-msg" rows="3" placeholder="Hey — would love to see you at the Spring Gala. I've saved you a seat at my table."></textarea>
+      </div>
+      <details style="margin-top: 14px;">
+        <summary style="cursor: pointer; font-size: 13px; color: var(--brand); font-weight: 500;">Preview email →</summary>
+        <div style="margin-top: 10px; padding: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); font-size: 13px; line-height: 19px;">
+          <div style="font-weight: 500; color: var(--ink); margin-bottom: 4px;">Maya Rodriguez invited you · Spring Gala 2026</div>
+          <div style="color: var(--muted); margin-bottom: 14px;">From: Spring Gala &lt;rsvp@gala.org&gt;</div>
+          <div id="preview-personal" style="font-style: italic; padding: 10px 12px; background: var(--brand-soft); border-radius: var(--r-md); margin-bottom: 14px; color: var(--ink);">Hey — would love to see you at the Spring Gala. I've saved you a seat at my table.</div>
+          <p style="margin: 0 0 10px;">You're invited to <strong>Spring Gala 2026</strong> on Sat May 16 at The Plaza Hotel, NYC.</p>
+          <p style="margin: 0 0 14px; color: var(--muted);">Tap below to confirm your seat and let us know about any dietary or accessibility needs.</p>
+          <span style="display: inline-block; background: var(--brand); color: white; padding: 9px 16px; border-radius: var(--r-md); font-weight: 500;">Confirm your seat →</span>
+        </div>
+      </details>
+    </div>
+    <div class="modal-foot">
+      <div id="invite-count" style="font-size: 13px; color: var(--muted);">0 invites · 0 slots available</div>
+      <div style="display: flex; gap: 8px; margin-left: auto;">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="send-invites" disabled>Send invites</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== REPLACE GUEST MODAL =================== -->
+<div class="modal-backdrop" id="modal-replace" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Replace this guest</h2>
+        <p id="replace-sub">Swap one name for another. The slot stays put.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="padding: 12px; background: var(--bg); border-radius: var(--r-md); margin-bottom: 16px;">
+        <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Replacing</div>
+        <div id="replace-current" style="font-weight: 500;">Jordan Chen</div>
+      </div>
+      <div class="grid-2" style="margin-top: 0;">
+        <div class="field">
+          <label for="rep-name">New guest name</label>
+          <input class="input" id="rep-name" placeholder="Sam Patel" />
+        </div>
+        <div class="field">
+          <label for="rep-email">Email</label>
+          <input class="input" id="rep-email" type="email" placeholder="sam@acme.co" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="rep-reason">Reason <span style="color: var(--muted); font-weight: 400;">(optional — visible to organizer)</span></label>
+        <input class="input" id="rep-reason" placeholder="Jordan can't make it; Sam is taking his seat." />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="save-replace" disabled>Replace</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== MOVE GUEST MODAL =================== -->
+<div class="modal-backdrop" id="modal-move" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Move a guest between your tables</h2>
+        <p>Reorganize without losing any guest details.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="mv-guest">Which guest?</label>
+        <select class="select" id="mv-guest"></select>
+      </div>
+      <div class="field">
+        <label for="mv-target">Move to</label>
+        <select class="select" id="mv-target"></select>
+        <div class="field-hint" id="mv-target-hint"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="save-move" disabled>Move guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== REMINDER MODAL =================== -->
+<div class="modal-backdrop" id="modal-reminder" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Send a reminder</h2>
+        <p id="reminder-sub">Nudge guests who haven't confirmed yet.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Recipients</label>
+        <div id="reminder-recipients" style="padding: 10px 12px; background: var(--bg); border-radius: var(--r-md); font-size: 13px; line-height: 19px;"></div>
+      </div>
+      <div class="field">
+        <label for="rem-msg">Your message <span style="color: var(--muted); font-weight: 400;">(optional add-on)</span></label>
+        <textarea class="textarea" id="rem-msg" placeholder="Quick reminder — just a few weeks out. Reply to this email if anything changed."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="send-reminder-final">Send reminder</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ====================== DATA MODEL ======================
+  // V2 model — slot-based, multi-table, dietary-aware.
+  // Status: confirmed | pending | empty
+  // Optional: dietary[], accessibility, phone, partyId (for linked couples/parties)
+
+  const DIETARY_OPTIONS = [
+    'Vegetarian', 'Vegan', 'Pescatarian',
+    'Gluten-free', 'Dairy-free', 'Nut-free',
+    'Kosher', 'Halal',
+    'No restrictions',
+  ];
+
+  const HOST = { name: 'Maya Rodriguez', email: 'maya@acme.co', initials: 'MR' };
+
+  const EVENT = {
+    name: 'Spring Gala 2026',
+    when: 'Sat · May 16, 2026 · 6:30 pm · The Plaza Hotel, New York NY',
+    cutoff: 'May 12',
+  };
+
+  const TABLES = [
+    {
+      id: 't1',
+      name: 'Acme Co. Team',
+      capacity: 10,
+      lastActivity: '2 days ago',
+      guests: [
+        { id: 'g1', slot: 1, status: 'confirmed', name: 'Maya Rodriguez', email: 'maya@acme.co', dietary: ['No restrictions'], isHost: true },
+        { id: 'g2', slot: 2, status: 'confirmed', name: 'Jordan Chen', email: 'jordan@acme.co', dietary: ['Vegetarian'], note: 'On the board last year — knows Maya.', partyId: 'p1' },
+        { id: 'g3', slot: 3, status: 'confirmed', name: 'Alex Chen', email: 'alex@acme.co', dietary: ['Vegetarian'], note: "Jordan's spouse.", partyId: 'p1' },
+        { id: 'g4', slot: 4, status: 'pending', email: 'sam@acme.co', invitedAt: 'Apr 22' },
+        { id: 'g5', slot: 5, status: 'pending', email: 'taylor@acme.co', invitedAt: 'Apr 22' },
+        { id: 'g6', slot: 6, status: 'confirmed', name: 'Riley Park', email: 'riley@acme.co', dietary: ['Gluten-free'], accessibility: 'Wheelchair access at the table', note: '' },
+        { id: 'g7', slot: 7, status: 'empty' },
+        { id: 'g8', slot: 8, status: 'empty' },
+        { id: 'g9', slot: 9, status: 'empty' },
+        { id: 'g10', slot: 10, status: 'empty' },
+      ],
+    },
+    {
+      id: 't2',
+      name: 'Acme Co. Partners',
+      capacity: 6,
+      lastActivity: '5 days ago',
+      guests: [
+        { id: 'g11', slot: 1, status: 'confirmed', name: 'Maya Rodriguez', email: 'maya@acme.co', dietary: ['No restrictions'], isHost: true },
+        { id: 'g12', slot: 2, status: 'confirmed', name: 'Casey Park', email: 'casey@partners.io', dietary: ['Vegan'] },
+        { id: 'g13', slot: 3, status: 'pending', email: 'jamie@partners.io', invitedAt: 'Apr 24' },
+        { id: 'g14', slot: 4, status: 'empty' },
+        { id: 'g15', slot: 5, status: 'empty' },
+        { id: 'g16', slot: 6, status: 'empty' },
+      ],
+    },
+  ];
+
+  let activeTableId = TABLES[0].id;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function activeTable() { return TABLES.find(t => t.id === activeTableId); }
+
+  // ====================== RENDER ======================
+  function render() {
+    const t = activeTable();
+
+    // Tabs
+    $('tabs').innerHTML = TABLES.map(table => {
+      const confirmed = table.guests.filter(g => g.status === 'confirmed').length;
+      const cls = table.id === activeTableId ? 'tab active' : 'tab';
+      return `<button class="${cls}" data-tab="${table.id}">${esc(table.name)} <span class="badge">${confirmed}/${table.capacity}</span></button>`;
+    }).join('');
+
+    // Hide "Move guest" if only one table
+    $('btn-move-guest').style.display = TABLES.length > 1 ? '' : 'none';
+
+    // Hero
+    $('table-name').textContent = t.name;
+    $('last-activity').textContent = `Last update ${t.lastActivity}`;
+
+    const confirmed = t.guests.filter(g => g.status === 'confirmed').length;
+    const pending = t.guests.filter(g => g.status === 'pending').length;
+    const empty = t.guests.filter(g => g.status === 'empty').length;
+    $('stat-confirmed').textContent = confirmed;
+    $('stat-pending').textContent = pending;
+    $('stat-empty').textContent = empty;
+    $('stat-capacity').textContent = t.capacity;
+    $('prog-confirmed').style.width = (100 * confirmed / t.capacity) + '%';
+    $('prog-pending').style.width = (100 * pending / t.capacity) + '%';
+
+    // Roster rows
+    $('roster-body').innerHTML = t.guests.map(g => rowHTML(g)).join('');
+
+    // Reminder notice — show if there are pending OR empty slots
+    const incomplete = pending + empty;
+    if (incomplete > 0) {
+      $('reminder-notice').style.display = '';
+      const bits = [];
+      if (pending > 0) bits.push(`${pending} pending RSVP${pending === 1 ? '' : 's'}`);
+      if (empty > 0) bits.push(`${empty} empty slot${empty === 1 ? '' : 's'}`);
+      $('reminder-text').innerHTML = `<strong>${bits.join(' · ')}</strong>. ${pending > 0 ? 'Nudge them?' : 'Invite more guests anytime up to ' + EVENT.cutoff + '.'}`;
+      $('reminder-notice').querySelector('.actions-inline').style.display = pending > 0 ? '' : 'none';
+    } else {
+      $('reminder-notice').style.display = 'none';
+    }
+  }
+
+  function rowHTML(g) {
+    let statusPill = '';
+    let guestCell = '';
+    let dietary = '';
+
+    if (g.isHost) {
+      statusPill = `<span class="pill pill-you"><span class="pill-dot"></span>You</span>`;
+    } else if (g.status === 'confirmed') {
+      statusPill = `<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmed</span>`;
+    } else if (g.status === 'pending') {
+      statusPill = `<span class="pill pill-pending"><span class="pill-dot"></span>Pending RSVP</span>`;
+    } else {
+      statusPill = `<span class="pill pill-empty"><span class="pill-dot"></span>Empty</span>`;
+    }
+
+    if (g.status === 'confirmed') {
+      const partyTag = g.partyId ? ` <span style="font-size: 11px; color: var(--muted);">· with party</span>` : '';
+      guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.name)}${partyTag}</div><div class="guest-meta">${esc(g.email || '')}</div></div>`;
+    } else if (g.status === 'pending') {
+      guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.email)}</div><div class="guest-meta">Invited ${esc(g.invitedAt || 'recently')} — awaiting RSVP</div></div>`;
+    } else {
+      guestCell = `<div class="guest-cell"><div class="guest-name">— Empty slot —</div><div class="guest-meta">Click to add a guest</div></div>`;
+    }
+
+    if (g.dietary && g.dietary.length) {
+      dietary = g.dietary.map(d => `<span class="diet-chip">${esc(d)}</span>`).join('');
+    }
+    if (g.accessibility) {
+      dietary += `<span class="diet-chip access" title="${esc(g.accessibility)}">Accessibility</span>`;
+    }
+    if (g.dietaryOther) {
+      dietary += `<span class="diet-chip" title="${esc(g.dietaryOther)}">+1 note</span>`;
+    }
+
+    let actions = '';
+    if (!g.isHost && g.status === 'confirmed') {
+      actions = `
+        <div class="row-actions">
+          <button class="icon-btn" title="Edit" data-edit="${g.id}"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2l2.5 2.5-7 7H2.5V9z"/></svg></button>
+          <button class="icon-btn" title="Replace" data-replace="${g.id}"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 4h7m0 0L8 2m2 2L8 6 M11 10H4m0 0l2-2m-2 2l2 2"/></svg></button>
+        </div>`;
+    }
+
+    const cls = g.status === 'empty' ? 'is-empty' : '';
+    return `<tr class="${cls}" data-row="${g.id}">
+      <td><span class="slot-num">${g.slot}</span></td>
+      <td>${guestCell}</td>
+      <td>${statusPill}</td>
+      <td>${dietary || '<span style="color: var(--faint);">—</span>'}</td>
+      <td>${actions}</td>
+    </tr>`;
+  }
+
+  // ====================== MODAL HELPERS ======================
+  function openModal(id) { $(id).classList.add('open'); }
+  function closeAll() { document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open')); }
+  document.querySelectorAll('.modal-backdrop').forEach(bd => {
+    bd.addEventListener('click', e => { if (e.target === bd) closeAll(); });
+    bd.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeAll));
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+  // ====================== TABS ======================
+  $('tabs').addEventListener('click', e => {
+    const tabId = e.target.closest('[data-tab]')?.dataset.tab;
+    if (tabId) { activeTableId = tabId; render(); }
+  });
+
+  // ====================== EDITABLE TABLE NAME ======================
+  $('table-name').addEventListener('blur', () => {
+    const newName = $('table-name').textContent.trim();
+    const t = activeTable();
+    if (newName && newName !== t.name) {
+      t.name = newName;
+      render();
+      showToast(`Renamed to "${newName}"`);
+    }
+  });
+
+  // ====================== ROW CLICK ======================
+  $('roster-body').addEventListener('click', e => {
+    const editId = e.target.closest('[data-edit]')?.dataset.edit;
+    const replaceId = e.target.closest('[data-replace]')?.dataset.replace;
+    const rowId = e.target.closest('[data-row]')?.dataset.row;
+
+    if (editId) { e.stopPropagation(); openGuestEditor(editId); return; }
+    if (replaceId) { e.stopPropagation(); openReplaceModal(replaceId); return; }
+    if (rowId) {
+      const g = activeTable().guests.find(x => x.id === rowId);
+      if (!g || g.isHost) return;
+      openGuestEditor(rowId);
+    }
+  });
+
+  // ====================== ACTION BUTTONS ======================
+  document.addEventListener('click', e => {
+    const action = e.target.closest('[data-action]')?.dataset.action;
+    if (!action) return;
+    if (action === 'invite') openInviteModal();
+    if (action === 'add-guest') openGuestEditor(activeTable().guests.find(g => g.status === 'empty')?.id);
+    if (action === 'move-guest') openMoveModal();
+    if (action === 'send-reminder') openReminderModal();
+  });
+
+  // ====================== GUEST EDITOR ======================
+  let editingId = null;
+  let editDietary = new Set();
+
+  function renderDietPicker() {
+    $('diet-picker').innerHTML = DIETARY_OPTIONS.map(opt =>
+      `<button type="button" class="diet-pick ${editDietary.has(opt) ? 'on' : ''}" data-diet="${esc(opt)}">${esc(opt)}</button>`
+    ).join('');
+  }
+  $('diet-picker').addEventListener('click', e => {
+    const opt = e.target.closest('[data-diet]')?.dataset.diet;
+    if (!opt) return;
+    if (editDietary.has(opt)) editDietary.delete(opt);
+    else {
+      // "No restrictions" is exclusive
+      if (opt === 'No restrictions') editDietary.clear();
+      else editDietary.delete('No restrictions');
+      editDietary.add(opt);
+    }
+    renderDietPicker();
+  });
+
+  function openGuestEditor(id) {
+    if (!id) return;
+    const t = activeTable();
+    const g = t.guests.find(x => x.id === id);
+    if (!g) return;
+    editingId = id;
+    editDietary = new Set(g.dietary || []);
+    renderDietPicker();
+
+    $('guest-sub').textContent = `Slot ${g.slot} · ${t.name}`;
+    if (g.status === 'empty') {
+      $('guest-title').textContent = 'Add a guest';
+      $('g-name').value = '';
+      $('g-email').value = '';
+      $('g-phone').value = '';
+      $('g-diet-other').value = '';
+      $('g-access').value = '';
+      $('g-note').value = '';
+      $('remove-guest').style.display = 'none';
+    } else {
+      $('guest-title').textContent = g.status === 'pending' ? 'Complete this guest' : 'Edit guest';
+      $('g-name').value = g.name || '';
+      $('g-email').value = g.email || '';
+      $('g-phone').value = g.phone || '';
+      $('g-diet-other').value = g.dietaryOther || '';
+      $('g-access').value = g.accessibility || '';
+      $('g-note').value = g.note || '';
+      $('remove-guest').style.display = 'inline-flex';
+    }
+    validateGuest();
+    openModal('modal-guest');
+    setTimeout(() => $('g-name').focus(), 50);
+  }
+  function validateGuest() {
+    $('save-guest').disabled = !($('g-name').value.trim() && $('g-email').value.trim());
+  }
+  $('g-name').addEventListener('input', validateGuest);
+  $('g-email').addEventListener('input', validateGuest);
+
+  $('save-guest').addEventListener('click', () => {
+    if ($('save-guest').disabled) return;
+    const t = activeTable();
+    const g = t.guests.find(x => x.id === editingId);
+    if (!g) return;
+    g.name = $('g-name').value.trim();
+    g.email = $('g-email').value.trim();
+    g.phone = $('g-phone').value.trim();
+    g.dietary = Array.from(editDietary);
+    g.dietaryOther = $('g-diet-other').value.trim();
+    g.accessibility = $('g-access').value.trim();
+    g.note = $('g-note').value.trim();
+    g.status = 'confirmed';
+    delete g.invitedAt;
+    t.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`${g.name} confirmed at slot ${g.slot}`);
+  });
+
+  $('remove-guest').addEventListener('click', () => {
+    const t = activeTable();
+    const g = t.guests.find(x => x.id === editingId);
+    if (!g || g.isHost) return;
+    const name = g.name || g.email || 'guest';
+    t.guests = t.guests.map(x => x.id === editingId
+      ? { id: x.id, slot: x.slot, status: 'empty' }
+      : x);
+    t.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`${name} removed — slot ${g.slot} is empty`);
+  });
+
+  // ====================== INVITE MODAL ======================
+  function openInviteModal() {
+    const t = activeTable();
+    const empty = t.guests.filter(g => g.status === 'empty').length;
+    $('invite-sub').textContent = `${t.name} · ${empty} empty slot${empty === 1 ? '' : 's'}`;
+    $('inv-emails').value = '';
+    $('inv-msg').value = '';
+    updateInviteCount();
+    openModal('modal-invite');
+    setTimeout(() => $('inv-emails').focus(), 50);
+  }
+  function parseEmails(raw) {
+    return raw.split(/[\s,;]+/).map(s => s.trim()).filter(s => /\S+@\S+\.\S+/.test(s));
+  }
+  function updateInviteCount() {
+    const t = activeTable();
+    const empty = t.guests.filter(g => g.status === 'empty').length;
+    const emails = parseEmails($('inv-emails').value);
+    const el = $('invite-count');
+    if (emails.length === 0) {
+      el.textContent = `${empty} empty slot${empty === 1 ? '' : 's'}`;
+      $('send-invites').disabled = true;
+    } else if (emails.length > empty) {
+      el.innerHTML = `<span style="color: var(--danger-fg);">${emails.length} emails, only ${empty} empty slots</span>`;
+      $('send-invites').disabled = true;
+    } else {
+      el.textContent = `${emails.length} invite${emails.length === 1 ? '' : 's'} · ${empty - emails.length} stays empty`;
+      $('send-invites').disabled = false;
+    }
+  }
+  $('inv-emails').addEventListener('input', updateInviteCount);
+  $('inv-msg').addEventListener('input', () => {
+    const v = $('inv-msg').value.trim();
+    $('preview-personal').textContent = v || 'Hey — would love to see you at the Spring Gala. I\'ve saved you a seat at my table.';
+  });
+
+  $('send-invites').addEventListener('click', () => {
+    const emails = parseEmails($('inv-emails').value);
+    const t = activeTable();
+    const empties = t.guests.filter(g => g.status === 'empty');
+    emails.slice(0, empties.length).forEach((email, i) => {
+      const target = empties[i];
+      const idx = t.guests.findIndex(g => g.id === target.id);
+      t.guests[idx] = { id: target.id, slot: target.slot, status: 'pending', email, invitedAt: 'just now' };
+    });
+    t.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`${emails.length} invite${emails.length === 1 ? '' : 's'} sent`);
+  });
+
+  // ====================== REPLACE MODAL ======================
+  let replacingId = null;
+  function openReplaceModal(id) {
+    const t = activeTable();
+    const g = t.guests.find(x => x.id === id);
+    if (!g) return;
+    replacingId = id;
+    $('replace-current').textContent = `${g.name || g.email} · slot ${g.slot}`;
+    $('rep-name').value = '';
+    $('rep-email').value = '';
+    $('rep-reason').value = '';
+    $('save-replace').disabled = true;
+    openModal('modal-replace');
+    setTimeout(() => $('rep-name').focus(), 50);
+  }
+  function validateReplace() {
+    $('save-replace').disabled = !($('rep-name').value.trim() && $('rep-email').value.trim());
+  }
+  $('rep-name').addEventListener('input', validateReplace);
+  $('rep-email').addEventListener('input', validateReplace);
+  $('save-replace').addEventListener('click', () => {
+    if ($('save-replace').disabled) return;
+    const t = activeTable();
+    const idx = t.guests.findIndex(g => g.id === replacingId);
+    if (idx === -1) return;
+    const old = t.guests[idx];
+    const replacement = {
+      id: old.id,
+      slot: old.slot,
+      status: 'confirmed',
+      name: $('rep-name').value.trim(),
+      email: $('rep-email').value.trim(),
+      dietary: [],
+      note: $('rep-reason').value.trim() ? `Replaced ${old.name || old.email}: ${$('rep-reason').value.trim()}` : '',
+    };
+    t.guests[idx] = replacement;
+    t.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`${replacement.name} replaces ${old.name || old.email}`);
+  });
+
+  // ====================== MOVE MODAL ======================
+  function openMoveModal() {
+    const t = activeTable();
+    const movable = t.guests.filter(g => !g.isHost && (g.status === 'confirmed' || g.status === 'pending'));
+    if (movable.length === 0) {
+      showToast('No guests to move on this table yet.');
+      return;
+    }
+    const others = TABLES.filter(tt => tt.id !== t.id);
+    $('mv-guest').innerHTML = movable.map(g =>
+      `<option value="${g.id}">${esc(g.name || g.email)} (slot ${g.slot})</option>`
+    ).join('');
+    $('mv-target').innerHTML = others.map(tt => {
+      const open = tt.guests.filter(g => g.status === 'empty').length;
+      return `<option value="${tt.id}" ${open === 0 ? 'disabled' : ''}>${esc(tt.name)} (${open} open)</option>`;
+    }).join('');
+    updateMoveTarget();
+    openModal('modal-move');
+  }
+  function updateMoveTarget() {
+    const target = TABLES.find(tt => tt.id === $('mv-target').value);
+    const open = target ? target.guests.filter(g => g.status === 'empty').length : 0;
+    $('mv-target-hint').textContent = open > 0 ? `Will take the first open slot.` : 'No open slots — pick another table.';
+    $('save-move').disabled = open === 0;
+  }
+  $('mv-target').addEventListener('change', updateMoveTarget);
+  $('save-move').addEventListener('click', () => {
+    if ($('save-move').disabled) return;
+    const source = activeTable();
+    const target = TABLES.find(tt => tt.id === $('mv-target').value);
+    const guestId = $('mv-guest').value;
+    const srcIdx = source.guests.findIndex(g => g.id === guestId);
+    if (srcIdx === -1 || !target) return;
+    const g = source.guests[srcIdx];
+    const emptyIdx = target.guests.findIndex(x => x.status === 'empty');
+    if (emptyIdx === -1) return;
+    const targetSlot = target.guests[emptyIdx].slot;
+    const targetId = target.guests[emptyIdx].id;
+    // Move the guest content into the target empty row (keep target's id + slot)
+    target.guests[emptyIdx] = { ...g, id: targetId, slot: targetSlot };
+    // Make source slot empty
+    source.guests[srcIdx] = { id: g.id, slot: g.slot, status: 'empty' };
+    source.lastActivity = 'just now';
+    target.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`${g.name || g.email} moved to ${target.name}`);
+  });
+
+  // ====================== REMINDER MODAL ======================
+  function openReminderModal() {
+    const t = activeTable();
+    const pending = t.guests.filter(g => g.status === 'pending');
+    if (pending.length === 0) {
+      showToast('No pending invites to remind right now.');
+      return;
+    }
+    $('reminder-sub').textContent = `${t.name} · ${pending.length} guest${pending.length === 1 ? '' : 's'} who haven't RSVPed`;
+    $('reminder-recipients').innerHTML = pending.map(g => `<div>· ${esc(g.email)} <span style="color: var(--muted);">(invited ${esc(g.invitedAt || 'recently')})</span></div>`).join('');
+    $('rem-msg').value = '';
+    openModal('modal-reminder');
+  }
+  $('send-reminder-final').addEventListener('click', () => {
+    const t = activeTable();
+    const pending = t.guests.filter(g => g.status === 'pending');
+    pending.forEach(g => { g.invitedAt = 'reminded just now'; });
+    t.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`Reminders sent to ${pending.length} guest${pending.length === 1 ? '' : 's'}`);
+  });
+
+  // ====================== TOAST ======================
+  let toastTimer = null;
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // ====================== INIT ======================
+  $('event-name').textContent = EVENT.name;
+  $('event-when').textContent = EVENT.when;
+  $('host-name').textContent = HOST.name;
+  $('host-initials').textContent = HOST.initials;
+  render();
+</script>
+
+</body>
+</html>

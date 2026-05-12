@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>v2 — Delegated Group Guest Management</title>
+<style>
+  :root {
+    --brand: #372056;
+    --ink: #1a1721;
+    --muted: #5e5972;
+    --bg: #faf9fc;
+    --card: #ffffff;
+    --border: #e6e3ec;
+    --soft: #f4f1f8;
+    --success-bg: #e1f4e6;
+    --success-fg: #176a3f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  .shell { max-width: 760px; margin: 0 auto; padding: 60px 20px 80px; }
+  .label {
+    display: inline-block;
+    font-size: 11px; font-weight: 500;
+    color: var(--success-fg);
+    background: var(--success-bg);
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 28px; font-weight: 500;
+    margin: 0 0 10px;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .lede {
+    font-size: 15px; line-height: 22px;
+    color: var(--muted);
+    margin: 0 0 32px;
+  }
+  .lede strong { color: var(--ink); font-weight: 500; }
+  h2 {
+    font-size: 14px; font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 32px 0 12px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: var(--ink);
+    display: block;
+    transition: border-color 100ms ease, transform 100ms ease;
+  }
+  .card:hover { border-color: var(--brand); transform: translateY(-1px); }
+  .card .title { font-weight: 500; font-size: 15px; margin-bottom: 4px; }
+  .card .desc { font-size: 13px; color: var(--muted); line-height: 18px; }
+
+  .phase-list {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+  }
+  .phase-list ol { margin: 0; padding-left: 22px; }
+  .phase-list li { margin: 8px 0; font-size: 13px; line-height: 19px; color: var(--ink); }
+  .phase-list li strong { font-weight: 500; }
+  .phase-list li .muted { color: var(--muted); }
+
+  .compare {
+    background: var(--soft);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-top: 12px;
+  }
+  .compare a {
+    color: var(--brand);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .compare a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <span class="label">v2 · Team Rubicon style</span>
+  <h1>Delegated Group Guest Management</h1>
+  <p class="lede">
+    A revised POC built for the <strong>mass-market gala workflow</strong> — sponsors and donors take ownership of a chunk of slots, fill names progressively over months, and the organizer keeps oversight without being in the middle of every change.
+  </p>
+
+  <h2>Preview the surfaces</h2>
+  <div class="cards">
+    <a class="card" href="captain-portal.html">
+      <div class="title">Host portal →</div>
+      <div class="desc">What a sponsor / host sees. Multi-table switcher, invite + add + edit, dietary + accessibility, replace, move guests between own tables, reminder banner.</div>
+    </a>
+    <a class="card" href="organizer-overview.html">
+      <div class="title">Organizer overview →</div>
+      <div class="desc">Cross-group dashboard. Completion %, missing names, dietary roll-up, status filters, host nudges, drawer with full roster + activity.</div>
+    </a>
+  </div>
+
+  <h2>The five-phase workflow this supports</h2>
+  <div class="phase-list">
+    <ol>
+      <li><strong>Phase 1 · Delegate.</strong> <span class="muted">Organizer creates groups and assigns each to a host (sponsor, donor, board member, captain).</span></li>
+      <li><strong>Phase 2 · Recruit.</strong> <span class="muted">Hosts invite by email, add guests manually, and capture dietary/accessibility info. Hybrid — not all guests self-register.</span></li>
+      <li><strong>Phase 3 · Chase &amp; finalize.</strong> <span class="muted">Organizer nudges stalled groups, drops in walk-ins, and watches the completion meter.</span></li>
+      <li><strong>Phase 4 · Spatial planning.</strong> <span class="muted">(Separate workflow layer — out of scope for this MVP. Currently Miro / spreadsheets.)</span></li>
+      <li><strong>Phase 5 · Check-in &amp; day-of.</strong> <span class="muted">(Existing RSVPify check-in flow — not redesigned here.)</span></li>
+    </ol>
+  </div>
+
+  <h2>How this differs from v1</h2>
+  <div class="compare">
+    v1 lives at <a href="../">../tablecaptains-poc/</a> — that one was built for FMM's specific cultivation-event model (free-form group sizes, plus-one courtesies, connection-to-cause emphasis).
+    v2 reframes around Team Rubicon's mainstream workflow: fixed-capacity slots assigned by organizer, dietary/accessibility front-and-center, replace + move flows, hybrid entry, late editability through cutoff.
+  </div>
+</div>
+</body>
+</html>
