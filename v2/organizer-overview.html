@@ -463,7 +463,6 @@
     <div class="brand">Spring Gala 2026</div>
     <a class="nav-item active" href="organizer-overview.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="12" height="3" rx="0.5"/><rect x="2" y="9" width="6" height="4" rx="0.5"/><rect x="10" y="9" width="4" height="4" rx="0.5"/></svg> Groups</a>
     <a class="nav-item" href="organizer-guests.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><path d="M1 14a5 5 0 0 1 10 0"/><path d="M11 4a3 3 0 0 1 0 6"/><path d="M15 14a4 4 0 0 0-3-3.9"/></svg> All guests</a>
-    <a class="nav-item" href="organizer-dietary.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 8h10 M4 4l8 8 M12 4l-8 8"/></svg> Dietary &amp; access</a>
     <a class="nav-item" href="#" style="opacity: 0.6;">Communications</a>
     <a class="nav-item" href="#" style="opacity: 0.6;">Check-in</a>
   </aside>
@@ -518,7 +517,7 @@
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         <input class="search" id="search" placeholder="Search host or group…" />
-        <button class="btn btn-ghost btn-sm" id="nudge-all">Send reminders to laggards</button>
+        <button class="btn btn-ghost btn-sm" id="nudge-all">Follow up with hosts</button>
       </div>
     </div>
 
@@ -711,6 +710,61 @@
       <button class="btn btn-ghost" id="archive-group" style="margin-right: auto; color: var(--danger-fg);">Archive this group</button>
       <button class="btn btn-ghost" data-close>Cancel</button>
       <button class="btn btn-primary" id="save-host" disabled>Reassign host</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =================== FOLLOW-UP / NUDGE MODAL =================== -->
+<div class="modal-backdrop" id="modal-nudge" role="dialog" aria-modal="true">
+  <div class="modal" style="width: 680px;">
+    <div class="modal-head">
+      <div>
+        <h2>Follow up with hosts</h2>
+        <p>Send a nudge to hosts with open slots or pending RSVPs. Each email is personalized with their numbers.</p>
+      </div>
+      <button class="modal-close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+
+      <div style="padding: 12px 14px; background: var(--bg); border-radius: var(--r-md); margin-bottom: 16px;">
+        <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Sending to</div>
+        <div id="nudge-recipients" style="font-size: 13px;"></div>
+      </div>
+
+      <div class="field">
+        <label for="nudge-subject">Subject</label>
+        <input class="input" id="nudge-subject" />
+      </div>
+
+      <div class="field">
+        <label for="nudge-body">Message</label>
+        <textarea class="textarea" id="nudge-body" rows="9" style="font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;"></textarea>
+        <div class="field-hint">
+          Merge variables: <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{host_name}}</code>
+          <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{table_name}}</code>
+          <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{open_slots}}</code>
+          <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{pending_count}}</code>
+          <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{days_to_cutoff}}</code>
+          <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{portal_link}}</code>
+        </div>
+      </div>
+
+      <details style="margin-top: 10px;">
+        <summary style="cursor: pointer; font-size: 13px; color: var(--brand); font-weight: 500;">Preview as <span id="nudge-preview-who"></span> →</summary>
+        <div style="margin-top: 10px; padding: 16px; background: var(--brand-soft); border-radius: var(--r-md); font-size: 13px; line-height: 19px; white-space: pre-wrap;" id="nudge-preview"></div>
+      </details>
+
+      <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 10px 12px; background: var(--info-bg); color: var(--info-fg); border-radius: var(--r-md); font-size: 12px;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="flex-shrink: 0;"><circle cx="8" cy="8" r="6"/><path d="M8 5v4 M8 11v.5"/></svg>
+        <span>This goes from your event sender address. Replies route to the organizer inbox.</span>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary btn-sm" id="nudge-reset" style="margin-right: auto;">Reset to template</button>
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="send-nudge" disabled>Send to <span id="nudge-count">0</span> host<span id="nudge-plural">s</span></button>
     </div>
   </div>
 </div>
@@ -1435,19 +1489,105 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
     showToast(`Imported ${rows.length} host${rows.length === 1 ? '' : 's'}`);
   });
 
-  // Nudge all stalled / pending groups
+  // =====================================================
+  // FOLLOW-UP / NUDGE — customizable email
+  // =====================================================
+  const NUDGE_TEMPLATE = {
+    subject: 'Checking in on your Spring Gala table',
+    body: `Hi {{host_name}},
+
+Quick check-in on your {{table_name}} table for the Spring Gala on May 16. You're at {{open_slots}} open slot(s){{pending_extra}}, and we're {{days_to_cutoff}} from the RSVP cutoff.
+
+If you've collected names verbally or by email, send them my way — happy to add them for you. Otherwise, your portal is here whenever you have a minute:
+
+{{portal_link}}
+
+Thanks for everything you're doing to fill the room.
+
+— The Spring Gala team`,
+  };
+
+  function nudgeTargets() {
+    return TABLES.filter(t => {
+      const open = t.guests.filter(g => g.status === 'empty').length;
+      const pending = t.guests.filter(g => g.status === 'pending').length;
+      return open > 0 || pending > 0;
+    });
+  }
+
+  function mergeVars(t, subjectOrBody) {
+    const open = t.guests.filter(g => g.status === 'empty').length;
+    const pending = t.guests.filter(g => g.status === 'pending').length;
+    const days = daysUntilCutoff();
+    const pendingExtra = pending > 0
+      ? ` and ${pending} guest${pending === 1 ? '' : 's'} who haven't RSVPed yet`
+      : '';
+    return subjectOrBody
+      .replace(/\{\{host_name\}\}/g, t.host.name.split(' ')[0])
+      .replace(/\{\{table_name\}\}/g, t.name)
+      .replace(/\{\{open_slots\}\}/g, open)
+      .replace(/\{\{pending_count\}\}/g, pending)
+      .replace(/\{\{pending_extra\}\}/g, pendingExtra)
+      .replace(/\{\{days_to_cutoff\}\}/g, days === 0 ? 'right at' : `${days} day${days === 1 ? '' : 's'} from`)
+      .replace(/\{\{portal_link\}\}/g, 'https://gala.org/host/' + t.id);
+  }
+
+  function renderNudgePreview() {
+    const targets = nudgeTargets();
+    if (targets.length === 0) return;
+    const sample = targets[0];
+    $('nudge-preview-who').textContent = `${sample.host.name} (${sample.name})`;
+    const subj = mergeVars(sample, $('nudge-subject').value);
+    const body = mergeVars(sample, $('nudge-body').value);
+    $('nudge-preview').textContent = `Subject: ${subj}\n\n${body}`;
+  }
+
   $('nudge-all').addEventListener('click', () => {
-    const targets = TABLES.filter(t => groupStatus(t) === 'stalled' || t.guests.some(g => g.status === 'pending'));
+    const targets = nudgeTargets();
     if (targets.length === 0) {
-      showToast('No groups need a nudge right now.');
+      showToast('All groups are fully confirmed — no one to follow up with right now.');
       return;
     }
+    // Populate recipient list
+    $('nudge-recipients').innerHTML = targets.map(t => {
+      const open = t.guests.filter(g => g.status === 'empty').length;
+      const pending = t.guests.filter(g => g.status === 'pending').length;
+      const bits = [];
+      if (open > 0) bits.push(`${open} open`);
+      if (pending > 0) bits.push(`${pending} pending`);
+      return `<div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--divider);">
+        <span><strong>${esc(t.host.name)}</strong> <span style="color: var(--muted);">· ${esc(t.name)}</span></span>
+        <span style="color: var(--muted); font-size: 12px;">${bits.join(' · ')}</span>
+      </div>`;
+    }).join('');
+    $('nudge-subject').value = NUDGE_TEMPLATE.subject;
+    $('nudge-body').value = NUDGE_TEMPLATE.body;
+    $('nudge-count').textContent = targets.length;
+    $('nudge-plural').textContent = targets.length === 1 ? '' : 's';
+    $('send-nudge').disabled = false;
+    renderNudgePreview();
+    openModal('modal-nudge');
+  });
+
+  $('nudge-subject').addEventListener('input', renderNudgePreview);
+  $('nudge-body').addEventListener('input', renderNudgePreview);
+
+  $('nudge-reset').addEventListener('click', () => {
+    $('nudge-subject').value = NUDGE_TEMPLATE.subject;
+    $('nudge-body').value = NUDGE_TEMPLATE.body;
+    renderNudgePreview();
+    showToast('Reset to default template');
+  });
+
+  $('send-nudge').addEventListener('click', () => {
+    const targets = nudgeTargets();
     targets.forEach(t => {
-      t.activity.unshift(`Just now — Organizer sent reminder`);
+      t.activity.unshift(`Just now — Organizer sent follow-up email`);
       t.lastActivity = 'just now';
     });
+    closeAllModals();
     render();
-    showToast(`Reminders sent to ${targets.length} host${targets.length === 1 ? '' : 's'}`);
+    showToast(`Follow-up sent to ${targets.length} host${targets.length === 1 ? '' : 's'}`);
   });
 
   // Toast
