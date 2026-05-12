@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RSVP · Spring Gala 2026</title>
+<style>
+  :root {
+    --brand:           #372056;
+    --brand-strong:    #2a1942;
+    --brand-soft:      #f4f1f8;
+    --brand-soft-2:    #ebe6f1;
+
+    --ink:             #1a1721;
+    --muted:           #5e5972;
+    --faint:           #9c97ad;
+    --border:          #e6e3ec;
+    --border-strong:   #d3cee0;
+    --divider:         #ede9f1;
+
+    --bg:              #faf9fc;
+    --card:            #ffffff;
+
+    --success-fg:      #176a3f;
+    --success-bg:      #e1f4e6;
+    --info-fg:         #1c4a72;
+    --info-bg:         #e2effa;
+
+    --r-sm:            6px;
+    --r-md:            10px;
+    --r-lg:            14px;
+    --r-pill:          999px;
+    --r-full:          50%;
+    --shadow-sm:       0 1px 2px rgba(26, 23, 33, 0.05);
+    --shadow-md:       0 4px 12px rgba(26, 23, 33, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; cursor: pointer; }
+  input, textarea, select { font: inherit; color: inherit; }
+
+  .shell { max-width: 580px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  .topbar {
+    color: var(--brand);
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .invite-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 24px 24px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .from {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .from .avatar {
+    width: 36px; height: 36px;
+    border-radius: var(--r-full);
+    background: var(--brand);
+    color: white;
+    font-size: 13px; font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .from-body { display: flex; flex-direction: column; }
+  .from-body .who { font-size: 13px; color: var(--muted); }
+  .from-body .name { color: var(--ink); font-weight: 500; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px; font-weight: 500;
+    color: var(--brand);
+    background: var(--brand-soft);
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 22px; font-weight: 500;
+    margin: 0 0 4px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .when {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .personal {
+    padding: 14px;
+    background: var(--brand-soft);
+    border-radius: var(--r-md);
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 19px;
+    border-left: 3px solid var(--brand);
+  }
+  .personal .from-tag {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  /* ============ Form card ============ */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .form-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .form-head h2 {
+    font-size: 16px; font-weight: 500;
+    margin: 0;
+  }
+  .form-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field + .field { margin-top: 14px; }
+  .field label {
+    font-size: 12px; font-weight: 500; color: var(--ink);
+  }
+  .field label .opt { color: var(--muted); font-weight: 400; }
+  .field-hint { font-size: 12px; color: var(--muted); }
+  .input, .textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--card);
+    color: var(--ink);
+    line-height: 20px;
+    outline: none;
+  }
+  .input:focus, .textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(55, 32, 86, 0.15);
+  }
+  .textarea { resize: vertical; min-height: 60px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .grid-2 .field { margin-top: 0; }
+
+  /* ============ Dietary chips ============ */
+  .diet-picker {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .diet-pick {
+    display: inline-flex; align-items: center;
+    padding: 6px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-pill);
+    font-size: 12px;
+    background: var(--card);
+    color: var(--ink);
+  }
+  .diet-pick:hover { border-color: var(--muted); }
+  .diet-pick.on {
+    background: var(--info-bg);
+    border-color: var(--info-fg);
+    color: var(--info-fg);
+    font-weight: 500;
+  }
+
+  /* ============ Section dividers ============ */
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 22px 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* ============ Plus-one ============ */
+  .pos-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: var(--r-md);
+  }
+  .pos-copy strong { display: block; font-size: 13px; font-weight: 500; }
+  .pos-copy span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pos-actions {
+    display: inline-flex;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--card);
+  }
+  .pos-actions button {
+    background: transparent;
+    border: 0;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .pos-actions button:hover { background: var(--brand-soft); }
+  .pos-actions button.on {
+    background: var(--brand);
+    color: white;
+  }
+
+  /* ============ Footer ============ */
+  .submit-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--divider);
+  }
+  .submit-note { font-size: 12px; color: var(--muted); }
+  .btn-primary {
+    background: var(--brand);
+    color: white;
+    border: 0;
+    padding: 11px 22px;
+    border-radius: var(--r-md);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-strong); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 11px 14px;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+
+  /* ============ Success ============ */
+  .success {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .success .check {
+    width: 56px; height: 56px;
+    margin: 0 auto 16px;
+    border-radius: var(--r-full);
+    background: var(--success-bg);
+    color: var(--success-fg);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .success h2 { font-size: 20px; margin: 0 0 8px; font-weight: 500; }
+  .success p { color: var(--muted); margin: 0 0 18px; line-height: 21px; font-size: 14px; }
+  .success .details {
+    text-align: left;
+    background: var(--bg);
+    border-radius: var(--r-md);
+    padding: 14px;
+    margin: 18px 0 0;
+    font-size: 13px;
+  }
+  .success .details div { margin: 4px 0; color: var(--ink); }
+  .success .details .label { display: inline-block; min-width: 110px; color: var(--muted); }
+
+  /* Hide form when success showing */
+  .hide { display: none; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <div class="topbar">Acme Foundation · Spring Gala</div>
+
+  <!-- INVITE CONTEXT -->
+  <div class="invite-card" id="invite-card">
+    <div class="from">
+      <span class="avatar" id="host-initials">MR</span>
+      <div class="from-body">
+        <span class="who">You've been invited by</span>
+        <span class="name" id="host-name">Maya Rodriguez</span>
+      </div>
+    </div>
+    <span class="eyebrow">You're invited</span>
+    <h1>Spring Gala 2026</h1>
+    <div class="when">Sat · May 16, 2026 · 6:30 pm · The Plaza Hotel, New York NY</div>
+    <div class="personal">
+      <span class="from-tag">A note from Maya</span>
+      Would love to see you there — I've saved you a seat at our table. Come hungry; the program is short and the people are good.
+    </div>
+  </div>
+
+  <!-- RSVP FORM -->
+  <div class="form-card" id="form-card">
+    <div class="form-head">
+      <h2>RSVP for your seat</h2>
+    </div>
+    <div class="form-sub">Confirm by Tuesday May 12. Help us plan for dietary needs, accessibility, and seating.</div>
+
+    <div class="section-title">About you</div>
+    <div class="field">
+      <label for="g-name">Your full name</label>
+      <input class="input" id="g-name" placeholder="Jordan Chen" />
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label for="g-email">Email</label>
+        <input class="input" id="g-email" type="email" placeholder="jordan@acme.co" value="jordan@acme.co" />
+      </div>
+      <div class="field">
+        <label for="g-phone">Phone <span class="opt">(optional · helps us reach you day-of)</span></label>
+        <input class="input" id="g-phone" type="tel" placeholder="(555) 123-4567" />
+      </div>
+    </div>
+
+    <div class="section-title">Dietary needs</div>
+    <div class="field">
+      <label>Any preferences? <span class="opt">(pick all that apply)</span></label>
+      <div class="diet-picker" id="diet-picker"></div>
+    </div>
+    <div class="field">
+      <label for="g-diet-other">Other notes <span class="opt">(allergies, special requests)</span></label>
+      <input class="input" id="g-diet-other" placeholder="No shellfish, please" />
+    </div>
+
+    <div class="section-title">Accessibility</div>
+    <div class="field">
+      <label for="g-access">Anything we should know? <span class="opt">(mobility, hearing, low vision, etc.)</span></label>
+      <input class="input" id="g-access" placeholder="Wheelchair access at the table, please" />
+    </div>
+
+    <div class="section-title">Bringing someone with you?</div>
+    <div class="pos-row">
+      <div class="pos-copy">
+        <strong>Yes, I'd like to bring a guest</strong>
+        <span>Maya offered each invitee one extra seat at the table.</span>
+      </div>
+      <div class="pos-actions">
+        <button type="button" id="po-no" class="on">No</button>
+        <button type="button" id="po-yes">Yes</button>
+      </div>
+    </div>
+    <div id="po-fields" class="hide">
+      <div class="grid-2">
+        <div class="field">
+          <label for="po-name">Guest name</label>
+          <input class="input" id="po-name" placeholder="Alex Chen" />
+        </div>
+        <div class="field">
+          <label for="po-email">Their email <span class="opt">(optional)</span></label>
+          <input class="input" id="po-email" type="email" placeholder="alex@example.com" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="po-diet">Their dietary needs <span class="opt">(optional)</span></label>
+        <input class="input" id="po-diet" placeholder="Vegetarian, gluten-free, etc." />
+      </div>
+    </div>
+
+    <div class="section-title">Connection to the cause <span class="opt" style="text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 11px;">(optional)</span></div>
+    <div class="field">
+      <label for="g-connection">How are you connected to Acme Foundation?</label>
+      <textarea class="textarea" id="g-connection" placeholder="A friend volunteered with the after-school program last year. I came to the spring lunch and was hooked."></textarea>
+      <div class="field-hint">Helps the team know who's in the room. Maya can see this.</div>
+    </div>
+
+    <div class="submit-row">
+      <span class="submit-note">By RSVPing, you're confirming a seat. Need to cancel later? Just reply to your invite email.</span>
+      <button class="btn-primary" id="rsvp-btn" disabled>RSVP →</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success hide" id="success-card">
+    <div class="check">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L20 7"/></svg>
+    </div>
+    <h2 id="success-title">You're in.</h2>
+    <p id="success-body">We've confirmed your seat at Maya Rodriguez's table. A calendar invite is on its way.</p>
+    <div class="details" id="success-details"></div>
+    <p style="margin-top: 18px; font-size: 12px; color: var(--muted);">Need to change something? Reply to the invite email or contact your host directly.</p>
+  </div>
+
+</div>
+
+<script>
+  const DIETARY_OPTIONS = [
+    'Vegetarian', 'Vegan', 'Pescatarian',
+    'Gluten-free', 'Dairy-free', 'Nut-free',
+    'Kosher', 'Halal',
+    'No restrictions',
+  ];
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // ============ DIETARY ============
+  let selectedDiet = new Set();
+  function renderDiet() {
+    $('diet-picker').innerHTML = DIETARY_OPTIONS.map(opt =>
+      `<button type="button" class="diet-pick ${selectedDiet.has(opt) ? 'on' : ''}" data-diet="${esc(opt)}">${esc(opt)}</button>`
+    ).join('');
+  }
+  $('diet-picker').addEventListener('click', e => {
+    const opt = e.target.closest('[data-diet]')?.dataset.diet;
+    if (!opt) return;
+    if (selectedDiet.has(opt)) selectedDiet.delete(opt);
+    else {
+      if (opt === 'No restrictions') selectedDiet.clear();
+      else selectedDiet.delete('No restrictions');
+      selectedDiet.add(opt);
+    }
+    renderDiet();
+  });
+  renderDiet();
+
+  // ============ PLUS-ONE TOGGLE ============
+  let bringingGuest = false;
+  $('po-yes').addEventListener('click', () => {
+    bringingGuest = true;
+    $('po-yes').classList.add('on');
+    $('po-no').classList.remove('on');
+    $('po-fields').classList.remove('hide');
+  });
+  $('po-no').addEventListener('click', () => {
+    bringingGuest = false;
+    $('po-no').classList.add('on');
+    $('po-yes').classList.remove('on');
+    $('po-fields').classList.add('hide');
+  });
+
+  // ============ VALIDATION ============
+  function validate() {
+    const name = $('g-name').value.trim();
+    const email = $('g-email').value.trim();
+    $('rsvp-btn').disabled = !(name && email);
+  }
+  $('g-name').addEventListener('input', validate);
+  $('g-email').addEventListener('input', validate);
+
+  // ============ SUBMIT ============
+  $('rsvp-btn').addEventListener('click', () => {
+    if ($('rsvp-btn').disabled) return;
+
+    // Build success summary
+    const dietList = Array.from(selectedDiet);
+    const dietOther = $('g-diet-other').value.trim();
+    const access = $('g-access').value.trim();
+    const connection = $('g-connection').value.trim();
+    const poName = bringingGuest ? $('po-name').value.trim() : '';
+
+    const rows = [
+      `<div><span class="label">Name</span> ${esc($('g-name').value.trim())}</div>`,
+      `<div><span class="label">Email</span> ${esc($('g-email').value.trim())}</div>`,
+    ];
+    if ($('g-phone').value.trim()) rows.push(`<div><span class="label">Phone</span> ${esc($('g-phone').value.trim())}</div>`);
+    if (dietList.length || dietOther) {
+      const all = [...dietList, dietOther].filter(Boolean).join(', ');
+      rows.push(`<div><span class="label">Dietary</span> ${esc(all)}</div>`);
+    }
+    if (access) rows.push(`<div><span class="label">Accessibility</span> ${esc(access)}</div>`);
+    if (poName) rows.push(`<div><span class="label">Bringing</span> ${esc(poName)}</div>`);
+    if (connection) rows.push(`<div><span class="label">Connection</span> ${esc(connection)}</div>`);
+
+    $('success-details').innerHTML = rows.join('');
+    $('form-card').classList.add('hide');
+    $('success-card').classList.remove('hide');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>

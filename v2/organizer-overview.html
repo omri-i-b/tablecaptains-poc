@@ -72,7 +72,7 @@
     color: var(--brand);
     margin-bottom: 14px;
   }
-  .sidebar .nav-item {
+  .sidebar a.nav-item, .sidebar button.nav-item {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 10px;
     border-radius: var(--r-md);
@@ -81,6 +81,7 @@
     border: none;
     background: transparent;
     text-align: left;
+    text-decoration: none;
   }
   .sidebar .nav-item:hover { background: var(--brand-soft-2); color: var(--ink); }
   .sidebar .nav-item.active { background: var(--card); color: var(--brand); font-weight: 500; }
@@ -460,11 +461,11 @@
 
   <aside class="sidebar">
     <div class="brand">Spring Gala 2026</div>
-    <button class="nav-item active"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="12" height="3" rx="0.5"/><rect x="2" y="9" width="6" height="4" rx="0.5"/><rect x="10" y="9" width="4" height="4" rx="0.5"/></svg> Groups</button>
-    <button class="nav-item"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><path d="M1 14a5 5 0 0 1 10 0"/><path d="M11 4a3 3 0 0 1 0 6"/><path d="M15 14a4 4 0 0 0-3-3.9"/></svg> All guests</button>
-    <button class="nav-item">Communications</button>
-    <button class="nav-item">Check-in</button>
-    <button class="nav-item">Settings</button>
+    <a class="nav-item active" href="organizer-overview.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="12" height="3" rx="0.5"/><rect x="2" y="9" width="6" height="4" rx="0.5"/><rect x="10" y="9" width="4" height="4" rx="0.5"/></svg> Groups</a>
+    <a class="nav-item" href="organizer-guests.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><path d="M1 14a5 5 0 0 1 10 0"/><path d="M11 4a3 3 0 0 1 0 6"/><path d="M15 14a4 4 0 0 0-3-3.9"/></svg> All guests</a>
+    <a class="nav-item" href="organizer-dietary.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 8h10 M4 4l8 8 M12 4l-8 8"/></svg> Dietary &amp; access</a>
+    <a class="nav-item" href="#" style="opacity: 0.6;">Communications</a>
+    <a class="nav-item" href="#" style="opacity: 0.6;">Check-in</a>
   </aside>
 
   <main class="main">
@@ -474,18 +475,38 @@
         <div class="sub">Delegated guest collection — Sat May 16 · cutoff May 12.</div>
       </div>
       <div class="page-head-right">
+        <button class="btn btn-secondary" id="open-bulk-import">Bulk import hosts</button>
         <button class="btn btn-secondary" id="open-add-guest">+ Add guest</button>
         <button class="btn btn-primary" id="open-add-group">+ New group</button>
       </div>
     </div>
 
+    <!-- Cutoff urgency banner -->
+    <div id="cutoff-banner" style="
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px;
+      background: var(--warning-bg);
+      border: 1px solid #f0d8a4;
+      border-radius: var(--r-md);
+      color: var(--warning-fg);
+      font-size: 13px;
+      margin-bottom: 14px;
+    ">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2.5 2"/></svg>
+      <span><strong id="cutoff-text">Cutoff approaching.</strong> <span id="cutoff-detail">RSVP cutoff in 5 days · 17 slots unresolved.</span></span>
+      <div style="margin-left: auto; display: flex; gap: 6px;">
+        <button class="btn btn-secondary btn-sm" id="cutoff-action-1">View open slots</button>
+      </div>
+    </div>
+
     <!-- Event summary -->
-    <div class="event-summary">
+    <div class="event-summary" style="grid-template-columns: repeat(6, 1fr);">
       <div class="summary-stat"><span class="num" id="sum-groups">0</span><span class="label">Groups</span></div>
       <div class="summary-stat"><span class="num" id="sum-confirmed">0</span><span class="label">Confirmed</span></div>
       <div class="summary-stat warn"><span class="num" id="sum-pending">0</span><span class="label">Pending RSVP</span></div>
       <div class="summary-stat"><span class="num" id="sum-empty">0</span><span class="label">Empty slots</span></div>
       <div class="summary-stat"><span class="num" id="sum-pct">0%</span><span class="label">Overall fill</span></div>
+      <div class="summary-stat"><span class="num" id="sum-headcount">0</span><span class="label">Final headcount (90%)</span></div>
     </div>
 
     <div class="toolbar">
@@ -630,6 +651,103 @@
   </div>
 </div>
 
+<!-- =================== EDIT GUEST MODAL =================== -->
+<div class="modal-backdrop" id="modal-edit-guest" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="eg-title">Edit guest</h2>
+        <p id="eg-sub">Acme Co. Team · slot 2</p>
+      </div>
+      <button class="modal-close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2" style="margin-top: 0;">
+        <div class="field"><label for="eg-name">Full name</label><input class="input" id="eg-name" /></div>
+        <div class="field"><label for="eg-email">Email</label><input class="input" id="eg-email" type="email" /></div>
+      </div>
+      <div class="field">
+        <label>Dietary preferences</label>
+        <div id="eg-diet-picker" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+      </div>
+      <div class="field"><label for="eg-diet-other">Other dietary notes</label><input class="input" id="eg-diet-other" placeholder="No shellfish" /></div>
+      <div class="field"><label for="eg-access">Accessibility needs</label><input class="input" id="eg-access" placeholder="Wheelchair access" /></div>
+      <div class="field"><label for="eg-conn">Connection to cause</label><textarea class="textarea" id="eg-conn"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="eg-remove" style="margin-right: auto; color: var(--danger-fg);">Remove guest</button>
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="eg-save">Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =================== REASSIGN HOST MODAL =================== -->
+<div class="modal-backdrop" id="modal-host" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Reassign host</h2>
+        <p id="rh-sub">Replace the host of this group. Guest list stays intact.</p>
+      </div>
+      <button class="modal-close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+      <div style="padding: 12px; background: var(--bg); border-radius: var(--r-md); margin-bottom: 16px;">
+        <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Current host</div>
+        <div id="rh-current" style="font-weight: 500;"></div>
+      </div>
+      <div class="grid-2" style="margin-top: 0;">
+        <div class="field"><label for="rh-name">New host name</label><input class="input" id="rh-name" /></div>
+        <div class="field"><label for="rh-email">New host email</label><input class="input" id="rh-email" type="email" /></div>
+      </div>
+      <div class="field" style="margin-top: 14px;">
+        <label for="rh-reason">Note <span style="color: var(--muted); font-weight: 400;">(optional — appears in activity)</span></label>
+        <input class="input" id="rh-reason" placeholder="Pat stepped back; Jordan taking over." />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="archive-group" style="margin-right: auto; color: var(--danger-fg);">Archive this group</button>
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="save-host" disabled>Reassign host</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =================== BULK IMPORT MODAL =================== -->
+<div class="modal-backdrop" id="modal-bulk" role="dialog" aria-modal="true">
+  <div class="modal" style="width: 600px;">
+    <div class="modal-head">
+      <div>
+        <h2>Bulk import hosts</h2>
+        <p>Paste rows from a spreadsheet or type them in. One host per line.</p>
+      </div>
+      <button class="modal-close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="bulk-data">Rows · <span style="color: var(--muted); font-weight: 400;">format: <code style="background: var(--bg); padding: 1px 6px; border-radius: 4px;">Group name, Host name, Host email, Slots</code></span></label>
+        <textarea class="textarea" id="bulk-data" rows="8" placeholder="Smith Family, Pat Smith, pat@smith.com, 10
+Acme Partners, Casey Jones, casey@acme.io, 8
+Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
+        <div class="field-hint">Default slots = 10 if you leave that column empty.</div>
+      </div>
+      <div id="bulk-preview" style="margin-top: 14px; padding: 12px; background: var(--bg); border-radius: var(--r-md); font-size: 13px; display: none;">
+        <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Preview</div>
+        <div id="bulk-preview-rows"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <span id="bulk-summary" style="font-size: 12px; color: var(--muted); margin-right: auto;">0 valid rows</span>
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="save-bulk" disabled>Import</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="toast" id="toast"></div>
 
 
@@ -749,6 +867,40 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   // =====================================================
+  // CUTOFF URGENCY
+  // =====================================================
+  const CUTOFF_DATE = new Date('2026-05-12T23:59:59');
+  function daysUntilCutoff() {
+    const today = new Date('2026-05-12'); // simulated "today" — change to live Date() in real app
+    const diff = Math.ceil((CUTOFF_DATE - today) / (1000 * 60 * 60 * 24));
+    return Math.max(0, diff);
+  }
+  function renderCutoffBanner(unresolved) {
+    const days = daysUntilCutoff();
+    const banner = $('cutoff-banner');
+    if (days <= 0) {
+      $('cutoff-text').textContent = 'Cutoff passed.';
+      $('cutoff-detail').textContent = `${unresolved} slot${unresolved === 1 ? '' : 's'} still unresolved.`;
+      banner.style.background = '#fde3e7';
+      banner.style.borderColor = '#f5b5be';
+      banner.style.color = '#b11a2b';
+    } else if (days <= 3) {
+      $('cutoff-text').textContent = `Cutoff in ${days} day${days === 1 ? '' : 's'}.`;
+      $('cutoff-detail').textContent = `${unresolved} slot${unresolved === 1 ? '' : 's'} still unresolved — time to chase names.`;
+    } else if (days <= 7) {
+      $('cutoff-text').textContent = `Cutoff in ${days} days.`;
+      $('cutoff-detail').textContent = `${unresolved} slot${unresolved === 1 ? '' : 's'} still need attention.`;
+    } else {
+      banner.style.display = 'none';
+      return;
+    }
+    banner.style.display = '';
+  }
+  $('cutoff-action-1').addEventListener('click', () => {
+    window.location.href = 'organizer-guests.html';
+  });
+
+  // =====================================================
   // STATUS LOGIC
   // =====================================================
   function groupStatus(t) {
@@ -791,6 +943,8 @@
     $('sum-pending').textContent = allPending;
     $('sum-empty').textContent = allEmpty;
     $('sum-pct').textContent = allCap > 0 ? Math.round(100 * allConfirmed / allCap) + '%' : '0%';
+    $('sum-headcount').textContent = Math.round(allConfirmed * 0.9);
+    renderCutoffBanner(allPending + allEmpty);
 
     // Filter
     const q = searchQuery.toLowerCase();
@@ -894,15 +1048,21 @@
 
     $('d-roster').innerHTML = t.guests.map(g => {
       if (g.status === 'empty') {
-        return `<div class="roster-item empty"><span class="slot-num">${g.slot}</span><div class="who">Empty slot</div></div>`;
+        return `<div class="roster-item empty" data-edit-slot="${g.slot}" style="cursor: pointer;"><span class="slot-num">${g.slot}</span><div class="who">Empty slot — click to add</div></div>`;
       }
-      const diet = (g.dietary || []).map(d => `<span class="diet-chip">${esc(d)}</span>`).join('');
+      const diet = (g.dietary || []).filter(d => d !== 'No restrictions').map(d => `<span class="diet-chip">${esc(d)}</span>`).join('');
       const access = g.accessibility ? `<span class="diet-chip access" title="${esc(g.accessibility)}">Access</span>` : '';
-      const meta = g.status === 'pending' ? `Pending RSVP · ${esc(g.email)}` : esc(g.email || '');
-      return `<div class="roster-item">
+      const isPending = g.status === 'pending';
+      const statusDot = isPending
+        ? `<span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--warning-fg); margin-right: 6px;"></span>`
+        : '';
+      const meta = isPending ? `Pending RSVP · ${esc(g.email)}` : esc(g.email || '');
+      const nameOrEmail = g.name || (isPending ? `<span style="color: var(--muted);">${esc(g.email)}</span>` : g.email);
+      const youTag = g.isHost ? `<span style="font-size: 10px; background: var(--brand); color: white; padding: 1px 6px; border-radius: 999px; margin-left: 6px; font-weight: 500;">Host</span>` : '';
+      return `<div class="roster-item" data-edit-slot="${g.slot}" style="cursor: pointer;">
         <span class="slot-num">${g.slot}</span>
         <div class="who">
-          <div class="who-name">${esc(g.name || g.email)}</div>
+          <div class="who-name">${statusDot}${nameOrEmail}${youTag}</div>
           <div class="who-meta">${meta}</div>
         </div>
         <div style="display: flex; gap: 4px;">${diet}${access}</div>
@@ -931,6 +1091,20 @@
     showToast(`Reminder sent to ${t.host.name}`);
     openDrawer(openGroupId);
     render();
+  });
+
+  // Drawer roster row click → edit guest modal
+  $('d-roster').addEventListener('click', e => {
+    const slotEl = e.target.closest('[data-edit-slot]');
+    if (!slotEl || !openGroupId) return;
+    const slot = parseInt(slotEl.dataset.editSlot, 10);
+    openEditGuestModal(openGroupId, slot);
+  });
+
+  // Reassign host button
+  $('d-edit-host').addEventListener('click', () => {
+    if (!openGroupId) return;
+    openReassignHostModal(openGroupId);
   });
 
   // =====================================================
@@ -1036,6 +1210,229 @@
     render();
     closeAllModals();
     showToast(`${$('ag-name').value.trim()} added to ${t.name}`);
+  });
+
+  // =====================================================
+  // EDIT GUEST MODAL (from drawer)
+  // =====================================================
+  const DIETARY_OPTIONS = [
+    'Vegetarian', 'Vegan', 'Pescatarian',
+    'Gluten-free', 'Dairy-free', 'Nut-free',
+    'Kosher', 'Halal',
+    'No restrictions',
+  ];
+  let editingSlot = null; // { groupId, slot }
+  let editDiet = new Set();
+  function renderEditDiet() {
+    $('eg-diet-picker').innerHTML = DIETARY_OPTIONS.map(opt =>
+      `<button type="button" data-eg-diet="${esc(opt)}" style="
+        padding: 5px 11px;
+        border: 1px solid ${editDiet.has(opt) ? 'var(--info-fg)' : 'var(--border-strong)'};
+        background: ${editDiet.has(opt) ? 'var(--info-bg)' : 'var(--card)'};
+        color: ${editDiet.has(opt) ? 'var(--info-fg)' : 'var(--ink)'};
+        border-radius: 999px; font-size: 12px;
+        font-weight: ${editDiet.has(opt) ? '500' : '400'};
+        cursor: pointer;
+      ">${esc(opt)}</button>`
+    ).join('');
+  }
+  $('eg-diet-picker').addEventListener('click', e => {
+    const opt = e.target.closest('[data-eg-diet]')?.dataset.egDiet;
+    if (!opt) return;
+    if (editDiet.has(opt)) editDiet.delete(opt);
+    else {
+      if (opt === 'No restrictions') editDiet.clear();
+      else editDiet.delete('No restrictions');
+      editDiet.add(opt);
+    }
+    renderEditDiet();
+  });
+
+  function openEditGuestModal(groupId, slot) {
+    const t = TABLES.find(x => x.id === groupId);
+    if (!t) return;
+    const g = t.guests.find(x => x.slot === slot);
+    if (!g) return;
+    editingSlot = { groupId, slot };
+    $('eg-title').textContent = g.status === 'empty' ? 'Add a guest' : (g.isHost ? 'Edit host' : 'Edit guest');
+    $('eg-sub').textContent = `${t.name} · slot ${slot}`;
+    $('eg-name').value = g.name || '';
+    $('eg-email').value = g.email || '';
+    $('eg-diet-other').value = g.dietaryOther || '';
+    $('eg-access').value = g.accessibility || '';
+    $('eg-conn').value = g.connection || '';
+    editDiet = new Set(g.dietary || []);
+    renderEditDiet();
+    $('eg-remove').style.display = (g.status === 'empty' || g.isHost) ? 'none' : '';
+    openModal('modal-edit-guest');
+    setTimeout(() => $('eg-name').focus(), 50);
+  }
+  $('eg-save').addEventListener('click', () => {
+    if (!editingSlot) return;
+    const t = TABLES.find(x => x.id === editingSlot.groupId);
+    const idx = t.guests.findIndex(x => x.slot === editingSlot.slot);
+    if (idx === -1) return;
+    const existing = t.guests[idx];
+    const name = $('eg-name').value.trim();
+    if (!name || !$('eg-email').value.trim()) { closeAllModals(); return; }
+    t.guests[idx] = {
+      ...existing,
+      status: 'confirmed',
+      name,
+      email: $('eg-email').value.trim(),
+      dietary: Array.from(editDiet),
+      dietaryOther: $('eg-diet-other').value.trim(),
+      accessibility: $('eg-access').value.trim(),
+      connection: $('eg-conn').value.trim(),
+    };
+    t.lastActivity = 'just now';
+    t.activity.unshift(`Just now — Organizer updated ${name} (slot ${editingSlot.slot})`);
+    closeAllModals();
+    render();
+    if (openGroupId) openDrawer(openGroupId);
+    showToast(`${name} updated`);
+  });
+  $('eg-remove').addEventListener('click', () => {
+    if (!editingSlot) return;
+    const t = TABLES.find(x => x.id === editingSlot.groupId);
+    const idx = t.guests.findIndex(x => x.slot === editingSlot.slot);
+    if (idx === -1) return;
+    const removed = t.guests[idx];
+    t.guests[idx] = { slot: editingSlot.slot, status: 'empty' };
+    t.lastActivity = 'just now';
+    t.activity.unshift(`Just now — Organizer removed ${removed.name || removed.email} (slot ${editingSlot.slot})`);
+    closeAllModals();
+    render();
+    if (openGroupId) openDrawer(openGroupId);
+    showToast(`${removed.name || removed.email} removed`);
+  });
+
+  // =====================================================
+  // REASSIGN HOST MODAL
+  // =====================================================
+  function openReassignHostModal(groupId) {
+    const t = TABLES.find(x => x.id === groupId);
+    if (!t) return;
+    $('rh-current').textContent = `${t.host.name} · ${t.host.email}`;
+    $('rh-sub').textContent = `Group: ${t.name}`;
+    $('rh-name').value = '';
+    $('rh-email').value = '';
+    $('rh-reason').value = '';
+    $('save-host').disabled = true;
+    openModal('modal-host');
+    setTimeout(() => $('rh-name').focus(), 50);
+  }
+  function validateReassign() {
+    $('save-host').disabled = !($('rh-name').value.trim() && $('rh-email').value.trim());
+  }
+  $('rh-name').addEventListener('input', validateReassign);
+  $('rh-email').addEventListener('input', validateReassign);
+  $('save-host').addEventListener('click', () => {
+    if ($('save-host').disabled || !openGroupId) return;
+    const t = TABLES.find(x => x.id === openGroupId);
+    const oldHost = t.host.name;
+    const newName = $('rh-name').value.trim();
+    const newEmail = $('rh-email').value.trim();
+    const reason = $('rh-reason').value.trim();
+    t.host = { name: newName, email: newEmail, initials: initialsFor(newName) };
+    // Replace host's slot-1 entry
+    const hostIdx = t.guests.findIndex(g => g.isHost);
+    if (hostIdx !== -1) {
+      t.guests[hostIdx] = { ...t.guests[hostIdx], name: newName, email: newEmail };
+    }
+    t.lastActivity = 'just now';
+    t.activity.unshift(`Just now — Host reassigned from ${oldHost} to ${newName}${reason ? ' · ' + reason : ''}`);
+    closeAllModals();
+    render();
+    openDrawer(openGroupId);
+    showToast(`Host reassigned to ${newName}`);
+  });
+
+  // Archive group
+  $('archive-group').addEventListener('click', () => {
+    if (!openGroupId) return;
+    const t = TABLES.find(x => x.id === openGroupId);
+    if (!confirm(`Archive "${t.name}"? Guests will be removed from the active list. This is a soft delete — you can ask support to restore it.`)) return;
+    TABLES = TABLES.filter(x => x.id !== openGroupId);
+    closeAllModals();
+    closeDrawer();
+    render();
+    showToast(`Group "${t.name}" archived`);
+  });
+
+  // =====================================================
+  // BULK IMPORT
+  // =====================================================
+  $('open-bulk-import').addEventListener('click', () => {
+    $('bulk-data').value = '';
+    $('bulk-preview').style.display = 'none';
+    $('bulk-summary').textContent = '0 valid rows';
+    $('save-bulk').disabled = true;
+    openModal('modal-bulk');
+    setTimeout(() => $('bulk-data').focus(), 50);
+  });
+
+  function parseBulk(raw) {
+    const out = [];
+    raw.split('\n').forEach((line, i) => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      const parts = trimmed.split(/[,\t]/).map(s => s.trim());
+      const groupName = parts[0] || '';
+      const hostName = parts[1] || '';
+      const hostEmail = parts[2] || '';
+      const slots = parseInt(parts[3], 10) || 10;
+      if (!groupName || !hostName || !hostEmail) {
+        out.push({ lineNum: i + 1, error: 'Missing required field', raw: trimmed });
+      } else if (!/\S+@\S+\.\S+/.test(hostEmail)) {
+        out.push({ lineNum: i + 1, error: 'Invalid email', raw: trimmed });
+      } else {
+        out.push({ lineNum: i + 1, groupName, hostName, hostEmail, slots: Math.max(1, Math.min(40, slots)) });
+      }
+    });
+    return out;
+  }
+
+  $('bulk-data').addEventListener('input', () => {
+    const rows = parseBulk($('bulk-data').value);
+    const valid = rows.filter(r => !r.error);
+    const invalid = rows.filter(r => r.error);
+    if (rows.length === 0) {
+      $('bulk-preview').style.display = 'none';
+      $('bulk-summary').textContent = '0 valid rows';
+      $('save-bulk').disabled = true;
+      return;
+    }
+    $('bulk-preview').style.display = '';
+    $('bulk-preview-rows').innerHTML = rows.slice(0, 10).map(r => {
+      if (r.error) {
+        return `<div style="color: var(--danger-fg); padding: 2px 0;">Line ${r.lineNum}: ${esc(r.error)} — ${esc(r.raw)}</div>`;
+      }
+      return `<div style="padding: 2px 0;">✓ <strong>${esc(r.groupName)}</strong> · ${esc(r.hostName)} (${esc(r.hostEmail)}) · ${r.slots} slots</div>`;
+    }).join('') + (rows.length > 10 ? `<div style="color: var(--muted); margin-top: 6px;">…and ${rows.length - 10} more rows</div>` : '');
+    $('bulk-summary').textContent = `${valid.length} valid${invalid.length ? `, ${invalid.length} skipped` : ''}`;
+    $('save-bulk').disabled = valid.length === 0;
+  });
+
+  $('save-bulk').addEventListener('click', () => {
+    const rows = parseBulk($('bulk-data').value).filter(r => !r.error);
+    rows.forEach(r => {
+      const id = 't' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+      const host = { name: r.hostName, email: r.hostEmail, initials: initialsFor(r.hostName) };
+      const guests = [
+        { slot: 1, status: 'confirmed', name: r.hostName, email: r.hostEmail, isHost: true },
+      ];
+      for (let i = 2; i <= r.slots; i++) guests.push({ slot: i, status: 'empty' });
+      TABLES.push({
+        id, name: r.groupName, host, capacity: r.slots,
+        lastActivity: 'just now',
+        activity: [`Just now — Imported via bulk · host ${r.hostName}`],
+        guests,
+      });
+    });
+    closeAllModals();
+    render();
+    showToast(`Imported ${rows.length} host${rows.length === 1 ? '' : 's'}`);
   });
 
   // Nudge all stalled / pending groups
