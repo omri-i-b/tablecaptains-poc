@@ -297,8 +297,42 @@
   .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
   .pill-confirmed { background: var(--success-bg); color: var(--success-fg); }
   .pill-pending { background: var(--invited-bg); color: var(--invited-fg); }
-  .pill-empty { background: var(--open-bg); color: var(--open-fg); }
+  .pill-empty { background: transparent; color: var(--faint); border: 1px dashed var(--border-strong); padding: 1px 8px; }
+  .pill-empty .pill-dot { display: none; }
   .pill-you { background: var(--brand); color: white; }
+
+  /* Empty slot rows — visually quieter, dashed accent on the left to signal "needs a guest" */
+  table.roster tbody tr.is-empty {
+    background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 4px, transparent 4px);
+    color: var(--faint);
+    font-style: normal;
+  }
+  table.roster tbody tr.is-empty td:first-child { position: relative; }
+  table.roster tbody tr.is-empty td:first-child::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 3px;
+    background: repeating-linear-gradient(180deg, var(--border-strong) 0 4px, transparent 4px 8px);
+    border-radius: 2px;
+  }
+  table.roster tbody tr.is-empty .guest-empty { color: var(--faint); }
+  table.roster tbody tr.is-empty .slot-num { background: transparent; border: 1px dashed var(--border-strong); color: var(--faint); }
+
+  /* Pending rows — soft amber background tint to signal "you've done something, waiting on them" */
+  table.roster tbody tr.is-pending {
+    background: rgba(253, 243, 216, 0.4);
+  }
+  table.roster tbody tr.is-pending td:first-child { position: relative; }
+  table.roster tbody tr.is-pending td:first-child::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 3px;
+    background: var(--invited-fg);
+    border-radius: 2px;
+    opacity: 0.45;
+  }
 
   /* Dietary chips */
   .diet-chip {
@@ -483,8 +517,8 @@
 
     <div class="stats">
       <div class="stat"><span class="num" id="stat-confirmed">0</span><span class="label">Confirmed</span></div>
-      <div class="stat"><span class="num" id="stat-pending">0</span><span class="label">Pending names</span></div>
-      <div class="stat"><span class="num" id="stat-empty">0</span><span class="label">Empty</span></div>
+      <div class="stat"><span class="num" id="stat-pending">0</span><span class="label">Awaiting response</span></div>
+      <div class="stat"><span class="num" id="stat-empty">0</span><span class="label">Guests still needed</span></div>
       <div class="stat"><span class="num" id="stat-capacity">0</span><span class="label">Capacity</span></div>
     </div>
 
@@ -600,24 +634,48 @@
     <div class="modal-body">
       <div class="field">
         <label for="inv-emails">Email addresses</label>
-        <textarea class="textarea" id="inv-emails" rows="4" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
-        <div class="field-hint">One per line, or comma-separated. Each consumes 1 slot.</div>
+        <textarea class="textarea" id="inv-emails" rows="3" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
+        <div class="field-hint">One per line, or comma-separated. Each takes one slot.</div>
       </div>
-      <div class="field">
-        <label for="inv-msg">Personal note <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
-        <textarea class="textarea" id="inv-msg" rows="3" placeholder="Hey — would love to see you at the Spring Gala. I've saved you a seat at my table."></textarea>
-      </div>
-      <details style="margin-top: 14px;">
-        <summary style="cursor: pointer; font-size: 13px; color: var(--brand); font-weight: 500;">Preview email →</summary>
-        <div style="margin-top: 10px; padding: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); font-size: 13px; line-height: 19px;">
-          <div style="font-weight: 500; color: var(--ink); margin-bottom: 4px;">Maya Rodriguez invited you · Spring Gala 2026</div>
-          <div style="color: var(--muted); margin-bottom: 14px;">From: Spring Gala &lt;rsvp@gala.org&gt;</div>
-          <div id="preview-personal" style="font-style: italic; padding: 10px 12px; background: var(--brand-soft); border-radius: var(--r-md); margin-bottom: 14px; color: var(--ink);">Hey — would love to see you at the Spring Gala. I've saved you a seat at my table.</div>
-          <p style="margin: 0 0 10px;">You're invited to <strong>Spring Gala 2026</strong> on Sat May 16 at The Plaza Hotel, NYC.</p>
-          <p style="margin: 0 0 14px; color: var(--muted);">Tap below to confirm your seat and let us know about any dietary or accessibility needs.</p>
-          <span style="display: inline-block; background: var(--brand); color: white; padding: 9px 16px; border-radius: var(--r-md); font-weight: 500;">Confirm your seat →</span>
+
+      <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--divider);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: 500; color: var(--ink);">Email they'll receive</label>
+          <button type="button" id="inv-reset-template" style="font-size: 11px; color: var(--muted); background: transparent; border: 0; cursor: pointer; text-decoration: underline;">Reset to default</button>
         </div>
-      </details>
+
+        <div class="field" style="margin-top: 8px;">
+          <label for="inv-subject" style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;">Subject</label>
+          <input class="input" id="inv-subject" />
+        </div>
+        <div class="field" style="margin-top: 12px;">
+          <label for="inv-body" style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;">Body</label>
+          <textarea class="textarea" id="inv-body" rows="9" style="font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; line-height: 19px;"></textarea>
+          <div class="field-hint">
+            You can use:
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{guest_email}}</code>
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{event_name}}</code>
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{event_date}}</code>
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{event_venue}}</code>
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{table_name}}</code>
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{host_name}}</code>
+            <code style="background: var(--brand-soft); padding: 1px 5px; border-radius: 4px;">{{rsvp_link}}</code>
+          </div>
+        </div>
+
+        <details style="margin-top: 14px;">
+          <summary style="cursor: pointer; font-size: 13px; color: var(--brand); font-weight: 500;">Preview as <span id="inv-preview-recipient">jordan@acme.co</span> →</summary>
+          <div style="margin-top: 10px; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); font-size: 13px; line-height: 20px;">
+            <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Subject</div>
+            <div id="preview-subject" style="font-weight: 500; color: var(--ink); margin-bottom: 12px;"></div>
+            <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">Body</div>
+            <div id="preview-body" style="white-space: pre-wrap; color: var(--ink);"></div>
+            <div style="margin-top: 14px;">
+              <span style="display: inline-block; background: var(--brand); color: white; padding: 9px 16px; border-radius: var(--r-md); font-weight: 500; font-size: 13px;">Confirm your seat →</span>
+            </div>
+          </div>
+        </details>
+      </div>
     </div>
     <div class="modal-foot">
       <div id="invite-count" style="font-size: 13px; color: var(--muted);">0 invites · 0 slots available</div>
@@ -821,9 +879,9 @@
     if (incomplete > 0) {
       $('reminder-notice').style.display = '';
       const bits = [];
-      if (pending > 0) bits.push(`${pending} pending RSVP${pending === 1 ? '' : 's'}`);
-      if (empty > 0) bits.push(`${empty} empty slot${empty === 1 ? '' : 's'}`);
-      $('reminder-text').innerHTML = `<strong>${bits.join(' · ')}</strong>. ${pending > 0 ? 'Nudge them?' : 'Invite more guests anytime up to ' + EVENT.cutoff + '.'}`;
+      if (pending > 0) bits.push(`${pending} awaiting response`);
+      if (empty > 0) bits.push(`${empty} guest${empty === 1 ? '' : 's'} still needed`);
+      $('reminder-text').innerHTML = `<strong>${bits.join(' · ')}</strong>. ${pending > 0 ? 'Nudge the ones you\'ve already invited?' : 'Invite more guests anytime up to ' + EVENT.cutoff + '.'}`;
       $('reminder-notice').querySelector('.actions-inline').style.display = pending > 0 ? '' : 'none';
     } else {
       $('reminder-notice').style.display = 'none';
@@ -840,18 +898,18 @@
     } else if (g.status === 'confirmed') {
       statusPill = `<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmed</span>`;
     } else if (g.status === 'pending') {
-      statusPill = `<span class="pill pill-pending"><span class="pill-dot"></span>Pending RSVP</span>`;
+      statusPill = `<span class="pill pill-pending"><span class="pill-dot"></span>Awaiting response</span>`;
     } else {
-      statusPill = `<span class="pill pill-empty"><span class="pill-dot"></span>Empty</span>`;
+      statusPill = `<span class="pill pill-empty">Guest still needed</span>`;
     }
 
     if (g.status === 'confirmed') {
       const partyTag = g.partyId ? ` <span style="font-size: 11px; color: var(--muted);">· with party</span>` : '';
       guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.name)}${partyTag}</div><div class="guest-meta">${esc(g.email || '')}</div></div>`;
     } else if (g.status === 'pending') {
-      guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.email)}</div><div class="guest-meta">Invited ${esc(g.invitedAt || 'recently')} — awaiting RSVP</div></div>`;
+      guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.email)}</div><div class="guest-meta">Invited ${esc(g.invitedAt || 'recently')} · no reply yet</div></div>`;
     } else {
-      guestCell = `<div class="guest-cell"><div class="guest-name">— Empty slot —</div><div class="guest-meta">Click to add a guest</div></div>`;
+      guestCell = `<div class="guest-cell"><div class="guest-name guest-empty">No guest yet</div><div class="guest-meta">Click to invite or add someone</div></div>`;
     }
 
     if (g.dietary && g.dietary.length) {
@@ -873,7 +931,7 @@
         </div>`;
     }
 
-    const cls = g.status === 'empty' ? 'is-empty' : '';
+    const cls = g.status === 'empty' ? 'is-empty' : (g.status === 'pending' ? 'is-pending' : '');
     return `<tr class="${cls}" data-row="${g.id}">
       <td><span class="slot-num">${g.slot}</span></td>
       <td>${guestCell}</td>
@@ -1030,12 +1088,28 @@
   });
 
   // ====================== INVITE MODAL ======================
+  const INVITE_TEMPLATE = {
+    subject: "You're invited to {{event_name}}",
+    body: `Hi there,
+
+I'd love for you to join me at {{event_name}} on {{event_date}} at {{event_venue}}. I'm hosting {{table_name}} and saved you a seat.
+
+Tap below to confirm and let us know about any dietary or accessibility needs — it only takes a minute.
+
+{{rsvp_link}}
+
+Hope to see you there,
+{{host_name}}`,
+  };
+
   function openInviteModal() {
     const t = activeTable();
     const empty = t.guests.filter(g => g.status === 'empty').length;
-    $('invite-sub').textContent = `${t.name} · ${empty} empty slot${empty === 1 ? '' : 's'}`;
+    $('invite-sub').textContent = `${t.name} · ${empty} guest${empty === 1 ? '' : 's'} still needed`;
     $('inv-emails').value = '';
-    $('inv-msg').value = '';
+    $('inv-subject').value = INVITE_TEMPLATE.subject;
+    $('inv-body').value = INVITE_TEMPLATE.body;
+    renderInvitePreview();
     updateInviteCount();
     openModal('modal-invite');
     setTimeout(() => $('inv-emails').focus(), 50);
@@ -1049,20 +1123,47 @@
     const emails = parseEmails($('inv-emails').value);
     const el = $('invite-count');
     if (emails.length === 0) {
-      el.textContent = `${empty} empty slot${empty === 1 ? '' : 's'}`;
+      el.textContent = `${empty} guest${empty === 1 ? '' : 's'} still needed`;
       $('send-invites').disabled = true;
     } else if (emails.length > empty) {
-      el.innerHTML = `<span style="color: var(--danger-fg);">${emails.length} emails, only ${empty} empty slots</span>`;
+      el.innerHTML = `<span style="color: var(--danger-fg);">${emails.length} invites, only ${empty} slots open</span>`;
       $('send-invites').disabled = true;
     } else {
-      el.textContent = `${emails.length} invite${emails.length === 1 ? '' : 's'} · ${empty - emails.length} stays empty`;
+      const stays = empty - emails.length;
+      el.textContent = `${emails.length} invite${emails.length === 1 ? '' : 's'} · ${stays} slot${stays === 1 ? '' : 's'} stays open`;
       $('send-invites').disabled = false;
     }
+    renderInvitePreview();
   }
   $('inv-emails').addEventListener('input', updateInviteCount);
-  $('inv-msg').addEventListener('input', () => {
-    const v = $('inv-msg').value.trim();
-    $('preview-personal').textContent = v || 'Hey — would love to see you at the Spring Gala. I\'ve saved you a seat at my table.';
+
+  function mergeInviteVars(text, recipientEmail) {
+    return text
+      .replace(/\{\{guest_email\}\}/g, recipientEmail)
+      .replace(/\{\{event_name\}\}/g, EVENT.name)
+      .replace(/\{\{event_date\}\}/g, 'Sat · May 16, 2026')
+      .replace(/\{\{event_venue\}\}/g, 'The Plaza Hotel, NYC')
+      .replace(/\{\{table_name\}\}/g, activeTable().name)
+      .replace(/\{\{host_name\}\}/g, HOST.name || 'your host')
+      .replace(/\{\{rsvp_link\}\}/g, 'https://gala.org/rsvp/' + activeTable().id);
+  }
+
+  function renderInvitePreview() {
+    const emails = parseEmails($('inv-emails').value);
+    const sample = emails[0] || 'jordan@acme.co';
+    $('inv-preview-recipient').textContent = sample;
+    $('preview-subject').textContent = mergeInviteVars($('inv-subject').value, sample);
+    $('preview-body').textContent = mergeInviteVars($('inv-body').value, sample);
+  }
+
+  $('inv-subject').addEventListener('input', renderInvitePreview);
+  $('inv-body').addEventListener('input', renderInvitePreview);
+
+  $('inv-reset-template').addEventListener('click', () => {
+    $('inv-subject').value = INVITE_TEMPLATE.subject;
+    $('inv-body').value = INVITE_TEMPLATE.body;
+    renderInvitePreview();
+    showToast('Reset to default template');
   });
 
   $('send-invites').addEventListener('click', () => {

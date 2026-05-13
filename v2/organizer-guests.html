@@ -367,7 +367,7 @@
     <div class="stats-bar">
       <div class="stat"><span class="num" id="s-total">0</span><span class="label">Total seats taken</span></div>
       <div class="stat"><span class="num" id="s-confirmed">0</span><span class="label">Confirmed</span></div>
-      <div class="stat"><span class="num" id="s-pending">0</span><span class="label">Pending RSVP</span></div>
+      <div class="stat"><span class="num" id="s-pending">0</span><span class="label">Awaiting response</span></div>
       <div class="stat"><span class="num" id="s-hosts">0</span><span class="label">Hosts</span></div>
       <div class="stat"><span class="num" id="s-final">0</span><span class="label">Final headcount (90%)</span></div>
     </div>
@@ -640,7 +640,7 @@
       ['all', 'All'],
       ['hosts', 'Hosts'],
       ['guests', 'Guests'],
-      ['pending', 'Needs RSVP'],
+      ['pending', 'Awaiting response'],
       ['dietary', 'Has dietary'],
       ['access', 'Has accessibility'],
     ];
@@ -675,7 +675,7 @@
         : `<span class="pill pill-guest"><span class="pill-dot"></span>Guest</span>`;
       const statusPill = g.status === 'confirmed'
         ? `<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmed</span>`
-        : `<span class="pill pill-pending"><span class="pill-dot"></span>Pending</span>`;
+        : `<span class="pill pill-pending"><span class="pill-dot"></span>Awaiting response</span>`;
       const dietBits = (g.dietary || []).filter(d => d !== 'No restrictions').map(d => `<span class="diet-chip">${esc(d)}</span>`).join('');
       const accessBit = g.accessibility ? `<span class="diet-chip access" title="${esc(g.accessibility)}">Access</span>` : '';
       const dietOther = g.dietaryOther ? `<span class="diet-chip" title="${esc(g.dietaryOther)}">+note</span>` : '';
@@ -687,7 +687,7 @@
         : '';
 
       const nameOrEmail = g.name ? `${esc(g.name)}${linkIcon}` : `<span style="color: var(--muted);">${esc(g.email)}</span>`;
-      const meta = g.name ? esc(g.email || '') : 'Awaiting RSVP';
+      const meta = g.name ? esc(g.email || '') : 'No reply yet';
 
       return `<tr data-ref="${g._tableId}|${g.slot}">
         <td><div class="name-cell"><div class="name">${nameOrEmail}</div><div class="meta">${meta}</div></div></td>

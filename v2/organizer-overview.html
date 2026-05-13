@@ -502,8 +502,8 @@
     <div class="event-summary" style="grid-template-columns: repeat(6, 1fr);">
       <div class="summary-stat"><span class="num" id="sum-groups">0</span><span class="label">Groups</span></div>
       <div class="summary-stat"><span class="num" id="sum-confirmed">0</span><span class="label">Confirmed</span></div>
-      <div class="summary-stat warn"><span class="num" id="sum-pending">0</span><span class="label">Pending RSVP</span></div>
-      <div class="summary-stat"><span class="num" id="sum-empty">0</span><span class="label">Empty slots</span></div>
+      <div class="summary-stat warn"><span class="num" id="sum-pending">0</span><span class="label">Awaiting response</span></div>
+      <div class="summary-stat"><span class="num" id="sum-empty">0</span><span class="label">Guests still needed</span></div>
       <div class="summary-stat"><span class="num" id="sum-pct">0%</span><span class="label">Overall fill</span></div>
       <div class="summary-stat"><span class="num" id="sum-headcount">0</span><span class="label">Final headcount (90%)</span></div>
     </div>
@@ -554,8 +554,8 @@
   <div class="drawer-body">
     <div class="drawer-stats">
       <div class="drawer-stat"><span class="num" id="d-confirmed">0</span><span class="label">Confirmed</span></div>
-      <div class="drawer-stat"><span class="num" id="d-pending">0</span><span class="label">Pending</span></div>
-      <div class="drawer-stat"><span class="num" id="d-empty">0</span><span class="label">Empty</span></div>
+      <div class="drawer-stat"><span class="num" id="d-pending">0</span><span class="label">Awaiting</span></div>
+      <div class="drawer-stat"><span class="num" id="d-empty">0</span><span class="label">Needed</span></div>
       <div class="drawer-stat"><span class="num" id="d-capacity">0</span><span class="label">Capacity</span></div>
     </div>
 
@@ -1047,7 +1047,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
         </div>
       </td>
       <td class="fill-cell">
-        <div class="fill-summary"><span class="filled">${confirmed} / ${t.capacity}</span> confirmed · ${pending} pending · ${empty} empty</div>
+        <div class="fill-summary"><span class="filled">${confirmed} / ${t.capacity}</span> confirmed · ${pending} awaiting · ${empty} needed</div>
         <div class="fill-bar">
           <div class="seg-confirmed" style="width: ${pctC}%"></div>
           <div class="seg-pending" style="width: ${pctP}%"></div>
@@ -1102,7 +1102,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
 
     $('d-roster').innerHTML = t.guests.map(g => {
       if (g.status === 'empty') {
-        return `<div class="roster-item empty" data-edit-slot="${g.slot}" style="cursor: pointer;"><span class="slot-num">${g.slot}</span><div class="who">Empty slot — click to add</div></div>`;
+        return `<div class="roster-item empty" data-edit-slot="${g.slot}" style="cursor: pointer; border-style: dashed;"><span class="slot-num" style="border: 1px dashed var(--border-strong); background: transparent;">${g.slot}</span><div class="who">Guest still needed — click to add</div></div>`;
       }
       const diet = (g.dietary || []).filter(d => d !== 'No restrictions').map(d => `<span class="diet-chip">${esc(d)}</span>`).join('');
       const access = g.accessibility ? `<span class="diet-chip access" title="${esc(g.accessibility)}">Access</span>` : '';
@@ -1110,10 +1110,11 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       const statusDot = isPending
         ? `<span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--warning-fg); margin-right: 6px;"></span>`
         : '';
-      const meta = isPending ? `Pending RSVP · ${esc(g.email)}` : esc(g.email || '');
+      const meta = isPending ? `Awaiting response · ${esc(g.email)}` : esc(g.email || '');
       const nameOrEmail = g.name || (isPending ? `<span style="color: var(--muted);">${esc(g.email)}</span>` : g.email);
       const youTag = g.isHost ? `<span style="font-size: 10px; background: var(--brand); color: white; padding: 1px 6px; border-radius: 999px; margin-left: 6px; font-weight: 500;">Host</span>` : '';
-      return `<div class="roster-item" data-edit-slot="${g.slot}" style="cursor: pointer;">
+      const rowStyle = isPending ? 'background: rgba(253, 243, 216, 0.4);' : '';
+      return `<div class="roster-item" data-edit-slot="${g.slot}" style="cursor: pointer; ${rowStyle}">
         <span class="slot-num">${g.slot}</span>
         <div class="who">
           <div class="who-name">${statusDot}${nameOrEmail}${youTag}</div>
@@ -1553,8 +1554,8 @@ Thanks for everything you're doing to fill the room.
       const open = t.guests.filter(g => g.status === 'empty').length;
       const pending = t.guests.filter(g => g.status === 'pending').length;
       const bits = [];
-      if (open > 0) bits.push(`${open} open`);
-      if (pending > 0) bits.push(`${pending} pending`);
+      if (open > 0) bits.push(`${open} guest${open === 1 ? '' : 's'} needed`);
+      if (pending > 0) bits.push(`${pending} awaiting response`);
       return `<div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--divider);">
         <span><strong>${esc(t.host.name)}</strong> <span style="color: var(--muted);">· ${esc(t.name)}</span></span>
         <span style="color: var(--muted); font-size: 12px;">${bits.join(' · ')}</span>
