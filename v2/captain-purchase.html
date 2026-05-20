@@ -401,11 +401,11 @@
   </div>
 
   <div class="hero">
-    <span class="eyebrow">Sponsor a table</span>
+    <span class="eyebrow">Sponsorship</span>
     <h1>Spring Gala 2026</h1>
     <div class="when">Sat · May 16, 2026 · 6:30 pm · The Plaza Hotel, New York NY</div>
     <p class="pitch">
-      Sponsor a table and invite the people in your circle who care about this work. You'll get your own host portal to manage names, collect dietary needs, and stay in control of your guest list all the way up to event night.
+      Choose your sponsorship level and invite the people in your circle who care about this work. You'll get your own host portal to manage names, collect dietary needs, and stay in control of your guest list all the way up to event night.
     </p>
   </div>
 
@@ -415,14 +415,14 @@
       <!-- =========== STEP 1 — package =========== -->
       <section>
         <h2><span class="step-num">1</span>Pick your sponsorship</h2>
-        <p class="step-sub">All tables include premium seating and a host portal. Choose the level that fits.</p>
+        <p class="step-sub">Every sponsorship includes premium seating and a host portal. Choose the level that fits.</p>
         <div class="packages" id="packages"></div>
       </section>
 
       <!-- =========== STEP 2 — quantity =========== -->
       <section id="qty-section">
-        <h2><span class="step-num">2</span>How many tables?</h2>
-        <p class="step-sub">Sponsoring multiple tables? We'll set up a host portal for each.</p>
+        <h2><span class="step-num">2</span>How many sponsorships?</h2>
+        <p class="step-sub">Most sponsors pick one. If you're sponsoring at more than one level, we'll set up a separate host portal for each.</p>
         <div class="qty-row">
           <div class="qty-label">
             <strong id="qty-pkg-name">Patron Table</strong>
@@ -509,8 +509,39 @@
           </div>
         </div>
 
-        <div class="invoice-note" id="invoice-note" style="display: none;">
-          We'll email an invoice to the address you provided above within one business day. Make checks payable to <strong>Acme Foundation</strong>. Your table is reserved as soon as the invoice is sent — you can start inviting guests right away.
+        <div id="invoice-block" style="display: none;">
+          <div class="field" style="margin-top: 4px;">
+            <label>Who should we send the invoice to?</label>
+            <label class="pay-method" id="inv-recipient-self" data-recipient="self" style="margin-top: 6px;">
+              <input type="radio" name="inv-recipient" value="self" checked />
+              <div class="pay-method-body">
+                <div class="pay-method-name">Send to me</div>
+                <div class="pay-method-desc">We'll use the email you entered above.</div>
+              </div>
+            </label>
+            <label class="pay-method" id="inv-recipient-other" data-recipient="other">
+              <input type="radio" name="inv-recipient" value="other" />
+              <div class="pay-method-body">
+                <div class="pay-method-name">Send to someone else</div>
+                <div class="pay-method-desc">Finance team, accounts payable, executive assistant, etc.</div>
+              </div>
+            </label>
+            <div id="inv-other-fields" style="display: none; margin-top: 10px;">
+              <div class="grid-2" style="margin-top: 0;">
+                <div class="field">
+                  <label for="inv-other-name">Their name</label>
+                  <input class="input" id="inv-other-name" placeholder="e.g. Casey Park, Accounts Payable" />
+                </div>
+                <div class="field">
+                  <label for="inv-other-email">Their email</label>
+                  <input class="input" id="inv-other-email" type="email" placeholder="ap@acme.co" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="invoice-note" style="margin-top: 14px;">
+            Our team will create and send the invoice within one business day. Make checks payable to <strong>Acme Foundation</strong>. Your sponsorship is reserved as soon as you submit — you can start inviting guests right away while we get the paperwork over.
+          </div>
         </div>
       </section>
 
@@ -648,19 +679,40 @@
   $('qty-plus').addEventListener('click', () => { if (qty < 20) { qty += 1; syncQty(); updateSummary(); } });
 
   // ============ PAYMENT METHOD ============
-  document.querySelectorAll('.pay-method').forEach(el => {
+  let invoiceRecipient = 'self';
+
+  function applyPayMethod(method) {
+    payMethod = method;
+    // Toggle the parent pay-method labels (only the top-level ones, not the invoice-recipient nested ones)
+    document.querySelectorAll('.pay-methods > .pay-method').forEach(m => {
+      const isOn = m.dataset.method === method;
+      m.classList.toggle('on', isOn);
+      const input = m.querySelector('input');
+      if (input) input.checked = isOn;
+    });
+    $('card-fields').style.display = method === 'card' ? '' : 'none';
+    $('invoice-block').style.display = method === 'invoice' ? '' : 'none';
+    $('reserve-btn').textContent = method === 'invoice' ? 'Reserve · invoice me' : 'Reserve sponsorship';
+    $('summary-note').textContent = method === 'invoice'
+      ? "We'll email you when the invoice goes out (usually one business day). You can start adding guests right now."
+      : "After you reserve, we'll email a link to your host portal. You can start adding names today.";
+  }
+  document.querySelectorAll('.pay-methods > .pay-method').forEach(el => {
+    el.addEventListener('click', () => applyPayMethod(el.dataset.method));
+  });
+
+  // Invoice recipient toggle
+  document.querySelectorAll('[data-recipient]').forEach(el => {
     el.addEventListener('click', () => {
-      payMethod = el.dataset.method;
-      document.querySelectorAll('.pay-method').forEach(m => m.classList.toggle('on', m === el));
+      invoiceRecipient = el.dataset.recipient;
+      document.querySelectorAll('[data-recipient]').forEach(m => m.classList.toggle('on', m === el));
       el.querySelector('input').checked = true;
-      $('card-fields').style.display = payMethod === 'card' ? '' : 'none';
-      $('invoice-note').style.display = payMethod === 'invoice' ? '' : 'none';
-      $('reserve-btn').textContent = payMethod === 'invoice' ? 'Reserve · send me an invoice' : 'Reserve table';
-      $('summary-note').textContent = payMethod === 'invoice'
-        ? 'We\'ll email an invoice within one business day. You can start adding guests now.'
-        : 'After you reserve, we\'ll email a link to your host portal. You can start adding names today.';
+      $('inv-other-fields').style.display = invoiceRecipient === 'other' ? '' : 'none';
+      validate();
     });
   });
+  // Default state: "Send to me" pre-selected
+  document.querySelector('[data-recipient="self"]').classList.add('on');
 
   // ============ SUMMARY ============
   function updateSummary() {
@@ -687,9 +739,12 @@
       const cvc = $('f-cvc').value.trim();
       ok = ok && card.length >= 12 && exp.length >= 4 && cvc.length >= 3;
     }
+    if (payMethod === 'invoice' && invoiceRecipient === 'other') {
+      ok = ok && $('inv-other-name').value.trim() && $('inv-other-email').value.trim();
+    }
     $('reserve-btn').disabled = !ok;
   }
-  ['f-name', 'f-email', 'f-card', 'f-exp', 'f-cvc'].forEach(id => $(id).addEventListener('input', validate));
+  ['f-name', 'f-email', 'f-card', 'f-exp', 'f-cvc', 'inv-other-name', 'inv-other-email'].forEach(id => $(id).addEventListener('input', validate));
 
   // ============ RESERVE ============
   $('reserve-btn').addEventListener('click', () => {
@@ -697,14 +752,21 @@
     const p = PACKAGES.find(x => x.id === selectedId);
     const lineTotal = p.price * qty;
     if (payMethod === 'invoice') {
-      $('success-title').textContent = 'Table reserved · invoice on the way';
-      $('success-body').innerHTML = `We've reserved <strong>${qty} × ${p.name}</strong> (${fmt(lineTotal)}). An invoice will land in your inbox within a business day — but you can start inviting guests now.`;
+      const where = invoiceRecipient === 'other'
+        ? `<strong>${escapeHtml($('inv-other-name').value.trim())}</strong> at ${escapeHtml($('inv-other-email').value.trim())}`
+        : `you`;
+      $('success-title').textContent = 'Sponsorship reserved · invoice on the way';
+      $('success-body').innerHTML = `We've reserved <strong>${qty} × ${p.name}</strong> (${fmt(lineTotal)}). Our team has been notified and will send the invoice to ${where} within a business day. You can start inviting guests right now from your host portal.`;
     } else {
-      $('success-title').textContent = 'Table reserved!';
-      $('success-body').innerHTML = `Thanks — we charged <strong>${fmt(lineTotal)}</strong> for ${qty} × ${p.name}. A receipt and a link to your host portal are on the way to your email.`;
+      $('success-title').textContent = 'Sponsorship reserved!';
+      $('success-body').innerHTML = `Thanks — we charged <strong>${fmt(lineTotal)}</strong> for ${qty} × ${p.name}. A receipt (with goods-and-services info for your records) and a link to your host portal are on their way.`;
     }
     $('modal-success').classList.add('open');
   });
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
 
   // ============ INIT ============
   renderPackages();

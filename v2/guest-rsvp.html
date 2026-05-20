@@ -236,6 +236,7 @@
     margin-top: 22px;
     padding-top: 18px;
     border-top: 1px solid var(--divider);
+    gap: 12px;
   }
   .submit-note { font-size: 12px; color: var(--muted); }
   .btn-primary {
@@ -338,6 +339,16 @@
         <input class="input" id="g-phone" type="tel" placeholder="(555) 123-4567" />
       </div>
     </div>
+    <div class="grid-2">
+      <div class="field">
+        <label for="g-title">Title <span class="opt">(optional)</span></label>
+        <input class="input" id="g-title" placeholder="VP of Engineering" />
+      </div>
+      <div class="field">
+        <label for="g-org">Organization <span class="opt">(optional)</span></label>
+        <input class="input" id="g-org" placeholder="Acme Co." />
+      </div>
+    </div>
 
     <div class="section-title">Dietary needs</div>
     <div class="field">
@@ -391,8 +402,28 @@
     </div>
 
     <div class="submit-row">
-      <span class="submit-note">By RSVPing, you're confirming a seat. Need to cancel later? Just reply to your invite email.</span>
-      <button class="btn-primary" id="rsvp-btn" disabled>RSVP →</button>
+      <button class="btn-ghost" id="decline-btn" style="color: var(--muted); cursor: pointer;">I can't make it</button>
+      <button class="btn-primary" id="rsvp-btn" disabled>Confirm my RSVP →</button>
+    </div>
+    <div style="font-size: 11px; color: var(--muted); margin-top: 10px; text-align: right;">Need to change something later? Reply to the invite email or contact your host directly.</div>
+  </div>
+
+  <!-- DECLINE FORM -->
+  <div class="form-card hide" id="decline-card">
+    <div class="form-head">
+      <h2>Sorry you can't make it</h2>
+    </div>
+    <div class="form-sub">We'll let Maya know. If your plans change, reply to the invite email and she can re-add you.</div>
+
+    <div class="field">
+      <label for="d-reason">Anything you'd like Maya to know? <span class="opt">(optional)</span></label>
+      <textarea class="textarea" id="d-reason" placeholder="Will be out of town that weekend — sorry to miss it!"></textarea>
+      <div class="field-hint">This goes only to Maya.</div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-ghost" id="decline-back" style="color: var(--muted); cursor: pointer;">← Back</button>
+      <button class="btn-primary" id="decline-confirm">Send my regrets</button>
     </div>
   </div>
 
@@ -405,6 +436,15 @@
     <p id="success-body">We've confirmed your seat at Maya Rodriguez's table. A calendar invite is on its way.</p>
     <div class="details" id="success-details"></div>
     <p style="margin-top: 18px; font-size: 12px; color: var(--muted);">Need to change something? Reply to the invite email or contact your host directly.</p>
+  </div>
+
+  <!-- DECLINE SUCCESS -->
+  <div class="success hide" id="decline-success">
+    <div class="check" style="background: var(--brand-soft); color: var(--brand);">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+    </div>
+    <h2>Got it — thanks for letting us know.</h2>
+    <p>We've sent your regrets to Maya. If your plans change before May 12, just reply to the invite email and she can re-add you.</p>
   </div>
 
 </div>
@@ -480,6 +520,10 @@
       `<div><span class="label">Email</span> ${esc($('g-email').value.trim())}</div>`,
     ];
     if ($('g-phone').value.trim()) rows.push(`<div><span class="label">Phone</span> ${esc($('g-phone').value.trim())}</div>`);
+    if ($('g-title').value.trim() || $('g-org').value.trim()) {
+      const combo = [$('g-title').value.trim(), $('g-org').value.trim()].filter(Boolean).join(' · ');
+      rows.push(`<div><span class="label">Title / org</span> ${esc(combo)}</div>`);
+    }
     if (dietList.length || dietOther) {
       const all = [...dietList, dietOther].filter(Boolean).join(', ');
       rows.push(`<div><span class="label">Dietary</span> ${esc(all)}</div>`);
@@ -491,6 +535,22 @@
     $('success-details').innerHTML = rows.join('');
     $('form-card').classList.add('hide');
     $('success-card').classList.remove('hide');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ============ DECLINE ============
+  $('decline-btn').addEventListener('click', () => {
+    $('form-card').classList.add('hide');
+    $('decline-card').classList.remove('hide');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  $('decline-back').addEventListener('click', () => {
+    $('decline-card').classList.add('hide');
+    $('form-card').classList.remove('hide');
+  });
+  $('decline-confirm').addEventListener('click', () => {
+    $('decline-card').classList.add('hide');
+    $('decline-success').classList.remove('hide');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 </script>

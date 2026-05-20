@@ -299,7 +299,19 @@
   .pill-pending { background: var(--invited-bg); color: var(--invited-fg); }
   .pill-empty { background: transparent; color: var(--faint); border: 1px dashed var(--border-strong); padding: 1px 8px; }
   .pill-empty .pill-dot { display: none; }
+  .pill-released { background: var(--brand-soft); color: var(--brand); }
   .pill-you { background: var(--brand); color: white; }
+
+  /* Released rows — quiet, struck through, no actions */
+  table.roster tbody tr.is-released {
+    background: var(--brand-soft);
+    color: var(--muted);
+  }
+  table.roster tbody tr.is-released .slot-num {
+    background: var(--brand-soft-2);
+    color: var(--brand);
+  }
+  table.roster tbody tr.is-released .guest-name { color: var(--brand); font-weight: 500; }
 
   /* Empty slot rows — visually quieter, dashed accent on the left to signal "needs a guest" */
   table.roster tbody tr.is-empty {
@@ -519,6 +531,7 @@
       <div class="stat"><span class="num" id="stat-confirmed">0</span><span class="label">Confirmed</span></div>
       <div class="stat"><span class="num" id="stat-pending">0</span><span class="label">Awaiting response</span></div>
       <div class="stat"><span class="num" id="stat-empty">0</span><span class="label">Guests still needed</span></div>
+      <div class="stat" id="stat-released-wrap" style="display: none;"><span class="num" id="stat-released">0</span><span class="label">Released to org</span></div>
       <div class="stat"><span class="num" id="stat-capacity">0</span><span class="label">Capacity</span></div>
     </div>
 
@@ -536,6 +549,7 @@
     </button>
     <button class="btn btn-secondary" data-action="add-guest">+ Add a guest</button>
     <button class="btn btn-secondary" data-action="move-guest" id="btn-move-guest">Move guest between my tables</button>
+    <button class="btn btn-secondary" data-action="release-seats" id="btn-release-seats" style="color: var(--muted);">Release unused seats →</button>
   </div>
 
   <!-- REMINDER NOTICE -->
@@ -645,6 +659,15 @@
         </div>
 
         <div class="field" style="margin-top: 8px;">
+          <label style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;">From</label>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); font-size: 13px;">
+            <span id="inv-from-display"><strong>Maya Rodriguez</strong> via Spring Gala &lt;rsvp@gala.org&gt;</span>
+            <span style="margin-left: auto; font-size: 11px; color: var(--muted);">Replies go to <span id="inv-reply-to">maya@acme.co</span></span>
+          </div>
+          <div class="field-hint">Guests see your name on the From line so they recognize the invite. Replies route back to you.</div>
+        </div>
+
+        <div class="field" style="margin-top: 12px;">
           <label for="inv-subject" style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;">Subject</label>
           <input class="input" id="inv-subject" />
         </div>
@@ -751,6 +774,47 @@
     </div>
   </div>
 </div>
+
+<!-- =================== RELEASE SEATS MODAL =================== -->
+<div class="modal-backdrop" id="modal-release" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Release unused seats</h2>
+        <p>Give some of your sponsored seats back to the organizer so they can re-use them.</p>
+      </div>
+      <button class="modal-close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+      <div style="padding: 12px 14px; background: var(--info-bg); color: var(--info-fg); border-radius: var(--r-md); margin-bottom: 16px; font-size: 13px; line-height: 18px;">
+        Released seats are <strong>donated back to the organization</strong>. You'll still get credit for the full sponsorship — these just won't show as "needed" on your end anymore, and the organizer can give them to someone else as comped seats.
+      </div>
+      <div class="field">
+        <label>How many seats are you releasing?</label>
+        <div class="stepper-row">
+          <span class="stepper-copy">
+            <strong><span id="rel-count">1</span> seat<span id="rel-plural"></span></strong>
+            <span>You currently have <span id="rel-available">0</span> empty slots.</span>
+          </span>
+          <div class="mini-stepper">
+            <button type="button" id="rel-minus" aria-label="Fewer">−</button>
+            <span class="count" id="rel-stepper">1</span>
+            <button type="button" id="rel-plus" aria-label="More">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rel-note">Note for the organizer <span style="color: var(--muted); font-weight: 400;">(optional)</span></label>
+        <textarea class="textarea" id="rel-note" placeholder="A few of our folks dropped out — happy for you to give these to someone else."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>Cancel</button>
+      <button class="btn btn-primary" id="confirm-release">Release seats</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- =================== REMINDER MODAL =================== -->
 <div class="modal-backdrop" id="modal-reminder" role="dialog" aria-modal="true">
@@ -864,12 +928,17 @@
     const confirmed = t.guests.filter(g => g.status === 'confirmed').length;
     const pending = t.guests.filter(g => g.status === 'pending').length;
     const empty = t.guests.filter(g => g.status === 'empty').length;
+    const released = t.guests.filter(g => g.status === 'released').length;
     $('stat-confirmed').textContent = confirmed;
     $('stat-pending').textContent = pending;
     $('stat-empty').textContent = empty;
+    $('stat-released').textContent = released;
+    $('stat-released-wrap').style.display = released > 0 ? '' : 'none';
     $('stat-capacity').textContent = t.capacity;
     $('prog-confirmed').style.width = (100 * confirmed / t.capacity) + '%';
     $('prog-pending').style.width = (100 * pending / t.capacity) + '%';
+    // Hide the release button when there are no empty slots
+    $('btn-release-seats').style.display = empty > 0 ? '' : 'none';
 
     // Roster rows
     $('roster-body').innerHTML = t.guests.map(g => rowHTML(g)).join('');
@@ -899,6 +968,8 @@
       statusPill = `<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmed</span>`;
     } else if (g.status === 'pending') {
       statusPill = `<span class="pill pill-pending"><span class="pill-dot"></span>Awaiting response</span>`;
+    } else if (g.status === 'released') {
+      statusPill = `<span class="pill pill-released"><span class="pill-dot"></span>Released</span>`;
     } else {
       statusPill = `<span class="pill pill-empty">Guest still needed</span>`;
     }
@@ -908,6 +979,8 @@
       guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.name)}${partyTag}</div><div class="guest-meta">${esc(g.email || '')}</div></div>`;
     } else if (g.status === 'pending') {
       guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.email)}</div><div class="guest-meta">Invited ${esc(g.invitedAt || 'recently')} · no reply yet</div></div>`;
+    } else if (g.status === 'released') {
+      guestCell = `<div class="guest-cell"><div class="guest-name">Donated back to the organization</div><div class="guest-meta">The organizer can use this seat for a comped guest.</div></div>`;
     } else {
       guestCell = `<div class="guest-cell"><div class="guest-name guest-empty">No guest yet</div><div class="guest-meta">Click to invite or add someone</div></div>`;
     }
@@ -931,7 +1004,10 @@
         </div>`;
     }
 
-    const cls = g.status === 'empty' ? 'is-empty' : (g.status === 'pending' ? 'is-pending' : '');
+    const cls = g.status === 'empty' ? 'is-empty'
+      : g.status === 'pending' ? 'is-pending'
+      : g.status === 'released' ? 'is-released'
+      : '';
     return `<tr class="${cls}" data-row="${g.id}">
       <td><span class="slot-num">${g.slot}</span></td>
       <td>${guestCell}</td>
@@ -978,6 +1054,10 @@
     if (rowId) {
       const g = activeTable().guests.find(x => x.id === rowId);
       if (!g || g.isHost) return;
+      if (g.status === 'released') {
+        showToast('This seat has been released — contact the organizer to take it back.');
+        return;
+      }
       openGuestEditor(rowId);
     }
   });
@@ -990,6 +1070,46 @@
     if (action === 'add-guest') openGuestEditor(activeTable().guests.find(g => g.status === 'empty')?.id);
     if (action === 'move-guest') openMoveModal();
     if (action === 'send-reminder') openReminderModal();
+    if (action === 'release-seats') openReleaseModal();
+  });
+
+  // ====================== RELEASE SEATS ======================
+  let releaseCount = 1;
+  function setReleaseCount(n) {
+    const max = activeTable().guests.filter(g => g.status === 'empty').length;
+    releaseCount = Math.max(1, Math.min(max, n));
+    $('rel-stepper').textContent = releaseCount;
+    $('rel-count').textContent = releaseCount;
+    $('rel-plural').textContent = releaseCount === 1 ? '' : 's';
+    $('rel-minus').disabled = releaseCount <= 1;
+    $('rel-plus').disabled = releaseCount >= max;
+    $('rel-available').textContent = max;
+  }
+  $('rel-minus').addEventListener('click', () => setReleaseCount(releaseCount - 1));
+  $('rel-plus').addEventListener('click', () => setReleaseCount(releaseCount + 1));
+
+  function openReleaseModal() {
+    const t = activeTable();
+    const empty = t.guests.filter(g => g.status === 'empty').length;
+    if (empty === 0) {
+      showToast('No empty seats to release right now.');
+      return;
+    }
+    setReleaseCount(Math.min(2, empty));
+    $('rel-note').value = '';
+    openModal('modal-release');
+  }
+  $('confirm-release').addEventListener('click', () => {
+    const t = activeTable();
+    const empties = t.guests.filter(g => g.status === 'empty');
+    const toRelease = empties.slice(0, releaseCount);
+    toRelease.forEach(g => {
+      g.status = 'released';
+    });
+    t.lastActivity = 'just now';
+    render();
+    closeAll();
+    showToast(`${releaseCount} seat${releaseCount === 1 ? '' : 's'} released to the organizer`);
   });
 
   // ====================== GUEST EDITOR ======================

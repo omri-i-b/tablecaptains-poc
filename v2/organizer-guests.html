@@ -437,6 +437,11 @@
         <label for="m-connection">Connection to cause <span class="opt">(from guest RSVP)</span></label>
         <textarea class="textarea" id="m-connection"></textarea>
       </div>
+      <div class="field" style="padding: 12px; background: #fbf3ed; border-radius: var(--r-md); border-left: 3px solid #c97b3a;">
+        <label for="m-private" style="color: #8a4d1c;">Private organizer note <span class="opt" style="color: #b56a32;">— hidden from the host</span></label>
+        <textarea class="textarea" id="m-private" placeholder="Wealth capacity $50K+. Returning donor since 2020. Seat near the auctioneer."></textarea>
+        <div class="field-hint" style="color: #8a4d1c;">Only event organizers see this. The host never sees private notes.</div>
+      </div>
       <div class="field">
         <label for="m-group">Move to a different group</label>
         <select class="select" id="m-group"></select>
@@ -534,7 +539,7 @@
       capacity: 10,
       guests: [
         { slot: 1, status: 'confirmed', name: 'Maya Rodriguez', email: 'maya@acme.co', isHost: true, dietary: ['No restrictions'] },
-        { slot: 2, status: 'confirmed', name: 'Jordan Chen', email: 'jordan@acme.co', dietary: ['Vegetarian'], partyId: 'p1', connection: 'On the board last year — knows Maya.' },
+        { slot: 2, status: 'confirmed', name: 'Jordan Chen', email: 'jordan@acme.co', dietary: ['Vegetarian'], partyId: 'p1', connection: 'On the board last year — knows Maya.', privateNote: 'Wealth capacity $250K+. Wants to be seated near auctioneer.' },
         { slot: 3, status: 'confirmed', name: 'Alex Chen', email: 'alex@acme.co', dietary: ['Vegetarian'], partyId: 'p1', connection: "Jordan's spouse." },
         { slot: 4, status: 'pending', email: 'sam@acme.co' },
         { slot: 5, status: 'pending', email: 'taylor@acme.co' },
@@ -570,7 +575,7 @@
         { slot: 4, status: 'confirmed', name: 'Robert Webb', email: 'robert@webb.co', dietary: ['Kosher'], partyId: 'p3' },
         { slot: 5, status: 'confirmed', name: 'Sandra Lopez', email: 'sandra@lopez.com', partyId: 'p4' },
         { slot: 6, status: 'confirmed', name: 'Carlos Lopez', email: 'carlos@lopez.com', partyId: 'p4' },
-        { slot: 7, status: 'confirmed', name: 'Erin Wu', email: 'erin@wu.co', dietary: ['Vegan'], accessibility: 'Low vision — large print menu' },
+        { slot: 7, status: 'confirmed', name: 'Erin Wu', email: 'erin@wu.co', dietary: ['Vegan'], accessibility: 'Low vision — large print menu', privateNote: 'Returning donor since 2020. Last year: $25K.' },
         { slot: 8, status: 'confirmed', name: 'David Kim', email: 'david@kim.co' },
       ],
     },
@@ -682,15 +687,17 @@
       const diet = (dietBits || accessBit || dietOther) ? `${dietBits}${dietOther}${accessBit}` : `<span style="color: var(--faint);">—</span>`;
 
       const partners = partyPartners(g);
+      const partnerNames = partners.map(p => p.name || p.email).join(', ');
       const linkIcon = partners.length > 0
-        ? `<span class="party-icon" title="With ${esc(partners.map(p => p.name || p.email).join(', '))}"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 7a2 2 0 0 0 2-2V3.5a2 2 0 1 0-2 2zM9 7a2 2 0 0 1-2-2v-1.5a2 2 0 1 1 2 2zM7 7v2"/></svg></span>`
+        ? `<span class="party-icon" title="With ${esc(partnerNames)}" style="display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; background: var(--brand-soft); color: var(--brand); border-radius: var(--r-pill); font-size: 11px; font-weight: 500; margin-left: 6px;"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3.5 7l3-3M7.5 4l3-3M10.5 10l-3 3M6.5 13l-3-3M5 6l4 4"/></svg> with ${esc(partnerNames.length > 18 ? partnerNames.slice(0, 18) + '…' : partnerNames)}</span>`
         : '';
 
       const nameOrEmail = g.name ? `${esc(g.name)}${linkIcon}` : `<span style="color: var(--muted);">${esc(g.email)}</span>`;
+      const privateNoteIcon = g.privateNote ? ` <span title="Private note: ${esc(g.privateNote)}" style="color: #c97b3a; cursor: help;">●</span>` : '';
       const meta = g.name ? esc(g.email || '') : 'No reply yet';
 
       return `<tr data-ref="${g._tableId}|${g.slot}">
-        <td><div class="name-cell"><div class="name">${nameOrEmail}</div><div class="meta">${meta}</div></div></td>
+        <td><div class="name-cell"><div class="name">${nameOrEmail}${privateNoteIcon}</div><div class="meta">${meta}</div></div></td>
         <td>${typePill}</td>
         <td><a class="group-link" href="organizer-overview.html?group=${g._tableId}">${esc(g._tableName)}</a><div style="font-size: 11px; color: var(--muted);">Host: ${esc(g._host.name)}</div></td>
         <td>${statusPill}</td>
@@ -765,6 +772,7 @@
     $('m-diet-other').value = g.dietaryOther || '';
     $('m-access').value = g.accessibility || '';
     $('m-connection').value = g.connection || '';
+    $('m-private').value = g.privateNote || '';
     editDiet = new Set(g.dietary || []);
     renderEditDiet();
     // Populate group dropdown
@@ -792,6 +800,7 @@
     g.dietaryOther = $('m-diet-other').value.trim();
     g.accessibility = $('m-access').value.trim();
     g.connection = $('m-connection').value.trim();
+    g.privateNote = $('m-private').value.trim();
     if (g.status === 'pending' && g.name) g.status = 'confirmed';
 
     // Handle group reassign

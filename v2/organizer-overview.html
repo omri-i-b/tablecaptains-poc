@@ -503,9 +503,9 @@
       <div class="summary-stat"><span class="num" id="sum-groups">0</span><span class="label">Groups</span></div>
       <div class="summary-stat"><span class="num" id="sum-confirmed">0</span><span class="label">Confirmed</span></div>
       <div class="summary-stat warn"><span class="num" id="sum-pending">0</span><span class="label">Awaiting response</span></div>
-      <div class="summary-stat"><span class="num" id="sum-empty">0</span><span class="label">Guests still needed</span></div>
-      <div class="summary-stat"><span class="num" id="sum-pct">0%</span><span class="label">Overall fill</span></div>
-      <div class="summary-stat"><span class="num" id="sum-headcount">0</span><span class="label">Final headcount (90%)</span></div>
+      <div class="summary-stat"><span class="num" id="sum-empty">0</span><span class="label">Still needed</span></div>
+      <div class="summary-stat"><span class="num" id="sum-released">0</span><span class="label">Released to org</span></div>
+      <div class="summary-stat"><span class="num" id="sum-seats-sold">0</span><span class="label">Total seats sold</span></div>
     </div>
 
     <div class="toolbar">
@@ -565,9 +565,10 @@
     <h3 style="font-size: 13px; font-weight: 500; color: var(--ink); margin: 22px 0 8px;">Activity</h3>
     <div id="d-activity" style="font-size: 13px; color: var(--muted); line-height: 19px;"></div>
   </div>
-  <div class="drawer-foot">
+  <div class="drawer-foot" style="flex-wrap: wrap; gap: 8px;">
+    <button class="btn btn-secondary btn-sm" id="d-toggle-paid" style="margin-right: auto;">Mark paid</button>
     <button class="btn btn-ghost" id="d-reminder">Send reminder to host</button>
-    <button class="btn btn-secondary" id="d-edit-host">Edit host</button>
+    <button class="btn btn-secondary" id="d-edit-host">Reassign host</button>
   </div>
 </div>
 
@@ -814,6 +815,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       id: 't1', name: 'Acme Co. Team',
       host: { name: 'Maya Rodriguez', email: 'maya@acme.co', initials: 'MR' },
       capacity: 10,
+      paid: true,
       lastActivity: '2 days ago',
       activity: [
         '2 days ago — Maya marked Riley Park as confirmed (gluten-free)',
@@ -837,6 +839,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       id: 't2', name: 'Acme Co. Partners',
       host: { name: 'Maya Rodriguez', email: 'maya@acme.co', initials: 'MR' },
       capacity: 6,
+      paid: true,
       lastActivity: '5 days ago',
       activity: [
         '5 days ago — Maya invited jamie@partners.io',
@@ -855,6 +858,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       id: 't3', name: 'Friends of Lena',
       host: { name: 'Lena Patel', email: 'lena@example.com', initials: 'LP' },
       capacity: 10,
+      paid: false,
       lastActivity: '11 days ago',
       activity: [
         '11 days ago — Group created',
@@ -876,6 +880,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       id: 't4', name: 'Board · Dempsey',
       host: { name: 'Jim Dempsey', email: 'jim@board.org', initials: 'JD' },
       capacity: 8,
+      paid: true,
       lastActivity: 'just now',
       activity: [
         'Just now — Jim confirmed Robert Webb (kosher)',
@@ -897,6 +902,7 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       id: 't5', name: "Sarah's Crew",
       host: { name: 'Sarah Hewitt', email: 'sarah@hewitt.com', initials: 'SH' },
       capacity: 8,
+      paid: false,
       lastActivity: '6 days ago',
       activity: [
         '6 days ago — Sarah invited 3 guests',
@@ -985,19 +991,21 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
   // =====================================================
   function render() {
     // Summary stats
-    let allConfirmed = 0, allPending = 0, allEmpty = 0, allCap = 0;
+    let allConfirmed = 0, allPending = 0, allEmpty = 0, allReleased = 0, allCap = 0;
     TABLES.forEach(t => {
       allConfirmed += t.guests.filter(g => g.status === 'confirmed').length;
       allPending += t.guests.filter(g => g.status === 'pending').length;
       allEmpty += t.guests.filter(g => g.status === 'empty').length;
+      allReleased += t.guests.filter(g => g.status === 'released').length;
       allCap += t.capacity;
     });
     $('sum-groups').textContent = TABLES.length;
     $('sum-confirmed').textContent = allConfirmed;
     $('sum-pending').textContent = allPending;
     $('sum-empty').textContent = allEmpty;
-    $('sum-pct').textContent = allCap > 0 ? Math.round(100 * allConfirmed / allCap) + '%' : '0%';
-    $('sum-headcount').textContent = Math.round(allConfirmed * 0.9);
+    $('sum-released').textContent = allReleased;
+    // Total seats sold = capacity across all sponsorships (what the room theoretically holds)
+    $('sum-seats-sold').textContent = allCap;
     renderCutoffBanner(allPending + allEmpty);
 
     // Filter
@@ -1032,9 +1040,12 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
     const accessChip = diet.access > 0 ? `<span class="diet-chip access">Access<span class="count">${diet.access}</span></span>` : '';
     const dietCluster = (dietChips || accessChip) ? `<div class="diet-cluster">${dietChips}${accessChip}</div>` : `<span style="color: var(--faint);">—</span>`;
 
+    const paidPill = t.paid
+      ? `<span style="display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; background: var(--success-bg); color: var(--success-fg); border-radius: var(--r-pill); font-size: 10px; font-weight: 500; margin-left: 6px;">Paid</span>`
+      : `<span style="display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; background: var(--warning-bg); color: var(--warning-fg); border-radius: var(--r-pill); font-size: 10px; font-weight: 500; margin-left: 6px;">Unpaid</span>`;
     return `<tr data-group="${t.id}">
       <td>
-        <div class="group-name">${esc(t.name)}</div>
+        <div class="group-name">${esc(t.name)}${paidPill}</div>
         <div class="group-sub">Updated ${esc(t.lastActivity)}</div>
       </td>
       <td>
@@ -1104,6 +1115,9 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
       if (g.status === 'empty') {
         return `<div class="roster-item empty" data-edit-slot="${g.slot}" style="cursor: pointer; border-style: dashed;"><span class="slot-num" style="border: 1px dashed var(--border-strong); background: transparent;">${g.slot}</span><div class="who">Guest still needed — click to add</div></div>`;
       }
+      if (g.status === 'released') {
+        return `<div class="roster-item" style="background: var(--brand-soft); border-color: var(--brand-soft-2);"><span class="slot-num" style="background: var(--brand-soft-2); color: var(--brand);">${g.slot}</span><div class="who"><div class="who-name" style="color: var(--brand);">Released to organizer</div><div class="who-meta">Available as a comped seat</div></div></div>`;
+      }
       const diet = (g.dietary || []).filter(d => d !== 'No restrictions').map(d => `<span class="diet-chip">${esc(d)}</span>`).join('');
       const access = g.accessibility ? `<span class="diet-chip access" title="${esc(g.accessibility)}">Access</span>` : '';
       const isPending = g.status === 'pending';
@@ -1126,9 +1140,24 @@ Friends of Lena, Lena Patel, lena@example.com, 10"></textarea>
 
     $('d-activity').innerHTML = t.activity.map(a => `<div>· ${esc(a)}</div>`).join('');
 
+    // Paid toggle label
+    $('d-toggle-paid').textContent = t.paid ? '✓ Marked paid · click to mark unpaid' : 'Mark paid';
+    $('d-toggle-paid').style.color = t.paid ? 'var(--success-fg)' : 'var(--ink)';
+
     $('drawer-backdrop').classList.add('open');
     $('drawer').classList.add('open');
   }
+
+  $('d-toggle-paid').addEventListener('click', () => {
+    if (!openGroupId) return;
+    const t = TABLES.find(x => x.id === openGroupId);
+    t.paid = !t.paid;
+    t.activity.unshift(`Just now — Organizer marked ${t.paid ? 'paid' : 'unpaid'}`);
+    t.lastActivity = 'just now';
+    showToast(t.paid ? `${t.name} marked paid` : `${t.name} marked unpaid`);
+    openDrawer(openGroupId);
+    render();
+  });
   function closeDrawer() {
     $('drawer-backdrop').classList.remove('open');
     $('drawer').classList.remove('open');
