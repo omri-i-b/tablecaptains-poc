@@ -297,10 +297,24 @@
   .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
   .pill-confirmed { background: var(--success-bg); color: var(--success-fg); }
   .pill-pending { background: var(--invited-bg); color: var(--invited-fg); }
+  .pill-plusone { background: #ebecf6; color: #45286b; }
   .pill-empty { background: transparent; color: var(--faint); border: 1px dashed var(--border-strong); padding: 1px 8px; }
   .pill-empty .pill-dot { display: none; }
   .pill-released { background: var(--brand-soft); color: var(--brand); }
   .pill-you { background: var(--brand); color: white; }
+
+  /* Plus-one rows — soft lavender accent indicating "reserved for primary's guest" */
+  table.roster tbody tr.is-plusone { background: rgba(235, 236, 246, 0.4); }
+  table.roster tbody tr.is-plusone td:first-child { position: relative; }
+  table.roster tbody tr.is-plusone td:first-child::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 3px;
+    background: #45286b;
+    border-radius: 2px;
+    opacity: 0.45;
+  }
 
   /* Released rows — quiet, struck through, no actions */
   table.roster tbody tr.is-released {
@@ -649,7 +663,17 @@
       <div class="field">
         <label for="inv-emails">Email addresses</label>
         <textarea class="textarea" id="inv-emails" rows="3" placeholder="jordan@acme.co&#10;sam@acme.co&#10;taylor@acme.co"></textarea>
-        <div class="field-hint">One per line, or comma-separated. Each takes one slot.</div>
+        <div class="field-hint">One per line, or comma-separated.</div>
+      </div>
+
+      <div class="field" style="margin-top: 14px;">
+        <label style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg); border-radius: var(--r-md); cursor: pointer;">
+          <input type="checkbox" id="inv-plusone" style="width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0;" />
+          <span style="flex: 1;">
+            <span style="display: block; font-size: 13px; font-weight: 500; color: var(--ink);">Each invitee can bring a guest</span>
+            <span style="display: block; font-size: 12px; color: var(--muted); margin-top: 2px;">Reserves one extra seat per invite for their plus-one. They'll fill in the name when they RSVP.</span>
+          </span>
+        </label>
       </div>
 
       <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--divider);">
@@ -876,13 +900,13 @@
         { id: 'g1', slot: 1, status: 'confirmed', name: 'Maya Rodriguez', email: 'maya@acme.co', dietary: ['No restrictions'], isHost: true },
         { id: 'g2', slot: 2, status: 'confirmed', name: 'Jordan Chen', email: 'jordan@acme.co', dietary: ['Vegetarian'], note: 'On the board last year — knows Maya.', partyId: 'p1' },
         { id: 'g3', slot: 3, status: 'confirmed', name: 'Alex Chen', email: 'alex@acme.co', dietary: ['Vegetarian'], note: "Jordan's spouse.", partyId: 'p1' },
-        { id: 'g4', slot: 4, status: 'pending', email: 'sam@acme.co', invitedAt: 'Apr 22' },
-        { id: 'g5', slot: 5, status: 'pending', email: 'taylor@acme.co', invitedAt: 'Apr 22' },
-        { id: 'g6', slot: 6, status: 'confirmed', name: 'Riley Park', email: 'riley@acme.co', dietary: ['Gluten-free'], accessibility: 'Wheelchair access at the table', note: '' },
-        { id: 'g7', slot: 7, status: 'empty' },
-        { id: 'g8', slot: 8, status: 'empty' },
-        { id: 'g9', slot: 9, status: 'empty' },
-        { id: 'g10', slot: 10, status: 'empty' },
+        { id: 'g4', slot: 4, status: 'pending', email: 'sam@acme.co', invitedAt: 'Apr 22', plusOneAllowed: true },
+        { id: 'g4p', slot: 5, status: 'plus-one', linkedToSlot: 4, linkedToEmail: 'sam@acme.co' },
+        { id: 'g5', slot: 6, status: 'pending', email: 'taylor@acme.co', invitedAt: 'Apr 22' },
+        { id: 'g6', slot: 7, status: 'confirmed', name: 'Riley Park', email: 'riley@acme.co', dietary: ['Gluten-free'], accessibility: 'Wheelchair access at the table', note: '' },
+        { id: 'g7', slot: 8, status: 'empty' },
+        { id: 'g8', slot: 9, status: 'empty' },
+        { id: 'g9', slot: 10, status: 'empty' },
       ],
     },
     {
@@ -926,7 +950,8 @@
     $('last-activity').textContent = `Last update ${t.lastActivity}`;
 
     const confirmed = t.guests.filter(g => g.status === 'confirmed').length;
-    const pending = t.guests.filter(g => g.status === 'pending').length;
+    // Treat plus-one reservations as part of "awaiting response" — the primary still needs to RSVP
+    const pending = t.guests.filter(g => g.status === 'pending' || g.status === 'plus-one').length;
     const empty = t.guests.filter(g => g.status === 'empty').length;
     const released = t.guests.filter(g => g.status === 'released').length;
     $('stat-confirmed').textContent = confirmed;
@@ -967,7 +992,10 @@
     } else if (g.status === 'confirmed') {
       statusPill = `<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmed</span>`;
     } else if (g.status === 'pending') {
-      statusPill = `<span class="pill pill-pending"><span class="pill-dot"></span>Awaiting response</span>`;
+      const plusBadge = g.plusOneAllowed ? ` <span style="font-size: 10px; padding: 1px 6px; background: #ebecf6; color: #45286b; border-radius: 999px; margin-left: 2px;">+1</span>` : '';
+      statusPill = `<span class="pill pill-pending"><span class="pill-dot"></span>Awaiting response</span>${plusBadge}`;
+    } else if (g.status === 'plus-one') {
+      statusPill = `<span class="pill pill-plusone"><span class="pill-dot"></span>Plus-one</span>`;
     } else if (g.status === 'released') {
       statusPill = `<span class="pill pill-released"><span class="pill-dot"></span>Released</span>`;
     } else {
@@ -979,6 +1007,10 @@
       guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.name)}${partyTag}</div><div class="guest-meta">${esc(g.email || '')}</div></div>`;
     } else if (g.status === 'pending') {
       guestCell = `<div class="guest-cell"><div class="guest-name">${esc(g.email)}</div><div class="guest-meta">Invited ${esc(g.invitedAt || 'recently')} · no reply yet</div></div>`;
+    } else if (g.status === 'plus-one') {
+      const primary = activeTable().guests.find(x => x.slot === g.linkedToSlot);
+      const primaryLabel = primary ? (primary.name || primary.email || `slot ${g.linkedToSlot}`) : `slot ${g.linkedToSlot}`;
+      guestCell = `<div class="guest-cell"><div class="guest-name">Plus-one of ${esc(primaryLabel)}</div><div class="guest-meta">${esc(g.linkedToEmail || primaryLabel)} will fill in their name on RSVP</div></div>`;
     } else if (g.status === 'released') {
       guestCell = `<div class="guest-cell"><div class="guest-name">Donated back to the organization</div><div class="guest-meta">The organizer can use this seat for a comped guest.</div></div>`;
     } else {
@@ -1006,6 +1038,7 @@
 
     const cls = g.status === 'empty' ? 'is-empty'
       : g.status === 'pending' ? 'is-pending'
+      : g.status === 'plus-one' ? 'is-plusone'
       : g.status === 'released' ? 'is-released'
       : '';
     return `<tr class="${cls}" data-row="${g.id}">
@@ -1143,7 +1176,14 @@
     editDietary = new Set(g.dietary || []);
     renderDietPicker();
 
-    $('guest-sub').textContent = `Slot ${g.slot} · ${t.name}`;
+    if (g.status === 'plus-one') {
+      const primary = t.guests.find(x => x.slot === g.linkedToSlot);
+      const primaryLabel = primary ? (primary.name || primary.email || `slot ${g.linkedToSlot}`) : `slot ${g.linkedToSlot}`;
+      $('guest-sub').textContent = `Slot ${g.slot} · plus-one of ${primaryLabel}`;
+    } else {
+      $('guest-sub').textContent = `Slot ${g.slot} · ${t.name}`;
+    }
+
     if (g.status === 'empty') {
       $('guest-title').textContent = 'Add a guest';
       $('g-name').value = '';
@@ -1153,6 +1193,15 @@
       $('g-access').value = '';
       $('g-note').value = '';
       $('remove-guest').style.display = 'none';
+    } else if (g.status === 'plus-one') {
+      $('guest-title').textContent = 'Fill in plus-one';
+      $('g-name').value = '';
+      $('g-email').value = '';
+      $('g-phone').value = '';
+      $('g-diet-other').value = '';
+      $('g-access').value = '';
+      $('g-note').value = '';
+      $('remove-guest').style.display = 'inline-flex';
     } else {
       $('guest-title').textContent = g.status === 'pending' ? 'Complete this guest' : 'Edit guest';
       $('g-name').value = g.name || '';
@@ -1187,6 +1236,9 @@
     g.note = $('g-note').value.trim();
     g.status = 'confirmed';
     delete g.invitedAt;
+    delete g.linkedToSlot;
+    delete g.linkedToEmail;
+    delete g.plusOneAllowed;
     t.lastActivity = 'just now';
     render();
     closeAll();
@@ -1198,13 +1250,23 @@
     const g = t.guests.find(x => x.id === editingId);
     if (!g || g.isHost) return;
     const name = g.name || g.email || 'guest';
-    t.guests = t.guests.map(x => x.id === editingId
-      ? { id: x.id, slot: x.slot, status: 'empty' }
-      : x);
+    const removedSlot = g.slot;
+
+    // If removing a primary that had a plus-one reserved, also clear the plus-one row
+    const linkedPlusOnes = t.guests.filter(x => x.status === 'plus-one' && x.linkedToSlot === g.slot);
+    t.guests = t.guests.map(x => {
+      if (x.id === editingId) return { id: x.id, slot: x.slot, status: 'empty' };
+      if (x.status === 'plus-one' && x.linkedToSlot === g.slot) return { id: x.id, slot: x.slot, status: 'empty' };
+      return x;
+    });
     t.lastActivity = 'just now';
     render();
     closeAll();
-    showToast(`${name} removed — slot ${g.slot} is empty`);
+    if (linkedPlusOnes.length > 0) {
+      showToast(`${name} removed · slot ${removedSlot} + ${linkedPlusOnes.length} plus-one slot${linkedPlusOnes.length === 1 ? '' : 's'} cleared`);
+    } else {
+      showToast(`${name} removed — slot ${removedSlot} is empty`);
+    }
   });
 
   // ====================== INVITE MODAL ======================
@@ -1227,6 +1289,7 @@ Hope to see you there,
     const empty = t.guests.filter(g => g.status === 'empty').length;
     $('invite-sub').textContent = `${t.name} · ${empty} guest${empty === 1 ? '' : 's'} still needed`;
     $('inv-emails').value = '';
+    $('inv-plusone').checked = false;
     $('inv-subject').value = INVITE_TEMPLATE.subject;
     $('inv-body').value = INVITE_TEMPLATE.body;
     renderInvitePreview();
@@ -1241,21 +1304,29 @@ Hope to see you there,
     const t = activeTable();
     const empty = t.guests.filter(g => g.status === 'empty').length;
     const emails = parseEmails($('inv-emails').value);
+    const plusOnes = $('inv-plusone').checked ? 1 : 0;
+    const seatsPerInvite = 1 + plusOnes;
+    const seatsNeeded = emails.length * seatsPerInvite;
     const el = $('invite-count');
     if (emails.length === 0) {
       el.textContent = `${empty} guest${empty === 1 ? '' : 's'} still needed`;
       $('send-invites').disabled = true;
-    } else if (emails.length > empty) {
-      el.innerHTML = `<span style="color: var(--danger-fg);">${emails.length} invites, only ${empty} slots open</span>`;
+    } else if (seatsNeeded > empty) {
+      el.innerHTML = plusOnes
+        ? `<span style="color: var(--danger-fg);">${emails.length} invites × 2 seats = ${seatsNeeded} needed, only ${empty} open</span>`
+        : `<span style="color: var(--danger-fg);">${emails.length} invites, only ${empty} slots open</span>`;
       $('send-invites').disabled = true;
     } else {
-      const stays = empty - emails.length;
-      el.textContent = `${emails.length} invite${emails.length === 1 ? '' : 's'} · ${stays} slot${stays === 1 ? '' : 's'} stays open`;
+      const stays = empty - seatsNeeded;
+      el.textContent = plusOnes
+        ? `${emails.length} invite${emails.length === 1 ? '' : 's'} · ${seatsNeeded} seats reserved · ${stays} stays open`
+        : `${emails.length} invite${emails.length === 1 ? '' : 's'} · ${stays} slot${stays === 1 ? '' : 's'} stays open`;
       $('send-invites').disabled = false;
     }
     renderInvitePreview();
   }
   $('inv-emails').addEventListener('input', updateInviteCount);
+  $('inv-plusone').addEventListener('change', updateInviteCount);
 
   function mergeInviteVars(text, recipientEmail) {
     return text
@@ -1289,16 +1360,36 @@ Hope to see you there,
   $('send-invites').addEventListener('click', () => {
     const emails = parseEmails($('inv-emails').value);
     const t = activeTable();
+    const plusOnes = $('inv-plusone').checked;
     const empties = t.guests.filter(g => g.status === 'empty');
-    emails.slice(0, empties.length).forEach((email, i) => {
-      const target = empties[i];
-      const idx = t.guests.findIndex(g => g.id === target.id);
-      t.guests[idx] = { id: target.id, slot: target.slot, status: 'pending', email, invitedAt: 'just now' };
+    const needed = emails.length * (plusOnes ? 2 : 1);
+    if (needed > empties.length) return;
+
+    let cursor = 0;
+    emails.forEach(email => {
+      const primary = empties[cursor++];
+      const primaryIdx = t.guests.findIndex(g => g.id === primary.id);
+      t.guests[primaryIdx] = {
+        id: primary.id, slot: primary.slot, status: 'pending',
+        email, invitedAt: 'just now',
+        plusOneAllowed: plusOnes,
+      };
+      if (plusOnes) {
+        const plusOne = empties[cursor++];
+        const plusOneIdx = t.guests.findIndex(g => g.id === plusOne.id);
+        t.guests[plusOneIdx] = {
+          id: plusOne.id, slot: plusOne.slot, status: 'plus-one',
+          linkedToSlot: primary.slot,
+          linkedToEmail: email,
+        };
+      }
     });
     t.lastActivity = 'just now';
     render();
     closeAll();
-    showToast(`${emails.length} invite${emails.length === 1 ? '' : 's'} sent`);
+    showToast(plusOnes
+      ? `${emails.length} invite${emails.length === 1 ? '' : 's'} sent · ${needed} seats reserved`
+      : `${emails.length} invite${emails.length === 1 ? '' : 's'} sent`);
   });
 
   // ====================== REPLACE MODAL ======================
